@@ -1,1 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Juego de Baile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        button {
+            background-color: #0088cc;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .resultado {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .estrellas {
+            color: #f1c40f;
+            font-size: 28px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎵 Juego de Baile</h1>
+    <p>¡Bienvenido a la Mini App!</p>
+    <button onclick="sortearBaile()">🎲 ¡Sortear Baile!</button>
+    <div id="resultado" class="resultado" style="display:none;">
+        <h2 id="nombreBaile"></h2>
+        <div id="estrellasBaile" class="estrellas"></div>
+        <p id="puntosBaile"></p>
+        <p><a id="enlaceBaile" href="#" target="_blank">🎬 Ver vídeo</a></p>
+    </div>
 
+    <script>
+        // 🔥 LISTA DE BAILES (vamos a poner todos los que tenemos) 🔥
+        const BAILES = [
+            // (Aquí irán los 175 bailes con su id, nombre, enlace y estrellas)
+            // Para empezar, ponemos solo 3 de ejemplo:
+            { id: 175, nombre: "MAZURCA DE LA PALMA", enlace: "https://telegram.me/c/2585777945/1588", estrellas: 3 },
+            { id: 174, nombre: "MAZURCA DEL NORTE DE GRAN CANARIA", enlace: "https://telegram.me/c/2585777945/1584", estrellas: 4 },
+            { id: 173, nombre: "MAZURCA DE TIJARAFE", enlace: "https://telegram.me/c/2585777945/1580", estrellas: 5 }
+        ];
+
+        // Variables para la partida
+        let bailesUsados = [];
+
+        function sortearBaile() {
+            // Comprobar que la lista está cargada
+            if (BAILES.length === 0) {
+                alert('⏳ La lista de bailes aún no se ha cargado. Recarga la página.');
+                return;
+            }
+
+            // Filtrar bailes no usados
+            let disponibles = BAILES.filter(b => !bailesUsados.includes(b.id));
+            
+            if (disponibles.length === 0) {
+                alert("🎉 ¡Ya se han bailado todos los bailes!");
+                return;
+            }
+            
+            // Elegir un baile al azar
+            let indice = Math.floor(Math.random() * disponibles.length);
+            let baile = disponibles[indice];
+            
+            // Marcar como usado
+            bailesUsados.push(baile.id);
+            
+            // Mostrar el resultado
+            mostrarBaile(baile);
+        }
+
+        function mostrarBaile(baile) {
+            // Generar estrellas
+            let estrellas = "⭐️".repeat(baile.estrellas);
+            
+            // Calcular puntos
+            let puntosSinRed = baile.estrellas * 10;
+            let puntosConChuleta = baile.estrellas * 5;
+            
+            // Mostrar en la página
+            document.getElementById("nombreBaile").textContent = baile.id + " - " + baile.nombre;
+            document.getElementById("estrellasBaile").textContent = estrellas;
+            document.getElementById("puntosBaile").innerHTML = 
+                "🎪 Sin red: " + puntosSinRed + " pts | 🎬 Con chuleta: " + puntosConChuleta + " pts";
+            document.getElementById("enlaceBaile").href = baile.enlace;
+            document.getElementById("resultado").style.display = "block";
+        }
+    </script>
+</body>
+</html>
