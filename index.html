@@ -123,10 +123,15 @@
         }
         .turno-actual {
             background-color: #e8f5e9;
-            padding: 10px;
+            padding: 15px;
             border-radius: 8px;
             margin: 10px 0;
             font-weight: bold;
+            font-size: 1.5em;
+        }
+        .turno-actual .nombre {
+            color: #0088cc;
+            font-size: 2em;
         }
         .votacion-activa {
             background-color: #ffeb3b;
@@ -134,6 +139,14 @@
             border-radius: 5px;
             display: inline-block;
             margin: 5px;
+        }
+        .turno-votacion {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        .jugador-votando {
+            font-weight: bold;
+            color: #e74c3c;
         }
     </style>
 </head>
@@ -157,7 +170,7 @@
         <button onclick="sortearBaile()" style="background-color:#ff9800;">🎲 Sortear baile</button>
         <button onclick="reiniciarPartida()" style="background-color:#e74c3c;">🔄 Reiniciar partida</button>
         <div id="turnoActual" class="turno-actual" style="display:none;">
-            👤 Turno de: <span id="nombreTurno"></span>
+            👤 Turno de: <span class="nombre" id="nombreTurno"></span>
             <span id="estadoVotacion" class="votacion-activa" style="display:none;">🗳️ Votación activa</span>
         </div>
     </div>
@@ -186,7 +199,10 @@
     <!-- Panel de votación -->
     <div id="votacionPanel" class="votacion-panel" style="display:none;">
         <h3>🗳️ VOTACIÓN EN CURSO</h3>
-        <p id="votacionJugador"></p>
+        <div class="turno-votacion">
+            Votando: <span class="jugador-votando" id="votacionJugador"></span>
+            <span id="progresoVotacion" style="font-size:0.8em;"></span>
+        </div>
         <p>¿Cómo valoras esta actuación?</p>
         <div>
             <button class="voto-boton" onclick="votar('👍')">👍 <br>¡Bien!</button>
@@ -197,9 +213,6 @@
             <p id="votosResumen"></p>
             <p id="puntosObtenidos" style="font-weight:bold; font-size:20px;"></p>
         </div>
-        <button onclick="finalizarVotacion()" style="margin-top:15px; background-color:#4caf50; color:white; padding:10px 20px; border:none; border-radius:8px; cursor:pointer;">
-            🏁 Finalizar votación
-        </button>
     </div>
 
     <script src="lista_bailes.js"></script>
@@ -212,8 +225,10 @@
         let baileActual = null;
         let modalidadActual = null;
         let votacionActiva = false;
-        let votos = { '👍': 0, '👎': 0 };
+        let votos = [];
         let jugadorVotado = null;
+        let votantesPendientes = [];
+        let indiceVotante = 0;
 
         // 🔥 AÑADIR JUGADOR 🔥
         function añadirJugador() {
@@ -303,6 +318,13 @@
             baileActual = baile;
             modalidadActual = null;
             mostrarBaile(baile);
+            // Mostrar el jugador actual en grande
+            if (jugadores.length > 0) {
+                const nombre = jugadores[turnoActual];
+                document.getElementById("nombreTurno").textContent = nombre;
+                document.getElementById("turnoActual").style.display = "block";
+                document.getElementById("estadoVotacion").style.display = "none";
+            }
         }
 
         // 🔥 MOSTRAR BAILE 🔥
@@ -320,7 +342,7 @@
             document.getElementById("votacionPanel").style.display = "none";
             document.getElementById("resultadoVotacion").style.display = "none";
             document.getElementById("modalidadSeleccionada").textContent = "";
-            votos = { '👍': 0, '👎': 0 };
+            votos = [];
             document.getElementById("estadoVotacion").style.display = "none";
         }
 
@@ -346,7 +368,6 @@
             document.getElementById("nombreTurno").textContent = nombre;
             document.getElementById("turnoActual").style.display = "block";
             document.getElementById("estadoVotacion").style.display = "none";
-            // Resetear votación
             document.getElementById("votacionPanel").style.display = "none";
             document.getElementById("resultadoVotacion").style.display = "none";
         }
@@ -372,12 +393,20 @@
             const nombre = jugadores[turnoActual];
             jugadorVotado = nombre;
             votacionActiva = true;
-            votos = { '👍': 0, '👎': 0 };
-            document.getElementById("votacionJugador").textContent = "👤 " + nombre;
+            votos = [];
+            // Lista de votantes (todos los jugadores excepto el que baila)
+            votantesPendientes = jugadores.filter(j => j !== nombre);
+            indiceVotante = 0;
+
+            // Mostrar el primer votante
+            const votanteActual = votantesPendientes[indiceVotante];
+            document.getElementById("votacionJugador").textContent = votanteActual;
+            document.getElementById("progresoVotacion").textContent = 
+                ` (${indiceVotante + 1}/${votantesPendientes.length})`;
             document.getElementById("votacionPanel").style.display = "block";
             document.getElementById("resultadoVotacion").style.display = "none";
             document.getElementById("estadoVotacion").style.display = "inline-block";
-            alert("🗳️ Votación iniciada para " + nombre);
+            alert(`🗳️ Votación iniciada para ${nombre}. Vota ${votanteActual}`);
         }
 
         // 🔥 VOTAR 🔥
@@ -386,24 +415,35 @@
                 alert("❌ No hay una votación activa.");
                 return;
             }
-            votos[emoji] = (votos[emoji] || 0) + 1;
-            document.getElementById("votosResumen").textContent = 
-                `👍: ${votos['👍']}  👎: ${votos['👎']}`;
-            document.querySelectorAll('.voto-boton').forEach(btn => {
-                btn.classList.remove('seleccionado');
-            });
-            if (event && event.target) {
-                event.target.classList.add('seleccionado');
+            const votanteActual = votantesPendientes[indiceVotante];
+            votos.push({ votante: votanteActual, voto: emoji });
+            
+            // Avanzar al siguiente votante
+            indiceVotante++;
+            
+            if (indiceVotante < votantesPendientes.length) {
+                // Siguiente votante
+                const siguienteVotante = votantesPendientes[indiceVotante];
+                document.getElementById("votacionJugador").textContent = siguienteVotante;
+                document.getElementById("progresoVotacion").textContent = 
+                    ` (${indiceVotante + 1}/${votantesPendientes.length})`;
+                alert(`🗳️ Ahora vota: ${siguienteVotante}`);
+            } else {
+                // Todos votaron, mostrar resultados
+                mostrarResultadosVotacion();
             }
         }
 
-        // 🔥 FINALIZAR VOTACIÓN 🔥
-        function finalizarVotacion() {
-            if (!votacionActiva) return;
+        // 🔥 MOSTRAR RESULTADOS DE VOTACIÓN 🔥
+        function mostrarResultadosVotacion() {
             votacionActiva = false;
+            // Contar votos
+            let votosArriba = votos.filter(v => v.voto === '👍').length;
+            let votosAbajo = votos.filter(v => v.voto === '👎').length;
+            
             let puntos = 0;
             let aprobado = false;
-            if (votos['👍'] > votos['👎']) {
+            if (votosArriba > votosAbajo) {
                 aprobado = true;
                 if (modalidadActual === 'sinred') {
                     puntos = baileActual.estrellas * 10;
@@ -414,22 +454,30 @@
                 aprobado = false;
                 puntos = 0;
             }
+            
             document.getElementById("resultadoVotacion").style.display = "block";
             document.getElementById("puntosObtenidos").textContent = 
                 aprobado ? `🎯 Aprobado! +${puntos} pts` : `❌ Reprobado! 0 pts`;
-            document.getElementById("votosResumen").textContent = 
-                `👍: ${votos['👍']}  👎: ${votos['👎']}`;
-            if (jugadorVotado) {
-                if (aprobado) {
-                    puntuaciones[jugadorVotado] = (puntuaciones[jugadorVotado] || 0) + puntos;
-                }
+            
+            // Mostrar resumen de votos
+            let resumen = "Votos: ";
+            votos.forEach(v => {
+                resumen += `${v.votante}: ${v.voto}  `;
+            });
+            document.getElementById("votosResumen").textContent = resumen;
+            
+            if (jugadorVotado && aprobado) {
+                puntuaciones[jugadorVotado] = (puntuaciones[jugadorVotado] || 0) + puntos;
                 actualizarClasificacion();
-                alert(`✅ Puntos actualizados! ${jugadorVotado}: ${puntuaciones[jugadorVotado]} pts`);
-                // Pasar al siguiente turno automáticamente
-                setTimeout(() => {
-                    siguienteTurno();
-                }, 1000);
             }
+            
+            document.getElementById("estadoVotacion").style.display = "none";
+            alert(`✅ Votación finalizada! ${jugadorVotado} ${aprobado ? 'recibe' : 'no recibe'} puntos.`);
+            
+            // Pasar al siguiente turno automáticamente después de un momento
+            setTimeout(() => {
+                siguienteTurno();
+            }, 2000);
         }
 
         // 🔥 REINICIAR PARTIDA 🔥
@@ -451,21 +499,7 @@
         // 🔥 INICIAR APP 🔥
         function iniciarApp() {
             console.log("✅ App iniciada. Bailes cargados:", BAILES.length);
-            // Añadir jugadores de ejemplo para prueba
-            añadirJugadorEjemplo();
-        }
-
-        function añadirJugadorEjemplo() {
-            // Esto es solo para que veas cómo funciona. Puedes borrar esta función.
-            const nombres = ["Ana", "Luis", "María", "Carlos"];
-            nombres.forEach(n => {
-                if (!jugadores.includes(n)) {
-                    jugadores.push(n);
-                    puntuaciones[n] = 0;
-                }
-            });
-            actualizarListaJugadores();
-            actualizarClasificacion();
+            // No añadir nombres de ejemplo
         }
 
         // Iniciar
