@@ -265,36 +265,6 @@
             display: inline-block;
             margin: 5px;
         }
-        .selector-color {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin: 8px 0;
-        }
-        .color-option {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid #ccc;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .color-option:hover {
-            transform: scale(1.15);
-        }
-        .color-option.seleccionado {
-            border-color: #333;
-            transform: scale(1.15);
-        }
-        .jugador-item .color-muestra {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            margin-right: 5px;
-            vertical-align: middle;
-        }
         h1 {
             font-size: 1.8em;
         }
@@ -339,10 +309,6 @@
             .panel-titulo {
                 font-size: 16px;
             }
-            .color-option {
-                width: 32px;
-                height: 32px;
-            }
         }
     </style>
 </head>
@@ -354,16 +320,6 @@
     <div class="panel">
         <div class="panel-titulo">👥 Jugadores</div>
         <input type="text" id="nombreJugador" class="input-nombre" placeholder="Nombre del jugador">
-        <div class="selector-color" id="selectorColor">
-            <div class="color-option" style="background-color:#e74c3c;" onclick="seleccionarColor('#e74c3c')"></div>
-            <div class="color-option" style="background-color:#3498db;" onclick="seleccionarColor('#3498db')"></div>
-            <div class="color-option" style="background-color:#2ecc71;" onclick="seleccionarColor('#2ecc71')"></div>
-            <div class="color-option" style="background-color:#f1c40f;" onclick="seleccionarColor('#f1c40f')"></div>
-            <div class="color-option" style="background-color:#9b59b6;" onclick="seleccionarColor('#9b59b6')"></div>
-            <div class="color-option" style="background-color:#e67e22;" onclick="seleccionarColor('#e67e22')"></div>
-            <div class="color-option" style="background-color:#1abc9c;" onclick="seleccionarColor('#1abc9c')"></div>
-            <div class="color-option" style="background-color:#e84393;" onclick="seleccionarColor('#e84393')"></div>
-        </div>
         <button onclick="añadirJugador()">➕ Añadir</button>
         <button onclick="eliminarJugadores()" style="background-color:#e74c3c;">🗑️ Eliminar todos</button>
         <div id="listaJugadores" style="margin-top:10px;"></div>
@@ -439,7 +395,6 @@
         // Variables
         let jugadores = [];
         let puntuaciones = {};
-        let colores = {};
         let turnoActual = 0;
         let bailesUsados = [];
         let baileActual = null;
@@ -451,24 +406,15 @@
         let indiceVotante = 0;
         let partidaFinalizada = false;
         let timeoutResultado = null;
-        let colorSeleccionado = '#e74c3c';
 
         // 🔥 MEZCLAR BAILES AL INICIO 🔥
         function mezclarBailes() {
+            if (typeof BAILES === 'undefined' || BAILES.length === 0) return;
             for (let i = BAILES.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [BAILES[i], BAILES[j]] = [BAILES[j], BAILES[i]];
             }
             console.log("✅ Bailes mezclados aleatoriamente.");
-        }
-
-        // 🔥 SELECCIONAR COLOR 🔥
-        function seleccionarColor(color) {
-            colorSeleccionado = color;
-            document.querySelectorAll('.color-option').forEach(el => {
-                el.classList.remove('seleccionado');
-            });
-            document.querySelector(`.color-option[style*="${color}"]`).classList.add('seleccionado');
         }
 
         // 🔥 AÑADIR JUGADOR 🔥
@@ -488,7 +434,6 @@
             }
             jugadores.push(nombre);
             puntuaciones[nombre] = 0;
-            colores[nombre] = colorSeleccionado;
             document.getElementById("nombreJugador").value = "";
             actualizarListaJugadores();
             actualizarClasificacion();
@@ -507,7 +452,6 @@
             if (!confirm("¿Eliminar todos los jugadores?")) return;
             jugadores = [];
             puntuaciones = {};
-            colores = {};
             turnoActual = 0;
             partidaFinalizada = false;
             actualizarListaJugadores();
@@ -528,13 +472,7 @@
             }
             let html = "";
             jugadores.forEach((nombre, index) => {
-                const color = colores[nombre] || '#0088cc';
-                html += `
-                    <div class="jugador-item">
-                        <span class="color-muestra" style="background-color:${color};"></span>
-                        ${index + 1}. ${nombre}
-                    </div>
-                `;
+                html += `<div class="jugador-item">${index + 1}. ${nombre}</div>`;
             });
             container.innerHTML = html;
         }
@@ -544,10 +482,7 @@
             if (jugadores.length === 0 || partidaFinalizada) return;
             const nombre = jugadores[turnoActual];
             const elemento = document.getElementById("turnoActual");
-            const color = colores[nombre] || '#0088cc';
             document.getElementById("nombreTurno").textContent = nombre;
-            elemento.style.borderColor = color;
-            elemento.style.backgroundColor = color + '22';
             elemento.style.display = "block";
             
             elemento.classList.remove('nuevo-turno');
@@ -579,15 +514,11 @@
             const ordenados = [...jugadores].sort((a, b) => puntuaciones[b] - puntuaciones[a]);
             let html = "";
             ordenados.forEach((nombre, index) => {
-                const color = colores[nombre] || '#0088cc';
                 const posicion = index + 1;
                 html += `
                     <div class="clasificacion-item">
                         <span class="posicion">#${posicion}</span>
-                        <span style="display:flex; align-items:center; gap:8px;">
-                            <span class="color-muestra" style="display:inline-block; width:14px; height:14px; border-radius:50%; background-color:${color};"></span>
-                            <span class="nombre">${nombre}</span>
-                        </span>
+                        <span class="nombre">${nombre}</span>
                         <span class="puntos">${puntuaciones[nombre]} pts</span>
                     </div>
                 `;
@@ -831,11 +762,55 @@
             let html = `<div class="clasificacion-final">`;
             html += `<h2>🏆 CLASIFICACIÓN FINAL <span class="bandera-canaria">🇮🇨</span></h2>`;
             ordenados.forEach((nombre, index) => {
-                const color = colores[nombre] || '#0088cc';
                 const posicion = index + 1;
                 const medalla = posicion === 1 ? '🥇' : posicion === 2 ? '🥈' : posicion === 3 ? '🥉' : `#${posicion}`;
                 html += `
                     <div class="clasificacion-item">
                         <span class="posicion">${medalla}</span>
-                        <span style="display:flex; align-items:center; gap:8px;">
-                            <span class="color-muestra" style="display:inline-block; width:14px; height:14px; border-radius:50%; background
+                        <span class="nombre">${nombre}</span>
+                        <span class="puntos">${puntuaciones[nombre]} pts</span>
+                    </div>
+                `;
+            });
+            html += `<button onclick="reiniciarPartida()" style="margin-top:15px; background-color:#4caf50;">🔄 Nueva partida</button>`;
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        // 🔥 REINICIAR PARTIDA 🔥
+        function reiniciarPartida() {
+            if (!confirm("¿Reiniciar toda la partida?")) return;
+            if (timeoutResultado) {
+                clearTimeout(timeoutResultado);
+                timeoutResultado = null;
+            }
+            bailesUsados = [];
+            turnoActual = 0;
+            jugadores.forEach(nombre => puntuaciones[nombre] = 0);
+            baileActual = null;
+            modalidadActual = null;
+            partidaFinalizada = false;
+            document.getElementById("resultado").style.display = "none";
+            document.getElementById("votacionPanel").style.display = "none";
+            document.getElementById("turnoActual").style.display = "none";
+            document.getElementById("estadoVotacion").style.display = "none";
+            document.getElementById("seccionVotacion").style.display = "block";
+            document.getElementById("resultadoPuntosGrande").style.display = "none";
+            actualizarClasificacion();
+            if (jugadores.length > 0) {
+                mostrarTurnoActual(true);
+            }
+            alert("🔄 Partida reiniciada.");
+        }
+
+        // 🔥 INICIAR APP 🔥
+        function iniciarApp() {
+            console.log("✅ App iniciada. Bailes cargados:", BAILES.length);
+            mezclarBailes();
+            actualizarBailesRestantes();
+        }
+
+        iniciarApp();
+    </script>
+</body>
+</html>
