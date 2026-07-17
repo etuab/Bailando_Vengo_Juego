@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Juego de Baile - Organizador</title>
     <style>
+        /* Estilos generales */
         body {
             font-family: Arial, sans-serif;
             text-align: center;
@@ -21,6 +22,7 @@
             border-radius: 8px;
             cursor: pointer;
             margin: 5px;
+            transition: background-color 0.3s;
         }
         button:hover {
             background-color: #006699;
@@ -38,6 +40,9 @@
             border-bottom: 2px solid #0088cc;
             padding-bottom: 5px;
             text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         .resultado {
             margin-top: 30px;
@@ -131,17 +136,28 @@
             overflow-y: auto;
         }
         .turno-actual {
-            background-color: #e8f5e9;
             padding: 15px;
             border-radius: 8px;
             margin: 10px 0;
             font-weight: bold;
             font-size: 1.5em;
-            border: 2px solid #4caf50;
+            border: 3px solid #4caf50;
+            background-color: #e8f5e9;
+            transition: all 0.5s ease;
         }
         .turno-actual .nombre {
             color: #0088cc;
             font-size: 2em;
+        }
+        .turno-actual.nuevo-turno {
+            border-color: #ff9800;
+            background-color: #fff3e0;
+            animation: pulso 1s ease 3;
+        }
+        @keyframes pulso {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
         .votacion-activa {
             background-color: #ffeb3b;
@@ -185,10 +201,53 @@
             margin-top: 15px;
             background-color: #fdf2f2;
         }
+        .resultado-puntos {
+            font-size: 4em;
+            font-weight: bold;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            animation: aparecer 0.5s ease;
+        }
+        .resultado-puntos.aprobado {
+            color: #4caf50;
+            background-color: #e8f5e9;
+            border: 3px solid #4caf50;
+        }
+        .resultado-puntos.reprobado {
+            color: #e74c3c;
+            background-color: #fdf2f2;
+            border: 3px solid #e74c3c;
+        }
+        @keyframes aparecer {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .bandera-canaria {
+            font-size: 1.2em;
+        }
+        .mensaje-nuevo-turno {
+            font-size: 0.6em;
+            color: #ff9800;
+            margin-top: 5px;
+            animation: parpadeo 1s infinite;
+        }
+        @keyframes parpadeo {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .bailes-restantes {
+            font-size: 1em;
+            background-color: #e3f2fd;
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 5px;
+        }
     </style>
 </head>
 <body>
-    <h1>🎵 Juego de Baile</h1>
+    <h1>🎵 Juego de Baile <span class="bandera-canaria">🇮🇨</span></h1>
     <p>Organiza tu partida desde este móvil</p>
 
     <!-- Panel de jugadores -->
@@ -204,12 +263,15 @@
     <div id="turnoActual" class="turno-actual" style="display:none;">
         👤 Turno de: <span class="nombre" id="nombreTurno"></span>
         <span id="estadoVotacion" class="votacion-activa" style="display:none;">🗳️ Votación activa</span>
+        <div id="mensajeNuevoTurno" class="mensaje-nuevo-turno" style="display:none;">🎯 ¡Nuevo turno! Sortea un baile</div>
     </div>
 
     <!-- Controles de partida -->
     <div class="panel">
         <div class="panel-titulo">🎮 Control de partida</div>
+        <span class="bailes-restantes" id="bailesRestantes">🎯 Bailes restantes: 175</span>
         <button onclick="sortearBaile()" style="background-color:#ff9800;">🎲 Sortear baile</button>
+        <button onclick="saltarTurno()" style="background-color:#9e9e9e;">⏭️ Saltar turno</button>
         <button onclick="reiniciarPartida()" style="background-color:#e74c3c;">🔄 Reiniciar partida</button>
         <button onclick="finalizarPartida()" class="boton-finalizar">🏁 Finalizar partida</button>
     </div>
@@ -228,7 +290,6 @@
         <div id="estrellasBaile" class="estrellas"></div>
         <p id="puntosBaile"></p>
         <p><a id="enlaceBaile" href="#" target="_blank">🎬 Ver vídeo</a></p>
-        <p id="contador" class="contador"></p>
         
         <!-- Elección de modalidad -->
         <div class="seccion">
@@ -257,8 +318,9 @@
                 <div id="resultadoVotacion" class="resultado-votacion" style="display:none;">
                     <h3>📊 RESULTADO DE LA VOTACIÓN</h3>
                     <p id="votosResumen"></p>
-                    <p id="puntosObtenidos" style="font-weight:bold; font-size:20px;"></p>
                 </div>
+                <!-- Resultado en grande (5 segundos) -->
+                <div id="resultadoPuntosGrande" style="display:none;"></div>
             </div>
         </div>
     </div>
@@ -278,6 +340,7 @@
         let votantesPendientes = [];
         let indiceVotante = 0;
         let partidaFinalizada = false;
+        let timeoutResultado = null;
 
         // 🔥 AÑADIR JUGADOR 🔥
         function añadirJugador() {
@@ -299,10 +362,9 @@
             document.getElementById("nombreJugador").value = "";
             actualizarListaJugadores();
             actualizarClasificacion();
-            // Si es el primer jugador, asignar turno
             if (jugadores.length === 1) {
                 turnoActual = 0;
-                mostrarTurnoActual();
+                mostrarTurnoActual(true);
             }
         }
 
@@ -323,6 +385,7 @@
             document.getElementById("votacionPanel").style.display = "none";
             document.getElementById("resultado").style.display = "none";
             document.getElementById("seccionVotacion").style.display = "block";
+            actualizarBailesRestantes();
         }
 
         // 🔥 ACTUALIZAR LISTA DE JUGADORES 🔥
@@ -340,12 +403,33 @@
         }
 
         // 🔥 MOSTRAR TURNO ACTUAL 🔥
-        function mostrarTurnoActual() {
-            if (jugadores.length === 0) return;
-            if (partidaFinalizada) return;
+        function mostrarTurnoActual(nuevoTurno = false) {
+            if (jugadores.length === 0 || partidaFinalizada) return;
             const nombre = jugadores[turnoActual];
+            const elemento = document.getElementById("turnoActual");
             document.getElementById("nombreTurno").textContent = nombre;
-            document.getElementById("turnoActual").style.display = "block";
+            elemento.style.display = "block";
+            
+            // Quitar clases anteriores
+            elemento.classList.remove('nuevo-turno');
+            document.getElementById("mensajeNuevoTurno").style.display = "none";
+            
+            if (nuevoTurno) {
+                // Marcar como nuevo turno con animación
+                elemento.classList.add('nuevo-turno');
+                document.getElementById("mensajeNuevoTurno").style.display = "block";
+                // Ocultar mensaje después de 3 segundos
+                setTimeout(() => {
+                    elemento.classList.remove('nuevo-turno');
+                    document.getElementById("mensajeNuevoTurno").style.display = "none";
+                }, 3000);
+            }
+        }
+
+        // 🔥 ACTUALIZAR BAILES RESTANTES 🔥
+        function actualizarBailesRestantes() {
+            const restantes = BAILES.length - bailesUsados.length;
+            document.getElementById("bailesRestantes").textContent = `🎯 Bailes restantes: ${restantes}`;
         }
 
         // 🔥 ACTUALIZAR CLASIFICACIÓN 🔥
@@ -368,6 +452,7 @@
                 `;
             });
             container.innerHTML = html;
+            actualizarBailesRestantes();
         }
 
         // 🔥 SORTEAR BAILE 🔥
@@ -399,9 +484,10 @@
             baileActual = baile;
             modalidadActual = null;
             mostrarBaile(baile);
-            mostrarTurnoActual();
+            mostrarTurnoActual(false);
             document.getElementById("estadoVotacion").style.display = "none";
             document.getElementById("seccionVotacion").style.display = "block";
+            actualizarBailesRestantes();
         }
 
         // 🔥 MOSTRAR BAILE 🔥
@@ -415,11 +501,15 @@
                 "🎪 Sin red: " + puntosSinRed + " pts | 🎬 Con chuleta: " + puntosConChuleta + " pts";
             document.getElementById("enlaceBaile").href = baile.enlace;
             document.getElementById("resultado").style.display = "block";
-            document.getElementById("contador").textContent = "🎯 Bailes restantes: " + (BAILES.length - bailesUsados.length);
             document.getElementById("votacionPanel").style.display = "none";
             document.getElementById("resultadoVotacion").style.display = "none";
             document.getElementById("modalidadSeleccionada").textContent = "";
+            document.getElementById("resultadoPuntosGrande").style.display = "none";
             votos = [];
+            if (timeoutResultado) {
+                clearTimeout(timeoutResultado);
+                timeoutResultado = null;
+            }
         }
 
         // 🔥 ELEGIR MODALIDAD 🔥
@@ -431,6 +521,18 @@
             modalidadActual = modalidad;
             const mensaje = modalidad === 'sinred' ? '🎪 Elegido SIN RED' : '🎬 Elegido CON CHULETA';
             document.getElementById("modalidadSeleccionada").textContent = mensaje;
+        }
+
+        // 🔥 SALTAR TURNO 🔥
+        function saltarTurno() {
+            if (jugadores.length === 0) return;
+            if (votacionActiva) {
+                alert("⚠️ Hay una votación activa. Finalízala primero.");
+                return;
+            }
+            turnoActual = (turnoActual + 1) % jugadores.length;
+            mostrarTurnoActual(true);
+            alert(`⏭️ Turno saltado. Ahora le toca a ${jugadores[turnoActual]}`);
         }
 
         // 🔥 INICIAR VOTACIÓN 🔥
@@ -469,13 +571,13 @@
             }
             indiceVotante = 0;
 
-            // Mostrar el primer votante
             const votanteActual = votantesPendientes[indiceVotante];
             document.getElementById("votacionJugador").textContent = votanteActual;
             document.getElementById("progresoVotacion").textContent = 
                 ` (${indiceVotante + 1}/${votantesPendientes.length})`;
             document.getElementById("votacionPanel").style.display = "block";
             document.getElementById("resultadoVotacion").style.display = "none";
+            document.getElementById("resultadoPuntosGrande").style.display = "none";
             document.getElementById("estadoVotacion").style.display = "inline-block";
             alert(`🗳️ Votación iniciada para ${nombre}. Vota ${votanteActual}`);
         }
@@ -489,18 +591,15 @@
             const votanteActual = votantesPendientes[indiceVotante];
             votos.push({ votante: votanteActual, voto: emoji });
             
-            // Avanzar al siguiente votante
             indiceVotante++;
             
             if (indiceVotante < votantesPendientes.length) {
-                // Siguiente votante
                 const siguienteVotante = votantesPendientes[indiceVotante];
                 document.getElementById("votacionJugador").textContent = siguienteVotante;
                 document.getElementById("progresoVotacion").textContent = 
                     ` (${indiceVotante + 1}/${votantesPendientes.length})`;
                 alert(`🗳️ Ahora vota: ${siguienteVotante}`);
             } else {
-                // Todos votaron, mostrar resultados
                 mostrarResultadosVotacion();
             }
         }
@@ -508,7 +607,6 @@
         // 🔥 MOSTRAR RESULTADOS DE VOTACIÓN 🔥
         function mostrarResultadosVotacion() {
             votacionActiva = false;
-            // Contar votos
             let votosArriba = votos.filter(v => v.voto === '👍').length;
             let votosAbajo = votos.filter(v => v.voto === '👎').length;
             
@@ -521,16 +619,9 @@
                 } else {
                     puntos = baileActual.estrellas * 5;
                 }
-            } else {
-                aprobado = false;
-                puntos = 0;
             }
             
             document.getElementById("resultadoVotacion").style.display = "block";
-            document.getElementById("puntosObtenidos").textContent = 
-                aprobado ? `🎯 Aprobado! +${puntos} pts` : `❌ Reprobado! 0 pts`;
-            
-            // Mostrar resumen de votos
             let resumen = "Votos: ";
             votos.forEach(v => {
                 resumen += `${v.votante}: ${v.voto}  `;
@@ -543,17 +634,30 @@
             }
             
             document.getElementById("estadoVotacion").style.display = "none";
-            alert(`✅ Votación finalizada! ${jugadorVotado} ${aprobado ? 'recibe' : 'no recibe'} puntos.`);
             
-            // Pasar al siguiente turno automáticamente
-            setTimeout(() => {
+            // Mostrar resultado en grande durante 5 segundos
+            const puntosDiv = document.getElementById("resultadoPuntosGrande");
+            puntosDiv.style.display = "block";
+            if (aprobado) {
+                puntosDiv.className = "resultado-puntos aprobado";
+                puntosDiv.textContent = `🎉 +${puntos} PTS`;
+            } else {
+                puntosDiv.className = "resultado-puntos reprobado";
+                puntosDiv.textContent = "😞 0 PTS";
+            }
+            
+            // Ocultar después de 5 segundos y pasar turno
+            if (timeoutResultado) clearTimeout(timeoutResultado);
+            timeoutResultado = setTimeout(() => {
+                puntosDiv.style.display = "none";
                 if (!partidaFinalizada && jugadores.length > 0) {
                     turnoActual = (turnoActual + 1) % jugadores.length;
-                    mostrarTurnoActual();
+                    mostrarTurnoActual(true);
                 }
                 document.getElementById("votacionPanel").style.display = "none";
                 document.getElementById("resultadoVotacion").style.display = "none";
-            }, 2000);
+                timeoutResultado = null;
+            }, 5000);
         }
 
         // 🔥 FINALIZAR PARTIDA 🔥
@@ -566,17 +670,21 @@
                 alert("⚠️ Hay una votación activa. Finalízala primero.");
                 return;
             }
+            if (timeoutResultado) {
+                clearTimeout(timeoutResultado);
+                timeoutResultado = null;
+            }
             partidaFinalizada = true;
             document.getElementById("turnoActual").style.display = "none";
             document.getElementById("resultado").style.display = "none";
             document.getElementById("votacionPanel").style.display = "none";
             document.getElementById("seccionVotacion").style.display = "none";
+            document.getElementById("resultadoPuntosGrande").style.display = "none";
             
-            // Mostrar clasificación final destacada
             const container = document.getElementById("clasificacionContainer");
             const ordenados = [...jugadores].sort((a, b) => puntuaciones[b] - puntuaciones[a]);
             let html = `<div class="clasificacion-final">`;
-            html += `<h2>🏆 CLASIFICACIÓN FINAL</h2>`;
+            html += `<h2>🏆 CLASIFICACIÓN FINAL <span class="bandera-canaria">🇮🇨</span></h2>`;
             ordenados.forEach((nombre, index) => {
                 const posicion = index + 1;
                 const medalla = posicion === 1 ? '🥇' : posicion === 2 ? '🥈' : posicion === 3 ? '🥉' : `#${posicion}`;
@@ -596,6 +704,10 @@
         // 🔥 REINICIAR PARTIDA 🔥
         function reiniciarPartida() {
             if (!confirm("¿Reiniciar toda la partida?")) return;
+            if (timeoutResultado) {
+                clearTimeout(timeoutResultado);
+                timeoutResultado = null;
+            }
             bailesUsados = [];
             turnoActual = 0;
             jugadores.forEach(nombre => puntuaciones[nombre] = 0);
@@ -607,9 +719,10 @@
             document.getElementById("turnoActual").style.display = "none";
             document.getElementById("estadoVotacion").style.display = "none";
             document.getElementById("seccionVotacion").style.display = "block";
+            document.getElementById("resultadoPuntosGrande").style.display = "none";
             actualizarClasificacion();
             if (jugadores.length > 0) {
-                mostrarTurnoActual();
+                mostrarTurnoActual(true);
             }
             alert("🔄 Partida reiniciada.");
         }
@@ -617,9 +730,9 @@
         // 🔥 INICIAR APP 🔥
         function iniciarApp() {
             console.log("✅ App iniciada. Bailes cargados:", BAILES.length);
+            actualizarBailesRestantes();
         }
 
-        // Iniciar
         iniciarApp();
     </script>
 </body>
