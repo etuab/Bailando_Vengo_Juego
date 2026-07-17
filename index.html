@@ -830,31 +830,4 @@
                 const posicion = index + 1;
                 const medalla = posicion === 1 ? '🥇' : posicion === 2 ? '🥈' : posicion === 3 ? '🥉' : `#${posicion}`;
                 html += `
-                    <div class="clasificacion-item">
-                        <span class="posicion">${medalla}</span>
-                        <span class="nombre">${nombre}</span>
-                        <span class="puntos">${puntuaciones[nombre]} pts</span>
-                    </div>
-                `;
-            });
-            html += `<button onclick="reiniciarPartida()" style="margin-top:15px; background-color:#4caf50;">🔄 Nueva partida</button>`;
-            html += `</div>`;
-            container.innerHTML = html;
-        }
-
-        // 🔥 REINICIAR PARTIDA 🔥
-        function reiniciarPartida() {
-            if (!confirm("¿Reiniciar toda la partida?")) return;
-            if (timeoutResultado) {
-                clearTimeout(timeoutResultado);
-                timeoutResultado = null;
-            }
-            bailesUsados = [];
-            turnoActual = 0;
-            jugadores.forEach(nombre => puntuaciones[nombre] = 0);
-            baileActual = null;
-            modalidadActual = null;
-            partidaFinalizada = false;
-            document.getElementById("resultado").style.display = "none";
-            document.getElementById("votacionPanel").style.display = "none";
-            document.getElementById("turnoActual").style.display = "none";
+                    <div class="clasificacion-item
