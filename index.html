@@ -128,6 +128,13 @@
             margin: 10px 0;
             font-weight: bold;
         }
+        .votacion-activa {
+            background-color: #ffeb3b;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+            margin: 5px;
+        }
     </style>
 </head>
 <body>
@@ -151,6 +158,7 @@
         <button onclick="reiniciarPartida()" style="background-color:#e74c3c;">🔄 Reiniciar partida</button>
         <div id="turnoActual" class="turno-actual" style="display:none;">
             👤 Turno de: <span id="nombreTurno"></span>
+            <span id="estadoVotacion" class="votacion-activa" style="display:none;">🗳️ Votación activa</span>
         </div>
     </div>
 
@@ -169,10 +177,10 @@
         <p id="puntosBaile"></p>
         <p><a id="enlaceBaile" href="#" target="_blank">🎬 Ver vídeo</a></p>
         <p id="contador" class="contador"></p>
-        <button onclick="iniciarVotacion()" style="margin-top:15px; background-color:#ff9800;">🗳️ Iniciar votación</button>
         <button onclick="elegirModalidad('sinred')" style="background-color:#4caf50;">🎪 Sin red</button>
         <button onclick="elegirModalidad('chuleta')" style="background-color:#ff9800;">🎬 Con chuleta</button>
         <p id="modalidadSeleccionada" style="margin-top:10px; color:#555;"></p>
+        <button onclick="iniciarVotacion()" style="margin-top:15px; background-color:#ff9800;">🗳️ Iniciar votación</button>
     </div>
 
     <!-- Panel de votación -->
@@ -188,10 +196,10 @@
             <h3>📊 RESULTADO DE LA VOTACIÓN</h3>
             <p id="votosResumen"></p>
             <p id="puntosObtenidos" style="font-weight:bold; font-size:20px;"></p>
-            <button onclick="finalizarVotacion()" style="margin-top:15px; background-color:#4caf50; color:white; padding:10px 20px; border:none; border-radius:8px; cursor:pointer;">
-                🏁 Finalizar votación
-            </button>
         </div>
+        <button onclick="finalizarVotacion()" style="margin-top:15px; background-color:#4caf50; color:white; padding:10px 20px; border:none; border-radius:8px; cursor:pointer;">
+            🏁 Finalizar votación
+        </button>
     </div>
 
     <script src="lista_bailes.js"></script>
@@ -234,6 +242,8 @@
             actualizarListaJugadores();
             actualizarClasificacion();
             document.getElementById("turnoActual").style.display = "none";
+            document.getElementById("votacionPanel").style.display = "none";
+            document.getElementById("resultado").style.display = "none";
         }
 
         // 🔥 ACTUALIZAR LISTA DE JUGADORES 🔥
@@ -311,6 +321,7 @@
             document.getElementById("resultadoVotacion").style.display = "none";
             document.getElementById("modalidadSeleccionada").textContent = "";
             votos = { '👍': 0, '👎': 0 };
+            document.getElementById("estadoVotacion").style.display = "none";
         }
 
         // 🔥 ELEGIR MODALIDAD 🔥
@@ -326,12 +337,16 @@
                 alert("❌ No hay jugadores.");
                 return;
             }
+            if (votacionActiva) {
+                alert("⚠️ Hay una votación activa. Finalízala primero.");
+                return;
+            }
             turnoActual = (turnoActual + 1) % jugadores.length;
             const nombre = jugadores[turnoActual];
             document.getElementById("nombreTurno").textContent = nombre;
             document.getElementById("turnoActual").style.display = "block";
+            document.getElementById("estadoVotacion").style.display = "none";
             // Resetear votación
-            votacionActiva = false;
             document.getElementById("votacionPanel").style.display = "none";
             document.getElementById("resultadoVotacion").style.display = "none";
         }
@@ -361,6 +376,7 @@
             document.getElementById("votacionJugador").textContent = "👤 " + nombre;
             document.getElementById("votacionPanel").style.display = "block";
             document.getElementById("resultadoVotacion").style.display = "none";
+            document.getElementById("estadoVotacion").style.display = "inline-block";
             alert("🗳️ Votación iniciada para " + nombre);
         }
 
@@ -376,7 +392,9 @@
             document.querySelectorAll('.voto-boton').forEach(btn => {
                 btn.classList.remove('seleccionado');
             });
-            event.target.classList.add('seleccionado');
+            if (event && event.target) {
+                event.target.classList.add('seleccionado');
+            }
         }
 
         // 🔥 FINALIZAR VOTACIÓN 🔥
@@ -407,6 +425,10 @@
                 }
                 actualizarClasificacion();
                 alert(`✅ Puntos actualizados! ${jugadorVotado}: ${puntuaciones[jugadorVotado]} pts`);
+                // Pasar al siguiente turno automáticamente
+                setTimeout(() => {
+                    siguienteTurno();
+                }, 1000);
             }
         }
 
@@ -421,6 +443,7 @@
             document.getElementById("resultado").style.display = "none";
             document.getElementById("votacionPanel").style.display = "none";
             document.getElementById("turnoActual").style.display = "none";
+            document.getElementById("estadoVotacion").style.display = "none";
             actualizarClasificacion();
             alert("🔄 Partida reiniciada.");
         }
