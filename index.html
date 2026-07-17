@@ -222,7 +222,6 @@
             margin-top: 15px;
             background-color: #fdf2f2;
         }
-        /* ESTILOS PARA EL RESULTADO DE LA VOTACIÓN EN GRANDE */
         .resultado-puntos {
             font-size: 3.5em;
             font-weight: bold;
@@ -424,9 +423,7 @@
                     <h3>📊 RESULTADO DE LA VOTACIÓN</h3>
                     <p id="votosResumen"></p>
                 </div>
-                <!-- RESULTADO EN GRANDE CON DETALLE DE VOTOS -->
                 <div id="resultadoPuntosGrande" style="display:none;"></div>
-                <!-- BOTÓN SIGUIENTE BAILE -->
                 <button id="botonSiguienteBaile" class="boton-siguiente" style="display:none;" onclick="siguienteBaile()">🎯 Siguiente baile ➜</button>
             </div>
         </div>
@@ -782,7 +779,6 @@
             // Mostrar botón "Siguiente baile"
             document.getElementById("botonSiguienteBaile").style.display = "block";
             
-            // Limpiar timeout anterior si existía
             if (timeoutResultado) {
                 clearTimeout(timeoutResultado);
                 timeoutResultado = null;
@@ -794,13 +790,11 @@
             if (partidaFinalizada) return;
             if (jugadores.length === 0) return;
             
-            // Ocultar el botón y el resultado grande
             document.getElementById("botonSiguienteBaile").style.display = "none";
             document.getElementById("resultadoPuntosGrande").style.display = "none";
             document.getElementById("votacionPanel").style.display = "none";
             document.getElementById("resultadoVotacion").style.display = "none";
             
-            // Pasar al siguiente turno y sortear nuevo baile
             turnoActual = (turnoActual + 1) % jugadores.length;
             mostrarTurnoActual(true);
             sortearBaile();
@@ -850,4 +844,17 @@
 
         // 🔥 REINICIAR PARTIDA 🔥
         function reiniciarPartida() {
-            if (!confirm("¿
+            if (!confirm("¿Reiniciar toda la partida?")) return;
+            if (timeoutResultado) {
+                clearTimeout(timeoutResultado);
+                timeoutResultado = null;
+            }
+            bailesUsados = [];
+            turnoActual = 0;
+            jugadores.forEach(nombre => puntuaciones[nombre] = 0);
+            baileActual = null;
+            modalidadActual = null;
+            partidaFinalizada = false;
+            document.getElementById("resultado").style.display = "none";
+            document.getElementById("votacionPanel").style.display = "none";
+            document.getElementById("turnoActual").style.display = "none";
