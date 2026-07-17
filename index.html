@@ -174,11 +174,10 @@
         <p id="puntosBaile"></p>
         <p><a id="enlaceBaile" href="#" target="_blank">🎬 Ver vídeo</a></p>
         <p id="contador" class="contador"></p>
-        <!-- Botón para iniciar votación (solo para admin) -->
         <button onclick="iniciarVotacion()" style="margin-top:15px; background-color:#ff9800;">🗳️ Iniciar votación</button>
     </div>
 
-    <!-- Panel de votación (se muestra cuando se inicia) -->
+    <!-- Panel de votación -->
     <div id="votacionPanel" class="votacion-panel" style="display:none;">
         <h3>🗳️ VOTACIÓN EN CURSO</h3>
         <p id="votacionJugador"></p>
@@ -191,15 +190,14 @@
             <h3>📊 RESULTADO DE LA VOTACIÓN</h3>
             <p id="votosResumen"></p>
             <p id="puntosObtenidos" style="font-weight:bold; font-size:20px;"></p>
-            <button onclick="finalizarVotacion()" style="margin-top:15px; background-color:#4caf50;">🏁 Cerrar votación</button>
+            <button onclick="finalizarVotacion()" style="margin-top:15px; background-color:#4caf50; color:white; padding:10px 20px; border:none; border-radius:8px; cursor:pointer;">
+                🏁 Finalizar votación
+            </button>
         </div>
     </div>
 
-    <!-- Cargar la lista de bailes desde el archivo externo -->
     <script src="lista_bailes.js"></script>
-
     <script>
-        // Variables
         let jugadorActual = null;
         let partidaActual = null;
         let bailesUsados = [];
@@ -209,7 +207,6 @@
         let baileActual = null;
         let modalidadActual = null;
 
-        // 🔥 FUNCIÓN PARA OBTENER EL ID DEL USUARIO DESDE TELEGRAM 🔥
         function obtenerIdUsuario() {
             if (window.Telegram && window.Telegram.WebApp) {
                 const user = window.Telegram.WebApp.initDataUnsafe?.user;
@@ -230,7 +227,6 @@
             return false;
         }
 
-        // 🔥 MOSTRAR LA INFORMACIÓN DEL JUGADOR 🔥
         function mostrarInfoJugador() {
             const infoDiv = document.getElementById("infoJugador");
             if (jugadorActual) {
@@ -243,7 +239,6 @@
             }
         }
 
-        // 🔥 CREAR PARTIDA 🔥
         function crearPartida() {
             const codigo = Math.floor(1000 + Math.random() * 9000).toString();
             partidaActual = {
@@ -258,7 +253,6 @@
             alert("🎮 Partida creada con código: " + codigo);
         }
 
-        // 🔥 UNIRSE A PARTIDA 🔥
         function unirsePartida() {
             const codigo = document.getElementById("codigoPartida").value.trim();
             if (!codigo) {
@@ -268,9 +262,15 @@
             if (!partidaActual) {
                 partidaActual = {
                     codigo: codigo,
-                    jugadores: [],
+                    jugadores: [jugadorActual.id],
                     puntuaciones: {}
                 };
+                partidaActual.puntuaciones[jugadorActual.id] = 0;
+                document.getElementById("codigoPartida").value = codigo;
+                actualizarListaJugadores();
+                actualizarClasificacion();
+                alert("🎮 Partida creada con código: " + codigo);
+                return;
             }
             if (partidaActual.jugadores.includes(jugadorActual.id)) {
                 alert("ℹ️ Ya estás en esta partida.");
@@ -283,7 +283,6 @@
             alert("✅ Te has unido a la partida " + codigo);
         }
 
-        // 🔥 ACTUALIZAR LISTA DE JUGADORES 🔥
         function actualizarListaJugadores() {
             const container = document.getElementById("jugadoresContainer");
             const numJugadores = document.getElementById("numJugadores");
@@ -302,14 +301,12 @@
             container.innerHTML = html;
         }
 
-        // 🔥 ACTUALIZAR CLASIFICACIÓN 🔥
         function actualizarClasificacion() {
             const container = document.getElementById("clasificacionContainer");
             if (!partidaActual || partidaActual.jugadores.length === 0) {
                 container.innerHTML = "<p style='color:#999;'>Aún no hay puntuaciones.</p>";
                 return;
             }
-            // Ordenar jugadores por puntos (de mayor a menor)
             const jugadoresOrdenados = Object.entries(partidaActual.puntuaciones)
                 .sort((a, b) => b[1] - a[1]);
             let html = "";
@@ -327,19 +324,16 @@
             container.innerHTML = html;
         }
 
-        // 🔥 SORTEO DE BAILE 🔥
         function sortearBaile() {
             if (typeof BAILES === 'undefined' || BAILES.length === 0) {
                 alert('⏳ La lista de bailes no está cargada. Recarga la página.');
                 return;
             }
-
             let disponibles = BAILES.filter(b => !bailesUsados.includes(b.id));
             if (disponibles.length === 0) {
                 alert("🎉 ¡Ya se han bailado todos los bailes!");
                 return;
             }
-            
             let indice = Math.floor(Math.random() * disponibles.length);
             let baile = disponibles[indice];
             bailesUsados.push(baile.id);
@@ -348,12 +342,10 @@
             mostrarBaile(baile);
         }
 
-        // 🔥 MOSTRAR BAILE 🔥
         function mostrarBaile(baile) {
             let estrellas = "⭐".repeat(baile.estrellas);
             let puntosSinRed = baile.estrellas * 10;
             let puntosConChuleta = baile.estrellas * 5;
-            
             document.getElementById("nombreBaile").textContent = baile.id + " - " + baile.nombre;
             document.getElementById("estrellasBaile").textContent = estrellas;
             document.getElementById("puntosBaile").innerHTML = 
@@ -361,12 +353,9 @@
             document.getElementById("enlaceBaile").href = baile.enlace;
             document.getElementById("resultado").style.display = "block";
             document.getElementById("contador").textContent = "🎯 Bailes restantes: " + (BAILES.length - bailesUsados.length);
-            // Ocultar votación anterior
             document.getElementById("votacionPanel").style.display = "none";
             document.getElementById("resultadoVotacion").style.display = "none";
-            // Reiniciar votos
             votos = { '👍': 0, '👎': 0 };
-            // Añadir botones para elegir modalidad
             const modalidadHtml = `
                 <div style="margin-top:15px;">
                     <button onclick="elegirModalidad('sinred')" style="background-color:#4caf50;">🎪 Sin red</button>
@@ -377,14 +366,12 @@
             document.getElementById("puntosBaile").innerHTML += modalidadHtml;
         }
 
-        // 🔥 ELEGIR MODALIDAD 🔥
         function elegirModalidad(modalidad) {
             modalidadActual = modalidad;
             const mensaje = modalidad === 'sinred' ? '🎪 Has elegido SIN RED' : '🎬 Has elegido CON CHULETA';
             document.getElementById("modalidadSeleccionada").textContent = mensaje;
         }
 
-        // 🔥 INICIAR VOTACIÓN 🔥
         function iniciarVotacion() {
             if (!partidaActual || partidaActual.jugadores.length < 1) {
                 alert("❌ No hay partida activa o no hay jugadores.");
@@ -402,12 +389,10 @@
                 alert("❌ No hay un baile activo. Sortea uno primero.");
                 return;
             }
-            // Elegir un jugador al azar para votar (de momento el primero de la lista)
             const jugadorId = partidaActual.jugadores[0];
             jugadorVotado = jugadorId;
             votacionActiva = true;
             votos = { '👍': 0, '👎': 0 };
-
             const nombreJugador = jugadorId === jugadorActual.id ? jugadorActual.nombre : "Jugador " + jugadorId;
             document.getElementById("votacionJugador").textContent = "👤 " + nombreJugador;
             document.getElementById("votacionPanel").style.display = "block";
@@ -415,7 +400,6 @@
             alert("🗳️ Votación iniciada para " + nombreJugador);
         }
 
-        // 🔥 VOTAR 🔥
         function votar(emoji) {
             if (!votacionActiva) {
                 alert("❌ No hay una votación activa.");
@@ -430,19 +414,13 @@
             event.target.classList.add('seleccionado');
         }
 
-        // 🔥 FINALIZAR VOTACIÓN 🔥
         function finalizarVotacion() {
             if (!votacionActiva) return;
             votacionActiva = false;
-            
-            // Calcular resultado
-            let totalVotos = votos['👍'] + votos['👎'];
             let puntos = 0;
             let aprobado = false;
-            
             if (votos['👍'] > votos['👎']) {
                 aprobado = true;
-                // Calcular puntos según modalidad
                 if (modalidadActual === 'sinred') {
                     puntos = baileActual.estrellas * 10;
                 } else {
@@ -452,25 +430,21 @@
                 aprobado = false;
                 puntos = 0;
             }
-            
-            // Mostrar resultado
             document.getElementById("resultadoVotacion").style.display = "block";
             document.getElementById("puntosObtenidos").textContent = 
                 aprobado ? `🎯 Aprobado! +${puntos} pts` : `❌ Reprobado! 0 pts`;
             document.getElementById("votosResumen").textContent = 
                 `👍: ${votos['👍']}  👎: ${votos['👎']}`;
-            
-            // Sumar puntos al jugador votado
             if (jugadorVotado && partidaActual) {
                 if (aprobado) {
                     partidaActual.puntuaciones[jugadorVotado] = (partidaActual.puntuaciones[jugadorVotado] || 0) + puntos;
                 }
                 actualizarListaJugadores();
                 actualizarClasificacion();
+                alert(`✅ Puntos actualizados! ${partidaActual.puntuaciones[jugadorVotado]} pts totales.`);
             }
         }
 
-        // 🔥 INICIAR APP 🔥
         function iniciarApp() {
             obtenerIdUsuario();
             mostrarInfoJugador();
@@ -478,7 +452,6 @@
             console.log("✅ Bailes cargados:", BAILES.length);
         }
 
-        // Iniciar la app al cargar la página
         iniciarApp();
     </script>
 </body>
