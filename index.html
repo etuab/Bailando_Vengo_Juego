@@ -533,6 +533,7 @@
             turnoActual = (turnoActual + 1) % jugadores.length;
             mostrarTurnoActual(true);
             alert(`⏭️ Turno saltado. Ahora le toca a ${jugadores[turnoActual]}`);
+            // No se sortea automáticamente, el organizador debe hacerlo
         }
 
         // 🔥 INICIAR VOTACIÓN 🔥
@@ -562,15 +563,13 @@
             votacionActiva = true;
             votos = [];
             
-            // 🔥 NUEVO: EL JUGADOR QUE BAILA TAMBIÉN VOTA (SE AÑADE AL FINAL)
+            // El jugador que baila también vota (se añade al final)
             const indiceActual = jugadores.indexOf(nombre);
             votantesPendientes = [];
-            // Primero los demás jugadores
             for (let i = 1; i < jugadores.length; i++) {
                 const idx = (indiceActual + i) % jugadores.length;
                 votantesPendientes.push(jugadores[idx]);
             }
-            // 🔥 AÑADIR AL QUE BAILA AL FINAL (para que también vote)
             votantesPendientes.push(nombre);
             
             indiceVotante = 0;
@@ -617,7 +616,7 @@
             let puntos = 0;
             let aprobado = false;
             
-            // 🔥 NUEVO: EMPATE = APROBADO
+            // Empate = Aprobado
             if (votosArriba >= votosAbajo) {
                 aprobado = true;
                 if (modalidadActual === 'sinred') {
@@ -655,13 +654,16 @@
                 puntosDiv.textContent = "😞 0 PTS";
             }
             
-            // Ocultar después de 5 segundos y pasar turno
+            // Ocultar después de 5 segundos y pasar al siguiente turno SORTEANDO UN NUEVO BAILE
             if (timeoutResultado) clearTimeout(timeoutResultado);
             timeoutResultado = setTimeout(() => {
                 puntosDiv.style.display = "none";
                 if (!partidaFinalizada && jugadores.length > 0) {
+                    // 🔥 NUEVO: SORTEAR UN NUEVO BAILE AUTOMÁTICAMENTE
                     turnoActual = (turnoActual + 1) % jugadores.length;
                     mostrarTurnoActual(true);
+                    // Sortear un nuevo baile automáticamente
+                    sortearBaile();
                 }
                 document.getElementById("votacionPanel").style.display = "none";
                 document.getElementById("resultadoVotacion").style.display = "none";
