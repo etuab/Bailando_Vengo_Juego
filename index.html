@@ -2,34 +2,44 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Juego de Baile - Organizador</title>
     <style>
-        /* Estilos generales */
+        /* Estilos generales optimizados para móvil */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            padding: 20px;
+            padding: 10px;
             background-color: #f0f0f0;
-            max-width: 800px;
+            max-width: 100%;
             margin: 0 auto;
+            font-size: 16px;
         }
         button {
             background-color: #0088cc;
             color: white;
             border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 10px;
             cursor: pointer;
             margin: 5px;
             transition: background-color 0.3s;
+            min-height: 50px;
+            min-width: 60px;
+            touch-action: manipulation;
         }
         button:hover {
             background-color: #006699;
         }
         .panel {
-            margin-top: 20px;
-            padding: 15px;
+            margin-top: 15px;
+            padding: 12px;
             background-color: #ffffff;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -43,46 +53,50 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            font-size: 18px;
         }
         .resultado {
-            margin-top: 30px;
-            padding: 20px;
+            margin-top: 20px;
+            padding: 15px;
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .estrellas {
             color: #f1c40f;
-            font-size: 28px;
+            font-size: 32px;
         }
         .contador {
-            margin-top: 20px;
+            margin-top: 15px;
             font-size: 18px;
             color: #555;
         }
         .input-nombre {
-            padding: 10px;
-            font-size: 16px;
+            padding: 12px;
+            font-size: 18px;
             border-radius: 8px;
             border: 1px solid #ccc;
-            width: 200px;
+            width: 80%;
+            max-width: 300px;
             margin: 10px 0;
         }
         .jugador-item {
-            padding: 5px 10px;
+            padding: 8px 14px;
             background-color: #f0f8ff;
             margin: 5px;
             border-radius: 5px;
             display: inline-block;
+            font-size: 16px;
         }
         .clasificacion-item {
-            padding: 8px 15px;
+            padding: 10px 15px;
             background-color: #f5f5f5;
             margin: 5px;
             border-radius: 5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-size: 16px;
         }
         .clasificacion-item .nombre {
             font-weight: bold;
@@ -98,21 +112,23 @@
             font-weight: bold;
         }
         .votacion-panel {
-            margin-top: 20px;
-            padding: 20px;
+            margin-top: 15px;
+            padding: 15px;
             background-color: #fff3e0;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .voto-boton {
-            font-size: 30px;
-            padding: 10px 15px;
+            font-size: 36px;
+            padding: 15px 20px;
             margin: 5px;
             border: none;
             border-radius: 10px;
             cursor: pointer;
             background-color: white;
             transition: transform 0.2s;
+            min-height: 70px;
+            min-width: 70px;
         }
         .voto-boton:hover {
             transform: scale(1.1);
@@ -130,6 +146,7 @@
         }
         .resultado-votacion h3 {
             color: #2e7d32;
+            font-size: 18px;
         }
         .clasificacion-container {
             max-height: 300px;
@@ -148,6 +165,7 @@
         .turno-actual .nombre {
             color: #0088cc;
             font-size: 2em;
+            display: block;
         }
         .turno-actual.nuevo-turno {
             border-color: #ff9800;
@@ -156,7 +174,7 @@
         }
         @keyframes pulso {
             0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            50% { transform: scale(1.03); }
             100% { transform: scale(1); }
         }
         .votacion-activa {
@@ -165,6 +183,7 @@
             border-radius: 5px;
             display: inline-block;
             margin: 5px;
+            font-size: 14px;
         }
         .turno-votacion {
             font-size: 1.2em;
@@ -173,23 +192,25 @@
         .jugador-votando {
             font-weight: bold;
             color: #e74c3c;
+            font-size: 1.3em;
         }
         .seccion {
             border-left: 4px solid #0088cc;
-            padding-left: 15px;
-            margin: 15px 0;
+            padding-left: 12px;
+            margin: 12px 0;
         }
         .seccion-votacion {
             border-left-color: #ff9800;
             background-color: #fff8e1;
-            padding: 15px;
+            padding: 12px;
             border-radius: 8px;
         }
         .boton-finalizar {
             background-color: #e74c3c;
             color: white;
-            padding: 12px 25px;
+            padding: 14px 25px;
             font-size: 18px;
+            border-radius: 10px;
         }
         .boton-finalizar:hover {
             background-color: #c0392b;
@@ -202,7 +223,7 @@
             background-color: #fdf2f2;
         }
         .resultado-puntos {
-            font-size: 4em;
+            font-size: 3.5em;
             font-weight: bold;
             padding: 20px;
             border-radius: 15px;
@@ -244,6 +265,85 @@
             display: inline-block;
             margin: 5px;
         }
+        .selector-color {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 8px 0;
+        }
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #ccc;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .color-option:hover {
+            transform: scale(1.15);
+        }
+        .color-option.seleccionado {
+            border-color: #333;
+            transform: scale(1.15);
+        }
+        .jugador-item .color-muestra {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        h1 {
+            font-size: 1.8em;
+        }
+        h2 {
+            font-size: 1.4em;
+        }
+        h3 {
+            font-size: 1.2em;
+        }
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+                font-size: 14px;
+            }
+            button {
+                font-size: 15px;
+                padding: 10px 14px;
+                min-height: 44px;
+            }
+            .input-nombre {
+                font-size: 16px;
+                padding: 10px;
+                width: 90%;
+            }
+            .voto-boton {
+                font-size: 28px;
+                padding: 12px 16px;
+                min-height: 60px;
+                min-width: 60px;
+            }
+            .turno-actual {
+                font-size: 1.2em;
+                padding: 12px;
+            }
+            .turno-actual .nombre {
+                font-size: 1.6em;
+            }
+            .resultado-puntos {
+                font-size: 2.8em;
+                padding: 15px;
+            }
+            .panel-titulo {
+                font-size: 16px;
+            }
+            .color-option {
+                width: 32px;
+                height: 32px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -254,6 +354,16 @@
     <div class="panel">
         <div class="panel-titulo">👥 Jugadores</div>
         <input type="text" id="nombreJugador" class="input-nombre" placeholder="Nombre del jugador">
+        <div class="selector-color" id="selectorColor">
+            <div class="color-option" style="background-color:#e74c3c;" onclick="seleccionarColor('#e74c3c')"></div>
+            <div class="color-option" style="background-color:#3498db;" onclick="seleccionarColor('#3498db')"></div>
+            <div class="color-option" style="background-color:#2ecc71;" onclick="seleccionarColor('#2ecc71')"></div>
+            <div class="color-option" style="background-color:#f1c40f;" onclick="seleccionarColor('#f1c40f')"></div>
+            <div class="color-option" style="background-color:#9b59b6;" onclick="seleccionarColor('#9b59b6')"></div>
+            <div class="color-option" style="background-color:#e67e22;" onclick="seleccionarColor('#e67e22')"></div>
+            <div class="color-option" style="background-color:#1abc9c;" onclick="seleccionarColor('#1abc9c')"></div>
+            <div class="color-option" style="background-color:#e84393;" onclick="seleccionarColor('#e84393')"></div>
+        </div>
         <button onclick="añadirJugador()">➕ Añadir</button>
         <button onclick="eliminarJugadores()" style="background-color:#e74c3c;">🗑️ Eliminar todos</button>
         <div id="listaJugadores" style="margin-top:10px;"></div>
@@ -319,7 +429,6 @@
                     <h3>📊 RESULTADO DE LA VOTACIÓN</h3>
                     <p id="votosResumen"></p>
                 </div>
-                <!-- Resultado en grande (5 segundos) -->
                 <div id="resultadoPuntosGrande" style="display:none;"></div>
             </div>
         </div>
@@ -330,6 +439,7 @@
         // Variables
         let jugadores = [];
         let puntuaciones = {};
+        let colores = {};
         let turnoActual = 0;
         let bailesUsados = [];
         let baileActual = null;
@@ -341,6 +451,25 @@
         let indiceVotante = 0;
         let partidaFinalizada = false;
         let timeoutResultado = null;
+        let colorSeleccionado = '#e74c3c';
+
+        // 🔥 MEZCLAR BAILES AL INICIO 🔥
+        function mezclarBailes() {
+            for (let i = BAILES.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [BAILES[i], BAILES[j]] = [BAILES[j], BAILES[i]];
+            }
+            console.log("✅ Bailes mezclados aleatoriamente.");
+        }
+
+        // 🔥 SELECCIONAR COLOR 🔥
+        function seleccionarColor(color) {
+            colorSeleccionado = color;
+            document.querySelectorAll('.color-option').forEach(el => {
+                el.classList.remove('seleccionado');
+            });
+            document.querySelector(`.color-option[style*="${color}"]`).classList.add('seleccionado');
+        }
 
         // 🔥 AÑADIR JUGADOR 🔥
         function añadirJugador() {
@@ -359,6 +488,7 @@
             }
             jugadores.push(nombre);
             puntuaciones[nombre] = 0;
+            colores[nombre] = colorSeleccionado;
             document.getElementById("nombreJugador").value = "";
             actualizarListaJugadores();
             actualizarClasificacion();
@@ -377,6 +507,7 @@
             if (!confirm("¿Eliminar todos los jugadores?")) return;
             jugadores = [];
             puntuaciones = {};
+            colores = {};
             turnoActual = 0;
             partidaFinalizada = false;
             actualizarListaJugadores();
@@ -397,7 +528,13 @@
             }
             let html = "";
             jugadores.forEach((nombre, index) => {
-                html += `<div class="jugador-item">${index + 1}. ${nombre}</div>`;
+                const color = colores[nombre] || '#0088cc';
+                html += `
+                    <div class="jugador-item">
+                        <span class="color-muestra" style="background-color:${color};"></span>
+                        ${index + 1}. ${nombre}
+                    </div>
+                `;
             });
             container.innerHTML = html;
         }
@@ -407,18 +544,18 @@
             if (jugadores.length === 0 || partidaFinalizada) return;
             const nombre = jugadores[turnoActual];
             const elemento = document.getElementById("turnoActual");
+            const color = colores[nombre] || '#0088cc';
             document.getElementById("nombreTurno").textContent = nombre;
+            elemento.style.borderColor = color;
+            elemento.style.backgroundColor = color + '22';
             elemento.style.display = "block";
             
-            // Quitar clases anteriores
             elemento.classList.remove('nuevo-turno');
             document.getElementById("mensajeNuevoTurno").style.display = "none";
             
             if (nuevoTurno) {
-                // Marcar como nuevo turno con animación
                 elemento.classList.add('nuevo-turno');
                 document.getElementById("mensajeNuevoTurno").style.display = "block";
-                // Ocultar mensaje después de 3 segundos
                 setTimeout(() => {
                     elemento.classList.remove('nuevo-turno');
                     document.getElementById("mensajeNuevoTurno").style.display = "none";
@@ -442,11 +579,15 @@
             const ordenados = [...jugadores].sort((a, b) => puntuaciones[b] - puntuaciones[a]);
             let html = "";
             ordenados.forEach((nombre, index) => {
+                const color = colores[nombre] || '#0088cc';
                 const posicion = index + 1;
                 html += `
                     <div class="clasificacion-item">
                         <span class="posicion">#${posicion}</span>
-                        <span class="nombre">${nombre}</span>
+                        <span style="display:flex; align-items:center; gap:8px;">
+                            <span class="color-muestra" style="display:inline-block; width:14px; height:14px; border-radius:50%; background-color:${color};"></span>
+                            <span class="nombre">${nombre}</span>
+                        </span>
                         <span class="puntos">${puntuaciones[nombre]} pts</span>
                     </div>
                 `;
@@ -533,7 +674,6 @@
             turnoActual = (turnoActual + 1) % jugadores.length;
             mostrarTurnoActual(true);
             alert(`⏭️ Turno saltado. Ahora le toca a ${jugadores[turnoActual]}`);
-            // No se sortea automáticamente, el organizador debe hacerlo
         }
 
         // 🔥 INICIAR VOTACIÓN 🔥
@@ -563,7 +703,6 @@
             votacionActiva = true;
             votos = [];
             
-            // El jugador que baila también vota (se añade al final)
             const indiceActual = jugadores.indexOf(nombre);
             votantesPendientes = [];
             for (let i = 1; i < jugadores.length; i++) {
@@ -616,7 +755,6 @@
             let puntos = 0;
             let aprobado = false;
             
-            // Empate = Aprobado
             if (votosArriba >= votosAbajo) {
                 aprobado = true;
                 if (modalidadActual === 'sinred') {
@@ -643,7 +781,6 @@
             
             document.getElementById("estadoVotacion").style.display = "none";
             
-            // Mostrar resultado en grande durante 5 segundos
             const puntosDiv = document.getElementById("resultadoPuntosGrande");
             puntosDiv.style.display = "block";
             if (aprobado) {
@@ -654,15 +791,12 @@
                 puntosDiv.textContent = "😞 0 PTS";
             }
             
-            // Ocultar después de 5 segundos y pasar al siguiente turno SORTEANDO UN NUEVO BAILE
             if (timeoutResultado) clearTimeout(timeoutResultado);
             timeoutResultado = setTimeout(() => {
                 puntosDiv.style.display = "none";
                 if (!partidaFinalizada && jugadores.length > 0) {
-                    // 🔥 NUEVO: SORTEAR UN NUEVO BAILE AUTOMÁTICAMENTE
                     turnoActual = (turnoActual + 1) % jugadores.length;
                     mostrarTurnoActual(true);
-                    // Sortear un nuevo baile automáticamente
                     sortearBaile();
                 }
                 document.getElementById("votacionPanel").style.display = "none";
@@ -697,54 +831,11 @@
             let html = `<div class="clasificacion-final">`;
             html += `<h2>🏆 CLASIFICACIÓN FINAL <span class="bandera-canaria">🇮🇨</span></h2>`;
             ordenados.forEach((nombre, index) => {
+                const color = colores[nombre] || '#0088cc';
                 const posicion = index + 1;
                 const medalla = posicion === 1 ? '🥇' : posicion === 2 ? '🥈' : posicion === 3 ? '🥉' : `#${posicion}`;
                 html += `
                     <div class="clasificacion-item">
                         <span class="posicion">${medalla}</span>
-                        <span class="nombre">${nombre}</span>
-                        <span class="puntos">${puntuaciones[nombre]} pts</span>
-                    </div>
-                `;
-            });
-            html += `<button onclick="reiniciarPartida()" style="margin-top:15px; background-color:#4caf50;">🔄 Nueva partida</button>`;
-            html += `</div>`;
-            container.innerHTML = html;
-        }
-
-        // 🔥 REINICIAR PARTIDA 🔥
-        function reiniciarPartida() {
-            if (!confirm("¿Reiniciar toda la partida?")) return;
-            if (timeoutResultado) {
-                clearTimeout(timeoutResultado);
-                timeoutResultado = null;
-            }
-            bailesUsados = [];
-            turnoActual = 0;
-            jugadores.forEach(nombre => puntuaciones[nombre] = 0);
-            baileActual = null;
-            modalidadActual = null;
-            partidaFinalizada = false;
-            document.getElementById("resultado").style.display = "none";
-            document.getElementById("votacionPanel").style.display = "none";
-            document.getElementById("turnoActual").style.display = "none";
-            document.getElementById("estadoVotacion").style.display = "none";
-            document.getElementById("seccionVotacion").style.display = "block";
-            document.getElementById("resultadoPuntosGrande").style.display = "none";
-            actualizarClasificacion();
-            if (jugadores.length > 0) {
-                mostrarTurnoActual(true);
-            }
-            alert("🔄 Partida reiniciada.");
-        }
-
-        // 🔥 INICIAR APP 🔥
-        function iniciarApp() {
-            console.log("✅ App iniciada. Bailes cargados:", BAILES.length);
-            actualizarBailesRestantes();
-        }
-
-        iniciarApp();
-    </script>
-</body>
-</html>
+                        <span style="display:flex; align-items:center; gap:8px;">
+                            <span class="color-muestra" style="display:inline-block; width:14px; height:14px; border-radius:50%; background
