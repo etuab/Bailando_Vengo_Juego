@@ -562,13 +562,17 @@
             votacionActiva = true;
             votos = [];
             
-            // Orden de votación: empieza por el siguiente al que baila
+            // 🔥 NUEVO: EL JUGADOR QUE BAILA TAMBIÉN VOTA (SE AÑADE AL FINAL)
             const indiceActual = jugadores.indexOf(nombre);
             votantesPendientes = [];
+            // Primero los demás jugadores
             for (let i = 1; i < jugadores.length; i++) {
                 const idx = (indiceActual + i) % jugadores.length;
                 votantesPendientes.push(jugadores[idx]);
             }
+            // 🔥 AÑADIR AL QUE BAILA AL FINAL (para que también vote)
+            votantesPendientes.push(nombre);
+            
             indiceVotante = 0;
 
             const votanteActual = votantesPendientes[indiceVotante];
@@ -612,13 +616,18 @@
             
             let puntos = 0;
             let aprobado = false;
-            if (votosArriba > votosAbajo) {
+            
+            // 🔥 NUEVO: EMPATE = APROBADO
+            if (votosArriba >= votosAbajo) {
                 aprobado = true;
                 if (modalidadActual === 'sinred') {
                     puntos = baileActual.estrellas * 10;
                 } else {
                     puntos = baileActual.estrellas * 5;
                 }
+            } else {
+                aprobado = false;
+                puntos = 0;
             }
             
             document.getElementById("resultadoVotacion").style.display = "block";
