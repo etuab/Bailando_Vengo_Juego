@@ -222,6 +222,7 @@
             margin-top: 15px;
             background-color: #fdf2f2;
         }
+        /* ESTILOS PARA EL RESULTADO DE LA VOTACIÓN EN GRANDE */
         .resultado-puntos {
             font-size: 3.5em;
             font-weight: bold;
@@ -423,7 +424,9 @@
                     <h3>📊 RESULTADO DE LA VOTACIÓN</h3>
                     <p id="votosResumen"></p>
                 </div>
+                <!-- RESULTADO EN GRANDE CON DETALLE DE VOTOS -->
                 <div id="resultadoPuntosGrande" style="display:none;"></div>
+                <!-- BOTÓN SIGUIENTE BAILE -->
                 <button id="botonSiguienteBaile" class="boton-siguiente" style="display:none;" onclick="siguienteBaile()">🎯 Siguiente baile ➜</button>
             </div>
         </div>
@@ -790,11 +793,13 @@
             if (partidaFinalizada) return;
             if (jugadores.length === 0) return;
             
+            // Ocultar elementos
             document.getElementById("botonSiguienteBaile").style.display = "none";
             document.getElementById("resultadoPuntosGrande").style.display = "none";
             document.getElementById("votacionPanel").style.display = "none";
             document.getElementById("resultadoVotacion").style.display = "none";
             
+            // Pasar al siguiente turno y sortear nuevo baile
             turnoActual = (turnoActual + 1) % jugadores.length;
             mostrarTurnoActual(true);
             sortearBaile();
@@ -830,4 +835,16 @@
                 const posicion = index + 1;
                 const medalla = posicion === 1 ? '🥇' : posicion === 2 ? '🥈' : posicion === 3 ? '🥉' : `#${posicion}`;
                 html += `
-                    <div class="clasificacion-item
+                    <div class="clasificacion-item">
+                        <span class="posicion">${medalla}</span>
+                        <span class="nombre">${nombre}</span>
+                        <span class="puntos">${puntuaciones[nombre]} pts</span>
+                    </div>
+                `;
+            });
+            html += `<button onclick="reiniciarPartida()" style="margin-top:15px; background-color:#4caf50;">🔄 Nueva partida</button>`;
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        // 🔥 REINICIAR PART
