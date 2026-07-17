@@ -222,13 +222,34 @@
             margin-top: 15px;
             background-color: #fdf2f2;
         }
+        /* ESTILOS PARA EL RESULTADO DE LA VOTACIÓN EN GRANDE */
         .resultado-puntos {
             font-size: 3.5em;
             font-weight: bold;
-            padding: 20px;
+            padding: 25px 15px;
             border-radius: 15px;
             margin: 20px 0;
             animation: aparecer 0.5s ease;
+        }
+        .resultado-puntos .puntos-grande {
+            font-size: 1.8em;
+            display: block;
+            margin: 5px 0;
+        }
+        .resultado-puntos .votos-detalle {
+            font-size: 0.5em;
+            font-weight: normal;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+        }
+        .resultado-puntos .votos-detalle span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         .resultado-puntos.aprobado {
             color: #4caf50;
@@ -243,6 +264,17 @@
         @keyframes aparecer {
             0% { transform: scale(0.5); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
+        }
+        .boton-siguiente {
+            background-color: #4caf50;
+            color: white;
+            font-size: 20px;
+            padding: 15px 30px;
+            border-radius: 12px;
+            margin: 10px 0;
+        }
+        .boton-siguiente:hover {
+            background-color: #388e3c;
         }
         .bandera-canaria {
             font-size: 1.2em;
@@ -303,8 +335,15 @@
                 font-size: 1.6em;
             }
             .resultado-puntos {
-                font-size: 2.8em;
+                font-size: 2.5em;
                 padding: 15px;
+            }
+            .resultado-puntos .puntos-grande {
+                font-size: 1.5em;
+            }
+            .resultado-puntos .votos-detalle {
+                font-size: 0.6em;
+                gap: 15px;
             }
             .panel-titulo {
                 font-size: 16px;
@@ -385,7 +424,10 @@
                     <h3>📊 RESULTADO DE LA VOTACIÓN</h3>
                     <p id="votosResumen"></p>
                 </div>
+                <!-- RESULTADO EN GRANDE CON DETALLE DE VOTOS -->
                 <div id="resultadoPuntosGrande" style="display:none;"></div>
+                <!-- BOTÓN SIGUIENTE BAILE -->
+                <button id="botonSiguienteBaile" class="boton-siguiente" style="display:none;" onclick="siguienteBaile()">🎯 Siguiente baile ➜</button>
             </div>
         </div>
     </div>
@@ -577,6 +619,7 @@
             document.getElementById("resultadoVotacion").style.display = "none";
             document.getElementById("modalidadSeleccionada").textContent = "";
             document.getElementById("resultadoPuntosGrande").style.display = "none";
+            document.getElementById("botonSiguienteBaile").style.display = "none";
             votos = [];
             if (timeoutResultado) {
                 clearTimeout(timeoutResultado);
@@ -651,6 +694,7 @@
             document.getElementById("votacionPanel").style.display = "block";
             document.getElementById("resultadoVotacion").style.display = "none";
             document.getElementById("resultadoPuntosGrande").style.display = "none";
+            document.getElementById("botonSiguienteBaile").style.display = "none";
             document.getElementById("estadoVotacion").style.display = "inline-block";
             alert(`🗳️ Votación iniciada para ${nombre}. Vota ${votanteActual}`);
         }
@@ -712,28 +756,54 @@
             
             document.getElementById("estadoVotacion").style.display = "none";
             
+            // RESULTADO EN GRANDE CON DETALLE DE VOTOS
             const puntosDiv = document.getElementById("resultadoPuntosGrande");
             puntosDiv.style.display = "block";
             if (aprobado) {
                 puntosDiv.className = "resultado-puntos aprobado";
-                puntosDiv.textContent = `🎉 +${puntos} PTS`;
+                puntosDiv.innerHTML = `
+                    <span class="puntos-grande">🎉 +${puntos} PTS</span>
+                    <div class="votos-detalle">
+                        <span>👍 ${votosArriba}</span>
+                        <span>👎 ${votosAbajo}</span>
+                    </div>
+                `;
             } else {
                 puntosDiv.className = "resultado-puntos reprobado";
-                puntosDiv.textContent = "😞 0 PTS";
+                puntosDiv.innerHTML = `
+                    <span class="puntos-grande">😞 0 PTS</span>
+                    <div class="votos-detalle">
+                        <span>👍 ${votosArriba}</span>
+                        <span>👎 ${votosAbajo}</span>
+                    </div>
+                `;
             }
             
-            if (timeoutResultado) clearTimeout(timeoutResultado);
-            timeoutResultado = setTimeout(() => {
-                puntosDiv.style.display = "none";
-                if (!partidaFinalizada && jugadores.length > 0) {
-                    turnoActual = (turnoActual + 1) % jugadores.length;
-                    mostrarTurnoActual(true);
-                    sortearBaile();
-                }
-                document.getElementById("votacionPanel").style.display = "none";
-                document.getElementById("resultadoVotacion").style.display = "none";
+            // Mostrar botón "Siguiente baile"
+            document.getElementById("botonSiguienteBaile").style.display = "block";
+            
+            // Limpiar timeout anterior si existía
+            if (timeoutResultado) {
+                clearTimeout(timeoutResultado);
                 timeoutResultado = null;
-            }, 5000);
+            }
+        }
+
+        // 🔥 SIGUIENTE BAILE (BOTÓN MANUAL) 🔥
+        function siguienteBaile() {
+            if (partidaFinalizada) return;
+            if (jugadores.length === 0) return;
+            
+            // Ocultar el botón y el resultado grande
+            document.getElementById("botonSiguienteBaile").style.display = "none";
+            document.getElementById("resultadoPuntosGrande").style.display = "none";
+            document.getElementById("votacionPanel").style.display = "none";
+            document.getElementById("resultadoVotacion").style.display = "none";
+            
+            // Pasar al siguiente turno y sortear nuevo baile
+            turnoActual = (turnoActual + 1) % jugadores.length;
+            mostrarTurnoActual(true);
+            sortearBaile();
         }
 
         // 🔥 FINALIZAR PARTIDA 🔥
@@ -756,6 +826,7 @@
             document.getElementById("votacionPanel").style.display = "none";
             document.getElementById("seccionVotacion").style.display = "none";
             document.getElementById("resultadoPuntosGrande").style.display = "none";
+            document.getElementById("botonSiguienteBaile").style.display = "none";
             
             const container = document.getElementById("clasificacionContainer");
             const ordenados = [...jugadores].sort((a, b) => puntuaciones[b] - puntuaciones[a]);
@@ -779,38 +850,4 @@
 
         // 🔥 REINICIAR PARTIDA 🔥
         function reiniciarPartida() {
-            if (!confirm("¿Reiniciar toda la partida?")) return;
-            if (timeoutResultado) {
-                clearTimeout(timeoutResultado);
-                timeoutResultado = null;
-            }
-            bailesUsados = [];
-            turnoActual = 0;
-            jugadores.forEach(nombre => puntuaciones[nombre] = 0);
-            baileActual = null;
-            modalidadActual = null;
-            partidaFinalizada = false;
-            document.getElementById("resultado").style.display = "none";
-            document.getElementById("votacionPanel").style.display = "none";
-            document.getElementById("turnoActual").style.display = "none";
-            document.getElementById("estadoVotacion").style.display = "none";
-            document.getElementById("seccionVotacion").style.display = "block";
-            document.getElementById("resultadoPuntosGrande").style.display = "none";
-            actualizarClasificacion();
-            if (jugadores.length > 0) {
-                mostrarTurnoActual(true);
-            }
-            alert("🔄 Partida reiniciada.");
-        }
-
-        // 🔥 INICIAR APP 🔥
-        function iniciarApp() {
-            console.log("✅ App iniciada. Bailes cargados:", BAILES.length);
-            mezclarBailes();
-            actualizarBailesRestantes();
-        }
-
-        iniciarApp();
-    </script>
-</body>
-</html>
+            if (!confirm("¿
