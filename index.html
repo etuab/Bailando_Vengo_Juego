@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Juego de Baile - Organizador</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
@@ -13,7 +11,7 @@
             padding: 0;
         }
         body {
-            font-family: 'Open Sans', sans-serif;
+            font-family: Arial, sans-serif;
             text-align: center;
             padding: 10px;
             background-color: #f0f0f0;
@@ -34,8 +32,6 @@
             min-height: 50px;
             min-width: 60px;
             touch-action: manipulation;
-            font-family: 'Open Sans', sans-serif;
-            font-weight: 600;
         }
         button:hover {
             background-color: #006699;
@@ -82,7 +78,6 @@
             width: 80%;
             max-width: 300px;
             margin: 10px 0;
-            font-family: 'Open Sans', sans-serif;
         }
         .jugador-item {
             padding: 8px 14px;
@@ -226,40 +221,7 @@
             margin-top: 15px;
             background-color: #fdf2f2;
         }
-        /* TARJETA DE BAILE */
-        .tarjeta-baile {
-            background-color: #ffffff;
-            border-radius: 15px;
-            padding: 20px;
-            margin: 15px 0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        .tarjeta-baile h2 {
-            font-size: 1.4em;
-            margin-bottom: 10px;
-        }
-        .tarjeta-baile .estrellas {
-            font-size: 32px;
-        }
-        .tarjeta-baile .puntos-baile {
-            font-size: 1.1em;
-            margin: 10px 0;
-        }
-        .tarjeta-baile .enlace-video {
-            display: inline-block;
-            background-color: #0088cc;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 18px;
-            margin: 10px 0;
-            transition: background-color 0.3s;
-        }
-        .tarjeta-baile .enlace-video:hover {
-            background-color: #006699;
-        }
+        /* ESTILOS PARA EL RESULTADO EN GRANDE */
         .resultado-puntos {
             font-size: 3.5em;
             font-weight: bold;
@@ -334,8 +296,14 @@
             display: inline-block;
             margin: 5px;
         }
-        h1, h2, h3 {
-            font-weight: 700;
+        h1 {
+            font-size: 1.8em;
+        }
+        h2 {
+            font-size: 1.4em;
+        }
+        h3 {
+            font-size: 1.2em;
         }
         @media (max-width: 480px) {
             body {
@@ -379,9 +347,6 @@
             .panel-titulo {
                 font-size: 16px;
             }
-            .tarjeta-baile h2 {
-                font-size: 1.2em;
-            }
         }
     </style>
 </head>
@@ -423,14 +388,12 @@
         </div>
     </div>
 
-    <!-- Resultado del sorteo (TARJETA DE BAILE) -->
+    <!-- Resultado del sorteo -->
     <div id="resultado" class="resultado" style="display:none;">
-        <div id="tarjetaBaile" class="tarjeta-baile">
-            <h2 id="nombreBaile"></h2>
-            <div id="estrellasBaile" class="estrellas"></div>
-            <p class="puntos-baile" id="puntosBaile"></p>
-            <a id="enlaceBaile" class="enlace-video" href="#" target="_blank">🎬 Ver vídeo</a>
-        </div>
+        <h2 id="nombreBaile"></h2>
+        <div id="estrellasBaile" class="estrellas"></div>
+        <p id="puntosBaile"></p>
+        <p><a id="enlaceBaile" href="#" target="_blank">🎬 Ver vídeo</a></p>
         
         <!-- Elección de modalidad -->
         <div class="seccion">
@@ -445,6 +408,7 @@
             <div style="font-weight:bold; margin-bottom:10px;">🗳️ Votación</div>
             <button onclick="iniciarVotacion()" style="background-color:#ff9800; font-size:18px; padding:10px 30px;">🗳️ Iniciar votación</button>
             
+            <!-- Panel de votación -->
             <div id="votacionPanel" style="display:none; margin-top:15px;">
                 <div class="turno-votacion">
                     Votando: <span class="jugador-votando" id="votacionJugador"></span>
@@ -459,7 +423,9 @@
                     <h3>📊 RESULTADO DE LA VOTACIÓN</h3>
                     <p id="votosResumen"></p>
                 </div>
+                <!-- RESULTADO EN GRANDE -->
                 <div id="resultadoPuntosGrande" style="display:none;"></div>
+                <!-- BOTÓN SIGUIENTE BAILE -->
                 <button id="botonSiguienteBaile" class="boton-siguiente" style="display:none;" onclick="siguienteBaile()">🎯 Siguiente baile ➜</button>
             </div>
         </div>
@@ -774,6 +740,7 @@
             
             document.getElementById("estadoVotacion").style.display = "none";
             
+            // 🔥 RESULTADO EN GRANDE CON DETALLE DE VOTOS
             const puntosDiv = document.getElementById("resultadoPuntosGrande");
             puntosDiv.style.display = "block";
             if (aprobado) {
@@ -796,6 +763,7 @@
                 `;
             }
             
+            // 🔥 BOTÓN "SIGUIENTE BAILE" (MANUAL)
             document.getElementById("botonSiguienteBaile").style.display = "block";
             
             if (timeoutResultado) {
@@ -804,15 +772,18 @@
             }
         }
 
+        // 🔥 FUNCIÓN PARA EL BOTÓN "SIGUIENTE BAILE"
         function siguienteBaile() {
             if (partidaFinalizada) return;
             if (jugadores.length === 0) return;
             
+            // Ocultar elementos
             document.getElementById("botonSiguienteBaile").style.display = "none";
             document.getElementById("resultadoPuntosGrande").style.display = "none";
             document.getElementById("votacionPanel").style.display = "none";
             document.getElementById("resultadoVotacion").style.display = "none";
             
+            // Pasar al siguiente turno y sortear nuevo baile
             turnoActual = (turnoActual + 1) % jugadores.length;
             mostrarTurnoActual(true);
             sortearBaile();
@@ -856,3 +827,42 @@
             });
             html += `<button onclick="reiniciarPartida()" style="margin-top:15px; background-color:#4caf50;">🔄 Nueva partida</button>`;
             html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        function reiniciarPartida() {
+            if (!confirm("¿Reiniciar toda la partida?")) return;
+            if (timeoutResultado) {
+                clearTimeout(timeoutResultado);
+                timeoutResultado = null;
+            }
+            bailesUsados = [];
+            turnoActual = 0;
+            jugadores.forEach(nombre => puntuaciones[nombre] = 0);
+            baileActual = null;
+            modalidadActual = null;
+            partidaFinalizada = false;
+            document.getElementById("resultado").style.display = "none";
+            document.getElementById("votacionPanel").style.display = "none";
+            document.getElementById("turnoActual").style.display = "none";
+            document.getElementById("estadoVotacion").style.display = "none";
+            document.getElementById("seccionVotacion").style.display = "block";
+            document.getElementById("resultadoPuntosGrande").style.display = "none";
+            document.getElementById("botonSiguienteBaile").style.display = "none";
+            actualizarClasificacion();
+            if (jugadores.length > 0) {
+                mostrarTurnoActual(true);
+            }
+            alert("🔄 Partida reiniciada.");
+        }
+
+        function iniciarApp() {
+            console.log("✅ App iniciada. Bailes cargados:", BAILES.length);
+            mezclarBailes();
+            actualizarBailesRestantes();
+        }
+
+        iniciarApp();
+    </script>
+</body>
+</html>
