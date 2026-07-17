@@ -4,24 +4,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Juego de Baile - Organizador</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Variables para temas */
+        :root {
+            --bg-color: #f0f0f0;
+            --text-color: #333;
+            --panel-bg: #ffffff;
+            --panel-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --border-color: #0088cc;
+            --card-bg: #ffffff;
+            --card-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            --button-bg: #0088cc;
+            --button-text: white;
+            --button-hover: #006699;
+            --turno-bg: #e8f5e9;
+            --turno-border: #4caf50;
+            --turno-text: #0088cc;
+            --votacion-bg: #fff3e0;
+            --votacion-border: #ff9800;
+            --clasificacion-item-bg: #f5f5f5;
+            --clasificacion-final-bg: #fdf2f2;
+            --input-bg: white;
+            --input-border: #ccc;
+        }
+        /* Tema oscuro */
+        body.dark {
+            --bg-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --panel-bg: #16213e;
+            --panel-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            --border-color: #4fc3f7;
+            --card-bg: #1a1a2e;
+            --card-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            --button-bg: #4fc3f7;
+            --button-text: #1a1a2e;
+            --button-hover: #81d4fa;
+            --turno-bg: #1b3a2a;
+            --turno-border: #66bb6a;
+            --turno-text: #81c784;
+            --votacion-bg: #3e2723;
+            --votacion-border: #ffa726;
+            --clasificacion-item-bg: #1a1a2e;
+            --clasificacion-final-bg: #3e1a1a;
+            --input-bg: #1a1a2e;
+            --input-border: #444;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Open Sans', sans-serif;
             text-align: center;
             padding: 10px;
-            background-color: #f0f0f0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             max-width: 100%;
             margin: 0 auto;
             font-size: 16px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            flex-wrap: wrap;
+        }
+        .header h1 {
+            font-size: 1.8em;
+            margin: 0;
+        }
+        .theme-toggle {
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            min-height: 44px;
+        }
+        .theme-toggle:hover {
+            background: var(--button-hover);
         }
         button {
-            background-color: #0088cc;
-            color: white;
+            background-color: var(--button-bg);
+            color: var(--button-text);
             border: none;
             padding: 12px 20px;
             font-size: 18px;
@@ -32,21 +107,24 @@
             min-height: 50px;
             min-width: 60px;
             touch-action: manipulation;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
         }
         button:hover {
-            background-color: #006699;
+            background-color: var(--button-hover);
         }
         .panel {
             margin-top: 15px;
             padding: 12px;
-            background-color: #ffffff;
+            background-color: var(--panel-bg);
             border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: var(--panel-shadow);
+            transition: background-color 0.3s, box-shadow 0.3s;
         }
         .panel-titulo {
             font-weight: bold;
             margin-bottom: 10px;
-            border-bottom: 2px solid #0088cc;
+            border-bottom: 2px solid var(--border-color);
             padding-bottom: 5px;
             text-align: left;
             display: flex;
@@ -57,9 +135,10 @@
         .resultado {
             margin-top: 20px;
             padding: 15px;
-            background-color: white;
+            background-color: var(--panel-bg);
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: var(--panel-shadow);
+            transition: background-color 0.3s, box-shadow 0.3s;
         }
         .estrellas {
             color: #f1c40f;
@@ -68,40 +147,45 @@
         .contador {
             margin-top: 15px;
             font-size: 18px;
-            color: #555;
+            color: var(--text-color);
         }
         .input-nombre {
             padding: 12px;
             font-size: 18px;
             border-radius: 8px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--input-border);
+            background: var(--input-bg);
+            color: var(--text-color);
             width: 80%;
             max-width: 300px;
             margin: 10px 0;
+            transition: background-color 0.3s, border-color 0.3s;
         }
         .jugador-item {
             padding: 8px 14px;
-            background-color: #f0f8ff;
+            background-color: var(--clasificacion-item-bg);
             margin: 5px;
             border-radius: 5px;
             display: inline-block;
             font-size: 16px;
+            transition: background-color 0.3s;
         }
         .clasificacion-item {
             padding: 10px 15px;
-            background-color: #f5f5f5;
+            background-color: var(--clasificacion-item-bg);
             margin: 5px;
             border-radius: 5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 16px;
+            transition: background-color 0.3s;
         }
         .clasificacion-item .nombre {
             font-weight: bold;
         }
         .clasificacion-item .puntos {
-            color: #0088cc;
+            color: var(--border-color);
             font-weight: bold;
         }
         .clasificacion-item .posicion {
@@ -113,9 +197,10 @@
         .votacion-panel {
             margin-top: 15px;
             padding: 15px;
-            background-color: #fff3e0;
+            background-color: var(--votacion-bg);
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: var(--panel-shadow);
+            transition: background-color 0.3s;
         }
         .voto-boton {
             font-size: 36px;
@@ -124,14 +209,14 @@
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            background-color: white;
-            transition: transform 0.2s;
+            background-color: var(--panel-bg);
+            transition: transform 0.2s, background-color 0.3s;
             min-height: 70px;
             min-width: 70px;
         }
         .voto-boton:hover {
             transform: scale(1.1);
-            background-color: #f0f0f0;
+            background-color: var(--clasificacion-item-bg);
         }
         .voto-boton.seleccionado {
             background-color: #ffd54f;
@@ -157,12 +242,12 @@
             margin: 10px 0;
             font-weight: bold;
             font-size: 1.5em;
-            border: 3px solid #4caf50;
-            background-color: #e8f5e9;
-            transition: all 0.5s ease;
+            border: 3px solid var(--turno-border);
+            background-color: var(--turno-bg);
+            transition: background-color 0.3s, border-color 0.3s;
         }
         .turno-actual .nombre {
-            color: #0088cc;
+            color: var(--turno-text);
             font-size: 2em;
             display: block;
         }
@@ -194,13 +279,13 @@
             font-size: 1.3em;
         }
         .seccion {
-            border-left: 4px solid #0088cc;
+            border-left: 4px solid var(--border-color);
             padding-left: 12px;
             margin: 12px 0;
         }
         .seccion-votacion {
             border-left-color: #ff9800;
-            background-color: #fff8e1;
+            background-color: var(--votacion-bg);
             padding: 12px;
             border-radius: 8px;
         }
@@ -219,9 +304,44 @@
             padding: 15px;
             border-radius: 10px;
             margin-top: 15px;
-            background-color: #fdf2f2;
+            background-color: var(--clasificacion-final-bg);
         }
-        /* ESTILOS PARA EL RESULTADO EN GRANDE */
+        /* Tarjeta de baile */
+        .tarjeta-baile {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: var(--card-shadow);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        .tarjeta-baile h2 {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+        }
+        .tarjeta-baile .estrellas {
+            font-size: 32px;
+        }
+        .tarjeta-baile .puntos-baile {
+            font-size: 1.1em;
+            margin: 10px 0;
+        }
+        .tarjeta-baile .enlace-video {
+            display: inline-block;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 10px 0;
+            transition: background-color 0.3s;
+        }
+        .tarjeta-baile .enlace-video:hover {
+            background-color: var(--button-hover);
+        }
+        /* Resultado en grande */
         .resultado-puntos {
             font-size: 3.5em;
             font-weight: bold;
@@ -296,19 +416,20 @@
             display: inline-block;
             margin: 5px;
         }
-        h1 {
-            font-size: 1.8em;
-        }
-        h2 {
-            font-size: 1.4em;
-        }
-        h3 {
-            font-size: 1.2em;
+        h1, h2, h3 {
+            font-weight: 700;
         }
         @media (max-width: 480px) {
             body {
                 padding: 5px;
                 font-size: 14px;
+            }
+            .header h1 {
+                font-size: 1.4em;
+            }
+            .theme-toggle {
+                font-size: 12px;
+                padding: 8px 12px;
             }
             button {
                 font-size: 15px;
@@ -347,11 +468,39 @@
             .panel-titulo {
                 font-size: 16px;
             }
+            .tarjeta-baile h2 {
+                font-size: 1.2em;
+            }
+        }
+        /* Confeti */
+        .confeti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden;
+        }
+        .confeti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            opacity: 0.9;
+            animation: caerConfeti linear forwards;
+        }
+        @keyframes caerConfeti {
+            0% { transform: translateY(-20px) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg) scale(0.5); opacity: 0; }
         }
     </style>
 </head>
 <body>
-    <h1>🎵 Juego de Baile <span class="bandera-canaria">🇮🇨</span></h1>
+    <div class="header">
+        <h1>🎵 Juego de Baile <span class="bandera-canaria">🇮🇨</span></h1>
+        <button class="theme-toggle" onclick="toggleTheme()">🌙 Tema oscuro</button>
+    </div>
     <p>Organiza tu partida desde este móvil</p>
 
     <!-- Panel de jugadores -->
@@ -384,23 +533,25 @@
     <div class="panel" id="panelClasificacion">
         <div class="panel-titulo">🏆 CLASIFICACIÓN</div>
         <div id="clasificacionContainer" class="clasificacion-container">
-            <p style="color:#999;">Aún no hay puntuaciones.</p>
+            <p style="color:var(--text-color);">Aún no hay puntuaciones.</p>
         </div>
     </div>
 
-    <!-- Resultado del sorteo -->
+    <!-- Resultado del sorteo (TARJETA DE BAILE) -->
     <div id="resultado" class="resultado" style="display:none;">
-        <h2 id="nombreBaile"></h2>
-        <div id="estrellasBaile" class="estrellas"></div>
-        <p id="puntosBaile"></p>
-        <p><a id="enlaceBaile" href="#" target="_blank">🎬 Ver vídeo</a></p>
+        <div id="tarjetaBaile" class="tarjeta-baile">
+            <h2 id="nombreBaile"></h2>
+            <div id="estrellasBaile" class="estrellas"></div>
+            <p class="puntos-baile" id="puntosBaile"></p>
+            <a id="enlaceBaile" class="enlace-video" href="#" target="_blank">🎬 Ver vídeo</a>
+        </div>
         
         <!-- Elección de modalidad -->
         <div class="seccion">
             <div style="font-weight:bold; margin-bottom:10px;">🎯 Elige tu modalidad:</div>
             <button onclick="elegirModalidad('sinred')" style="background-color:#4caf50;">🎪 Sin red</button>
             <button onclick="elegirModalidad('chuleta')" style="background-color:#ff9800;">🎬 Con chuleta</button>
-            <p id="modalidadSeleccionada" style="margin-top:10px; color:#555; font-style:italic;"></p>
+            <p id="modalidadSeleccionada" style="margin-top:10px; color:var(--text-color); font-style:italic;"></p>
         </div>
 
         <!-- Votación (sección diferenciada) -->
@@ -408,7 +559,6 @@
             <div style="font-weight:bold; margin-bottom:10px;">🗳️ Votación</div>
             <button onclick="iniciarVotacion()" style="background-color:#ff9800; font-size:18px; padding:10px 30px;">🗳️ Iniciar votación</button>
             
-            <!-- Panel de votación -->
             <div id="votacionPanel" style="display:none; margin-top:15px;">
                 <div class="turno-votacion">
                     Votando: <span class="jugador-votando" id="votacionJugador"></span>
@@ -423,9 +573,7 @@
                     <h3>📊 RESULTADO DE LA VOTACIÓN</h3>
                     <p id="votosResumen"></p>
                 </div>
-                <!-- RESULTADO EN GRANDE -->
                 <div id="resultadoPuntosGrande" style="display:none;"></div>
-                <!-- BOTÓN SIGUIENTE BAILE -->
                 <button id="botonSiguienteBaile" class="boton-siguiente" style="display:none;" onclick="siguienteBaile()">🎯 Siguiente baile ➜</button>
             </div>
         </div>
@@ -447,6 +595,41 @@
         let partidaFinalizada = false;
         let timeoutResultado = null;
 
+        // 🔥 TEMA OSCURO 🔥
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const btn = document.querySelector('.theme-toggle');
+            if (document.body.classList.contains('dark')) {
+                btn.textContent = '☀️ Tema claro';
+            } else {
+                btn.textContent = '🌙 Tema oscuro';
+            }
+        }
+
+        // 🔥 CONFETI 🔥
+        function lanzarConfeti() {
+            const container = document.createElement('div');
+            container.className = 'confeti-container';
+            document.body.appendChild(container);
+            const colores = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6', '#e67e22', '#1abc9c', '#e84393'];
+            for (let i = 0; i < 80; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confeti-piece';
+                piece.style.left = Math.random() * 100 + '%';
+                piece.style.backgroundColor = colores[Math.floor(Math.random() * colores.length)];
+                piece.style.width = (Math.random() * 8 + 5) + 'px';
+                piece.style.height = (Math.random() * 8 + 5) + 'px';
+                piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                piece.style.animationDelay = (Math.random() * 1.5) + 's';
+                container.appendChild(piece);
+            }
+            setTimeout(() => {
+                container.remove();
+            }, 4000);
+        }
+
+        // 🔥 MEZCLAR BAILES 🔥
         function mezclarBailes() {
             if (typeof BAILES === 'undefined' || BAILES.length === 0) return;
             for (let i = BAILES.length - 1; i > 0; i--) {
@@ -456,6 +639,7 @@
             console.log("✅ Bailes mezclados aleatoriamente.");
         }
 
+        // 🔥 AÑADIR JUGADOR 🔥
         function añadirJugador() {
             if (partidaFinalizada) {
                 alert("⚠️ La partida ha finalizado. Reinicia para añadir más jugadores.");
@@ -481,6 +665,7 @@
             }
         }
 
+        // 🔥 ELIMINAR JUGADORES 🔥
         function eliminarJugadores() {
             if (partidaFinalizada) {
                 alert("⚠️ La partida ha finalizado. Reinicia para eliminar jugadores.");
@@ -500,10 +685,11 @@
             actualizarBailesRestantes();
         }
 
+        // 🔥 ACTUALIZAR LISTA DE JUGADORES 🔥
         function actualizarListaJugadores() {
             const container = document.getElementById("listaJugadores");
             if (jugadores.length === 0) {
-                container.innerHTML = "<p style='color:#999;'>No hay jugadores.</p>";
+                container.innerHTML = "<p style='color:var(--text-color);'>No hay jugadores.</p>";
                 return;
             }
             let html = "";
@@ -513,16 +699,15 @@
             container.innerHTML = html;
         }
 
+        // 🔥 MOSTRAR TURNO ACTUAL 🔥
         function mostrarTurnoActual(nuevoTurno = false) {
             if (jugadores.length === 0 || partidaFinalizada) return;
             const nombre = jugadores[turnoActual];
             const elemento = document.getElementById("turnoActual");
             document.getElementById("nombreTurno").textContent = nombre;
             elemento.style.display = "block";
-            
             elemento.classList.remove('nuevo-turno');
             document.getElementById("mensajeNuevoTurno").style.display = "none";
-            
             if (nuevoTurno) {
                 elemento.classList.add('nuevo-turno');
                 document.getElementById("mensajeNuevoTurno").style.display = "block";
@@ -533,15 +718,17 @@
             }
         }
 
+        // 🔥 ACTUALIZAR BAILES RESTANTES 🔥
         function actualizarBailesRestantes() {
             const restantes = BAILES.length - bailesUsados.length;
             document.getElementById("bailesRestantes").textContent = `🎯 Bailes restantes: ${restantes}`;
         }
 
+        // 🔥 ACTUALIZAR CLASIFICACIÓN 🔥
         function actualizarClasificacion() {
             const container = document.getElementById("clasificacionContainer");
             if (jugadores.length === 0) {
-                container.innerHTML = "<p style='color:#999;'>Aún no hay puntuaciones.</p>";
+                container.innerHTML = "<p style='color:var(--text-color);'>Aún no hay puntuaciones.</p>";
                 return;
             }
             const ordenados = [...jugadores].sort((a, b) => puntuaciones[b] - puntuaciones[a]);
@@ -560,6 +747,7 @@
             actualizarBailesRestantes();
         }
 
+        // 🔥 SORTEAR BAILE 🔥
         function sortearBaile() {
             if (partidaFinalizada) {
                 alert("⚠️ La partida ha finalizado. Reinicia para jugar de nuevo.");
@@ -594,6 +782,7 @@
             actualizarBailesRestantes();
         }
 
+        // 🔥 MOSTRAR BAILE (TARJETA) 🔥
         function mostrarBaile(baile) {
             let estrellas = "⭐".repeat(baile.estrellas);
             let puntosSinRed = baile.estrellas * 10;
@@ -616,6 +805,7 @@
             }
         }
 
+        // 🔥 ELEGIR MODALIDAD 🔥
         function elegirModalidad(modalidad) {
             if (partidaFinalizada) {
                 alert("⚠️ La partida ha finalizado.");
@@ -626,6 +816,7 @@
             document.getElementById("modalidadSeleccionada").textContent = mensaje;
         }
 
+        // 🔥 SALTAR TURNO 🔥
         function saltarTurno() {
             if (jugadores.length === 0) return;
             if (votacionActiva) {
@@ -637,6 +828,7 @@
             alert(`⏭️ Turno saltado. Ahora le toca a ${jugadores[turnoActual]}`);
         }
 
+        // 🔥 INICIAR VOTACIÓN 🔥
         function iniciarVotacion() {
             if (partidaFinalizada) {
                 alert("⚠️ La partida ha finalizado.");
@@ -650,219 +842,3 @@
                 alert("⚠️ Ya hay una votación en curso.");
                 return;
             }
-            if (!modalidadActual) {
-                alert("❌ Elige modalidad (Sin red / Con chuleta).");
-                return;
-            }
-            if (!baileActual) {
-                alert("❌ Sortea un baile primero.");
-                return;
-            }
-            const nombre = jugadores[turnoActual];
-            jugadorVotado = nombre;
-            votacionActiva = true;
-            votos = [];
-            
-            const indiceActual = jugadores.indexOf(nombre);
-            votantesPendientes = [];
-            for (let i = 1; i < jugadores.length; i++) {
-                const idx = (indiceActual + i) % jugadores.length;
-                votantesPendientes.push(jugadores[idx]);
-            }
-            votantesPendientes.push(nombre);
-            
-            indiceVotante = 0;
-
-            const votanteActual = votantesPendientes[indiceVotante];
-            document.getElementById("votacionJugador").textContent = votanteActual;
-            document.getElementById("progresoVotacion").textContent = 
-                ` (${indiceVotante + 1}/${votantesPendientes.length})`;
-            document.getElementById("votacionPanel").style.display = "block";
-            document.getElementById("resultadoVotacion").style.display = "none";
-            document.getElementById("resultadoPuntosGrande").style.display = "none";
-            document.getElementById("botonSiguienteBaile").style.display = "none";
-            document.getElementById("estadoVotacion").style.display = "inline-block";
-            alert(`🗳️ Votación iniciada para ${nombre}. Vota ${votanteActual}`);
-        }
-
-        function votar(emoji) {
-            if (!votacionActiva) {
-                alert("❌ No hay una votación activa.");
-                return;
-            }
-            const votanteActual = votantesPendientes[indiceVotante];
-            votos.push({ votante: votanteActual, voto: emoji });
-            
-            indiceVotante++;
-            
-            if (indiceVotante < votantesPendientes.length) {
-                const siguienteVotante = votantesPendientes[indiceVotante];
-                document.getElementById("votacionJugador").textContent = siguienteVotante;
-                document.getElementById("progresoVotacion").textContent = 
-                    ` (${indiceVotante + 1}/${votantesPendientes.length})`;
-                alert(`🗳️ Ahora vota: ${siguienteVotante}`);
-            } else {
-                mostrarResultadosVotacion();
-            }
-        }
-
-        function mostrarResultadosVotacion() {
-            votacionActiva = false;
-            let votosArriba = votos.filter(v => v.voto === '👍').length;
-            let votosAbajo = votos.filter(v => v.voto === '👎').length;
-            
-            let puntos = 0;
-            let aprobado = false;
-            
-            if (votosArriba >= votosAbajo) {
-                aprobado = true;
-                if (modalidadActual === 'sinred') {
-                    puntos = baileActual.estrellas * 10;
-                } else {
-                    puntos = baileActual.estrellas * 5;
-                }
-            } else {
-                aprobado = false;
-                puntos = 0;
-            }
-            
-            document.getElementById("resultadoVotacion").style.display = "block";
-            let resumen = "Votos: ";
-            votos.forEach(v => {
-                resumen += `${v.votante}: ${v.voto}  `;
-            });
-            document.getElementById("votosResumen").textContent = resumen;
-            
-            if (jugadorVotado && aprobado) {
-                puntuaciones[jugadorVotado] = (puntuaciones[jugadorVotado] || 0) + puntos;
-                actualizarClasificacion();
-            }
-            
-            document.getElementById("estadoVotacion").style.display = "none";
-            
-            // 🔥 RESULTADO EN GRANDE CON DETALLE DE VOTOS
-            const puntosDiv = document.getElementById("resultadoPuntosGrande");
-            puntosDiv.style.display = "block";
-            if (aprobado) {
-                puntosDiv.className = "resultado-puntos aprobado";
-                puntosDiv.innerHTML = `
-                    <span class="puntos-grande">🎉 +${puntos} PTS</span>
-                    <div class="votos-detalle">
-                        <span>👍 ${votosArriba}</span>
-                        <span>👎 ${votosAbajo}</span>
-                    </div>
-                `;
-            } else {
-                puntosDiv.className = "resultado-puntos reprobado";
-                puntosDiv.innerHTML = `
-                    <span class="puntos-grande">😞 0 PTS</span>
-                    <div class="votos-detalle">
-                        <span>👍 ${votosArriba}</span>
-                        <span>👎 ${votosAbajo}</span>
-                    </div>
-                `;
-            }
-            
-            // 🔥 BOTÓN "SIGUIENTE BAILE" (MANUAL)
-            document.getElementById("botonSiguienteBaile").style.display = "block";
-            
-            if (timeoutResultado) {
-                clearTimeout(timeoutResultado);
-                timeoutResultado = null;
-            }
-        }
-
-        // 🔥 FUNCIÓN PARA EL BOTÓN "SIGUIENTE BAILE"
-        function siguienteBaile() {
-            if (partidaFinalizada) return;
-            if (jugadores.length === 0) return;
-            
-            // Ocultar elementos
-            document.getElementById("botonSiguienteBaile").style.display = "none";
-            document.getElementById("resultadoPuntosGrande").style.display = "none";
-            document.getElementById("votacionPanel").style.display = "none";
-            document.getElementById("resultadoVotacion").style.display = "none";
-            
-            // Pasar al siguiente turno y sortear nuevo baile
-            turnoActual = (turnoActual + 1) % jugadores.length;
-            mostrarTurnoActual(true);
-            sortearBaile();
-        }
-
-        function finalizarPartida() {
-            if (jugadores.length === 0) {
-                alert("❌ No hay jugadores en la partida.");
-                return;
-            }
-            if (votacionActiva) {
-                alert("⚠️ Hay una votación activa. Finalízala primero.");
-                return;
-            }
-            if (timeoutResultado) {
-                clearTimeout(timeoutResultado);
-                timeoutResultado = null;
-            }
-            partidaFinalizada = true;
-            document.getElementById("turnoActual").style.display = "none";
-            document.getElementById("resultado").style.display = "none";
-            document.getElementById("votacionPanel").style.display = "none";
-            document.getElementById("seccionVotacion").style.display = "none";
-            document.getElementById("resultadoPuntosGrande").style.display = "none";
-            document.getElementById("botonSiguienteBaile").style.display = "none";
-            
-            const container = document.getElementById("clasificacionContainer");
-            const ordenados = [...jugadores].sort((a, b) => puntuaciones[b] - puntuaciones[a]);
-            let html = `<div class="clasificacion-final">`;
-            html += `<h2>🏆 CLASIFICACIÓN FINAL <span class="bandera-canaria">🇮🇨</span></h2>`;
-            ordenados.forEach((nombre, index) => {
-                const posicion = index + 1;
-                const medalla = posicion === 1 ? '🥇' : posicion === 2 ? '🥈' : posicion === 3 ? '🥉' : `#${posicion}`;
-                html += `
-                    <div class="clasificacion-item">
-                        <span class="posicion">${medalla}</span>
-                        <span class="nombre">${nombre}</span>
-                        <span class="puntos">${puntuaciones[nombre]} pts</span>
-                    </div>
-                `;
-            });
-            html += `<button onclick="reiniciarPartida()" style="margin-top:15px; background-color:#4caf50;">🔄 Nueva partida</button>`;
-            html += `</div>`;
-            container.innerHTML = html;
-        }
-
-        function reiniciarPartida() {
-            if (!confirm("¿Reiniciar toda la partida?")) return;
-            if (timeoutResultado) {
-                clearTimeout(timeoutResultado);
-                timeoutResultado = null;
-            }
-            bailesUsados = [];
-            turnoActual = 0;
-            jugadores.forEach(nombre => puntuaciones[nombre] = 0);
-            baileActual = null;
-            modalidadActual = null;
-            partidaFinalizada = false;
-            document.getElementById("resultado").style.display = "none";
-            document.getElementById("votacionPanel").style.display = "none";
-            document.getElementById("turnoActual").style.display = "none";
-            document.getElementById("estadoVotacion").style.display = "none";
-            document.getElementById("seccionVotacion").style.display = "block";
-            document.getElementById("resultadoPuntosGrande").style.display = "none";
-            document.getElementById("botonSiguienteBaile").style.display = "none";
-            actualizarClasificacion();
-            if (jugadores.length > 0) {
-                mostrarTurnoActual(true);
-            }
-            alert("🔄 Partida reiniciada.");
-        }
-
-        function iniciarApp() {
-            console.log("✅ App iniciada. Bailes cargados:", BAILES.length);
-            mezclarBailes();
-            actualizarBailesRestantes();
-        }
-
-        iniciarApp();
-    </script>
-</body>
-</html>
