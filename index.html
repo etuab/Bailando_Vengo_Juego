@@ -35,8 +35,6 @@
             color: #fff;
             font-size: 1.2em;
         }
-        
-        /* Diseño volcánico/oceánico */
         .panel {
             margin-top: 15px;
             padding: 15px;
@@ -58,7 +56,6 @@
             font-size: 18px;
             color: #f1c40f;
         }
-        
         button {
             background: linear-gradient(135deg, #3498db, #2980b9);
             color: white;
@@ -111,7 +108,6 @@
         .btn-oro:hover {
             box-shadow: 0 6px 20px rgba(241, 196, 15, 0.4);
         }
-        
         .input-nombre {
             padding: 12px;
             font-size: 16px;
@@ -127,7 +123,6 @@
             border-color: #f1c40f;
             outline: none;
         }
-        
         .jugador-item {
             padding: 8px 14px;
             background: rgba(52, 152, 219, 0.2);
@@ -137,7 +132,6 @@
             font-size: 16px;
             border: 1px solid rgba(52, 152, 219, 0.3);
         }
-        
         .clasificacion-item {
             padding: 10px 15px;
             background: rgba(255,255,255,0.05);
@@ -169,7 +163,6 @@
             font-weight: bold;
             color: #2c3e50;
         }
-        
         .turno-actual {
             padding: 20px;
             border-radius: 16px;
@@ -192,12 +185,10 @@
             background: rgba(231, 76, 60, 0.15);
             animation: pulso 1s ease 3;
         }
-        
         @keyframes pulso {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.03); }
         }
-        
         .votacion-activa {
             background: #e74c3c;
             padding: 5px 15px;
@@ -207,12 +198,10 @@
             font-size: 14px;
             animation: parpadeo 1s infinite;
         }
-        
         @keyframes parpadeo {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
-        
         .voto-boton {
             font-size: 32px;
             padding: 15px 25px;
@@ -239,7 +228,6 @@
         .voto-boton:active {
             transform: scale(0.95);
         }
-        
         .resultado-puntos {
             font-size: 3em;
             font-weight: bold;
@@ -273,12 +261,10 @@
             background: rgba(231, 76, 60, 0.15);
             border: 3px solid #e74c3c;
         }
-        
         @keyframes aparecer {
             0% { transform: scale(0.5) rotate(-5deg); opacity: 0; }
             100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
-        
         .bailes-restantes {
             font-size: 1em;
             background: rgba(46, 204, 113, 0.2);
@@ -288,7 +274,6 @@
             margin: 5px;
             border: 1px solid rgba(46, 204, 113, 0.3);
         }
-        
         .clasificacion-container {
             max-height: 300px;
             overflow-y: auto;
@@ -304,7 +289,6 @@
             background: #f1c40f;
             border-radius: 10px;
         }
-        
         .seccion-votacion {
             background: rgba(231, 76, 60, 0.1);
             padding: 15px;
@@ -312,7 +296,6 @@
             border: 1px solid rgba(231, 76, 60, 0.2);
             margin-top: 15px;
         }
-        
         .clasificacion-final {
             border: 3px solid #f1c40f;
             padding: 20px;
@@ -320,14 +303,12 @@
             margin-top: 15px;
             background: rgba(241, 196, 15, 0.05);
         }
-        
         .mensaje-nuevo-turno {
             font-size: 0.7em;
             color: #f1c40f;
             margin-top: 5px;
             animation: parpadeo 1s infinite;
         }
-        
         .resultado {
             background: rgba(44, 62, 80, 0.85);
             backdrop-filter: blur(10px);
@@ -336,20 +317,17 @@
             margin-top: 15px;
             border: 1px solid rgba(241, 196, 15, 0.2);
         }
-        
         .estrellas {
             color: #f1c40f;
             font-size: 32px;
             margin: 10px 0;
         }
-        
         .votacion-panel {
             background: rgba(0,0,0,0.2);
             padding: 15px;
             border-radius: 12px;
             margin-top: 15px;
         }
-        
         .turno-votacion {
             font-size: 1.2em;
             margin: 15px 0;
@@ -359,13 +337,6 @@
             font-size: 1.4em;
             font-weight: bold;
         }
-        
-        .boton-desactivado {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-        
         .toast {
             position: fixed;
             bottom: 20px;
@@ -380,24 +351,10 @@
             border: 1px solid rgba(241, 196, 15, 0.3);
             max-width: 90%;
         }
-        
         @keyframes slideUp {
             from { transform: translateX(-50%) translateY(100px); opacity: 0; }
             to { transform: translateX(-50%) translateY(0); opacity: 1; }
         }
-        
-        .badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 0.8em;
-            margin-left: 8px;
-        }
-        .badge-oro {
-            background: #f1c40f;
-            color: #2c3e50;
-        }
-        
         @media (max-width: 480px) {
             body { padding: 5px; font-size: 14px; }
             button { font-size: 14px; padding: 10px 14px; min-height: 44px; }
@@ -415,7 +372,6 @@
 
     <div id="toastContainer"></div>
 
-    <!-- Panel de jugadores -->
     <div class="panel">
         <div class="panel-titulo">👥 Jugadores</div>
         <input type="text" id="nombreJugador" class="input-nombre" placeholder="Nombre del jugador">
@@ -425,17 +381,15 @@
         <div id="listaJugadores" style="margin-top:10px;"></div>
     </div>
 
-    <!-- Turno actual -->
     <div id="turnoActual" class="turno-actual" style="display:none;">
         👤 Turno de: <span class="nombre" id="nombreTurno"></span>
         <span id="estadoVotacion" class="votacion-activa" style="display:none;">🗳️ Votación activa</span>
         <div id="mensajeNuevoTurno" class="mensaje-nuevo-turno" style="display:none;">🎯 ¡Nuevo turno! Sortea un baile</div>
     </div>
 
-    <!-- Controles de partida -->
     <div class="panel">
         <div class="panel-titulo">🎮 Control de partida</div>
-        <span class="bailes-restantes" id="bailesRestantes">🎯 Bailes restantes: 175</span>
+        <span class="bailes-restantes" id="bailesRestantes">🎯 Bailes restantes: 0</span>
         <button onclick="sortearBaile()" class="btn-naranja">🎲 Sortear baile</button>
         <button onclick="saltarTurno()" style="background: #7f8c8d;">⏭️ Saltar turno</button>
         <button onclick="reiniciarPartida()" class="btn-rojo">🔄 Reiniciar partida</button>
@@ -444,7 +398,6 @@
         <button onclick="cargarPartida()" class="btn-verde" style="font-size:14px;">📂 Cargar partida</button>
     </div>
 
-    <!-- Clasificación -->
     <div class="panel" id="panelClasificacion">
         <div class="panel-titulo">🏆 CLASIFICACIÓN</div>
         <div id="clasificacionContainer" class="clasificacion-container">
@@ -452,7 +405,6 @@
         </div>
     </div>
 
-    <!-- Resultado del sorteo -->
     <div id="resultado" class="resultado" style="display:none;">
         <h2 id="nombreBaile" style="color: #f1c40f;"></h2>
         <div id="estrellasBaile" class="estrellas"></div>
@@ -481,7 +433,7 @@
                     <button class="voto-boton" onclick="votar('👎')">👎 <br><span style="font-size:14px;">¡Mejorable!</span></button>
                 </div>
                 <button onclick="deshacerVoto()" class="btn-rojo" style="font-size:14px; margin-top:10px;">↩️ Deshacer último voto</button>
-                <div id="resultadoVotacion" class="resultado-votacion" style="display:none; margin-top:15px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px;">
+                <div id="resultadoVotacion" style="display:none; margin-top:15px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px;">
                     <h3 style="color: #f1c40f;">📊 RESULTADO DE LA VOTACIÓN</h3>
                     <p id="votosResumen" style="color: #ecf0f1;"></p>
                 </div>
@@ -491,8 +443,14 @@
         </div>
     </div>
 
+    <!-- ⚠️ IMPORTANTE: Primero cargamos la lista de bailes -->
+    <script src="lista_bailes.js"></script>
+    
+    <!-- Luego el resto del código del juego -->
     <script>
-        // Estado del juego
+        // ============================================================
+        // 🎮 CÓDIGO DEL JUEGO (usa BAILES del archivo externo)
+        // ============================================================
         let jugadores = [];
         let puntuaciones = {};
         let turnoActual = 0;
@@ -508,7 +466,83 @@
         let timeoutResultado = null;
         let ultimoVoto = null;
 
-        // Funciones principales
+        function mostrarToast(mensaje) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = mensaje;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function actualizarBailesRestantes() {
+            // Verificar que BAILES existe
+            if (typeof BAILES === 'undefined') {
+                document.getElementById("bailesRestantes").textContent = "⚠️ Bailes no cargados";
+                return;
+            }
+            const restantes = BAILES.length - bailesUsados.length;
+            document.getElementById("bailesRestantes").textContent = `🎯 Bailes restantes: ${restantes}`;
+        }
+
+        function actualizarListaJugadores() {
+            const container = document.getElementById("listaJugadores");
+            if (jugadores.length === 0) {
+                container.innerHTML = "<p style='color:#7f8c8d;'>No hay jugadores.</p>";
+                return;
+            }
+            let html = "";
+            jugadores.forEach((nombre, index) => {
+                const esTurno = (index === turnoActual && !partidaFinalizada);
+                html += `<div class="jugador-item" style="${esTurno ? 'border: 2px solid #f1c40f;' : ''}">${index + 1}. ${nombre}${esTurno ? ' 👑' : ''}</div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function mostrarTurnoActual(nuevoTurno = false) {
+            if (jugadores.length === 0 || partidaFinalizada) return;
+            const nombre = jugadores[turnoActual];
+            const elemento = document.getElementById("turnoActual");
+            document.getElementById("nombreTurno").textContent = nombre;
+            elemento.style.display = "block";
+            
+            elemento.classList.remove('nuevo-turno');
+            document.getElementById("mensajeNuevoTurno").style.display = "none";
+            
+            if (nuevoTurno) {
+                elemento.classList.add('nuevo-turno');
+                document.getElementById("mensajeNuevoTurno").style.display = "block";
+                setTimeout(() => {
+                    elemento.classList.remove('nuevo-turno');
+                    document.getElementById("mensajeNuevoTurno").style.display = "none";
+                }, 3000);
+            }
+            actualizarListaJugadores();
+        }
+
+        function actualizarClasificacion() {
+            const container = document.getElementById("clasificacionContainer");
+            if (jugadores.length === 0) {
+                container.innerHTML = "<p style='color:#7f8c8d;'>Aún no hay puntuaciones.</p>";
+                return;
+            }
+            const ordenados = [...jugadores].sort((a, b) => puntuaciones[b] - puntuaciones[a]);
+            let html = "";
+            ordenados.forEach((nombre, index) => {
+                const posicion = index + 1;
+                const medalla = posicion === 1 ? '🥇' : posicion === 2 ? '🥈' : posicion === 3 ? '🥉' : `#${posicion}`;
+                html += `
+                    <div class="clasificacion-item">
+                        <span class="posicion">${medalla}</span>
+                        <span class="nombre">${nombre}</span>
+                        <span class="puntos">${puntuaciones[nombre]} pts</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            actualizarBailesRestantes();
+        }
+
         function añadirJugador() {
             if (partidaFinalizada) {
                 mostrarToast("⚠️ La partida ha finalizado. Reinicia para añadir más jugadores.");
@@ -560,7 +594,6 @@
                 mostrarToast("ℹ️ Necesitas al menos 2 jugadores para barajar.");
                 return;
             }
-            // Fisher-Yates shuffle
             for (let i = jugadores.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [jugadores[i], jugadores[j]] = [jugadores[j], jugadores[i]];
@@ -572,69 +605,6 @@
             mostrarToast("🔄 ¡Orden barajado!");
         }
 
-        function actualizarListaJugadores() {
-            const container = document.getElementById("listaJugadores");
-            if (jugadores.length === 0) {
-                container.innerHTML = "<p style='color:#7f8c8d;'>No hay jugadores.</p>";
-                return;
-            }
-            let html = "";
-            jugadores.forEach((nombre, index) => {
-                const esTurno = (index === turnoActual && !partidaFinalizada);
-                html += `<div class="jugador-item" style="${esTurno ? 'border: 2px solid #f1c40f;' : ''}">${index + 1}. ${nombre}${esTurno ? ' 👑' : ''}</div>`;
-            });
-            container.innerHTML = html;
-        }
-
-        function mostrarTurnoActual(nuevoTurno = false) {
-            if (jugadores.length === 0 || partidaFinalizada) return;
-            const nombre = jugadores[turnoActual];
-            const elemento = document.getElementById("turnoActual");
-            document.getElementById("nombreTurno").textContent = nombre;
-            elemento.style.display = "block";
-            
-            elemento.classList.remove('nuevo-turno');
-            document.getElementById("mensajeNuevoTurno").style.display = "none";
-            
-            if (nuevoTurno) {
-                elemento.classList.add('nuevo-turno');
-                document.getElementById("mensajeNuevoTurno").style.display = "block";
-                setTimeout(() => {
-                    elemento.classList.remove('nuevo-turno');
-                    document.getElementById("mensajeNuevoTurno").style.display = "none";
-                }, 3000);
-            }
-            actualizarListaJugadores();
-        }
-
-        function actualizarBailesRestantes() {
-            const restantes = typeof BAILES !== 'undefined' ? BAILES.length - bailesUsados.length : 0;
-            document.getElementById("bailesRestantes").textContent = `🎯 Bailes restantes: ${restantes}`;
-        }
-
-        function actualizarClasificacion() {
-            const container = document.getElementById("clasificacionContainer");
-            if (jugadores.length === 0) {
-                container.innerHTML = "<p style='color:#7f8c8d;'>Aún no hay puntuaciones.</p>";
-                return;
-            }
-            const ordenados = [...jugadores].sort((a, b) => puntuaciones[b] - puntuaciones[a]);
-            let html = "";
-            ordenados.forEach((nombre, index) => {
-                const posicion = index + 1;
-                const medalla = posicion === 1 ? '🥇' : posicion === 2 ? '🥈' : posicion === 3 ? '🥉' : `#${posicion}`;
-                html += `
-                    <div class="clasificacion-item">
-                        <span class="posicion">${medalla}</span>
-                        <span class="nombre">${nombre}</span>
-                        <span class="puntos">${puntuaciones[nombre]} pts</span>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-            actualizarBailesRestantes();
-        }
-
         function sortearBaile() {
             if (partidaFinalizada) {
                 mostrarToast("⚠️ La partida ha finalizado. Reinicia para jugar de nuevo.");
@@ -644,8 +614,12 @@
                 mostrarToast("❌ Añade jugadores primero.");
                 return;
             }
-            if (typeof BAILES === 'undefined' || BAILES.length === 0) {
+            if (typeof BAILES === 'undefined') {
                 mostrarToast('⏳ La lista de bailes no está cargada.');
+                return;
+            }
+            if (BAILES.length === 0) {
+                mostrarToast('⏳ La lista de bailes está vacía.');
                 return;
             }
             if (votacionActiva) {
@@ -765,7 +739,6 @@
             document.getElementById("botonSiguienteBaile").style.display = "none";
             document.getElementById("estadoVotacion").style.display = "inline-block";
             
-            // Resetear selección visual
             document.querySelectorAll('.voto-boton').forEach(b => b.classList.remove('seleccionado'));
             ultimoVoto = null;
         }
@@ -777,7 +750,6 @@
             }
             const votanteActual = votantesPendientes[indiceVotante];
             
-            // Marcar visualmente el voto seleccionado
             document.querySelectorAll('.voto-boton').forEach(b => b.classList.remove('seleccionado'));
             if (emoji === '👍') {
                 document.querySelector('.voto-boton:first-child').classList.add('seleccionado');
@@ -791,13 +763,9 @@
             indiceVotante++;
             
             if (indiceVotante < votantesPendientes.length) {
-                setTimeout(() => {
-                    actualizarVotante();
-                }, 500);
+                setTimeout(() => actualizarVotante(), 500);
             } else {
-                setTimeout(() => {
-                    mostrarResultadosVotacion();
-                }, 500);
+                setTimeout(() => mostrarResultadosVotacion(), 500);
             }
         }
 
@@ -810,13 +778,10 @@
                 mostrarToast("ℹ️ No hay voto para deshacer.");
                 return;
             }
-            // Quitar el último voto
             votos.pop();
             indiceVotante--;
             document.querySelectorAll('.voto-boton').forEach(b => b.classList.remove('seleccionado'));
             ultimoVoto = null;
-            
-            // Volver a mostrar al votante anterior
             actualizarVotante();
             mostrarToast("↩️ Último voto deshecho.");
         }
@@ -855,7 +820,6 @@
             
             document.getElementById("estadoVotacion").style.display = "none";
             
-            // Resultado en grande
             const puntosDiv = document.getElementById("resultadoPuntosGrande");
             puntosDiv.style.display = "block";
             if (aprobado) {
@@ -965,7 +929,6 @@
             mostrarToast("🔄 Partida reiniciada.");
         }
 
-        // Guardado persistente
         function guardarPartidaAuto() {
             try {
                 const datos = {
@@ -1017,7 +980,6 @@
                         bailesUsados = datos.bailesUsados || [];
                         partidaFinalizada = datos.partidaFinalizada || false;
                         
-                        // Asegurar que todos los jugadores tengan puntuación
                         jugadores.forEach(n => {
                             if (!puntuaciones[n]) puntuaciones[n] = 0;
                         });
@@ -1043,19 +1005,6 @@
             input.click();
         }
 
-        // Toast notifications
-        function mostrarToast(mensaje) {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.textContent = mensaje;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.remove();
-            }, 3000);
-        }
-
-        // Cargar partida guardada al iniciar
         function cargarPartidaAuto() {
             try {
                 const datos = localStorage.getItem('juegoBailePartida');
@@ -1086,19 +1035,30 @@
         }
 
         function iniciarApp() {
-            console.log("✅ App iniciada. Bailes cargados:", typeof BAILES !== 'undefined' ? BAILES.length : 0);
-            if (typeof BAILES !== 'undefined') {
-                // Mezclar bailes
-                for (let i = BAILES.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [BAILES[i], BAILES[j]] = [BAILES[j], BAILES[i]];
-                }
+            // Verificar que los bailes se cargaron correctamente
+            if (typeof BAILES === 'undefined') {
+                console.error('❌ Error: BAILES no está definido. Revisa que lista_bailes.js se cargó correctamente.');
+                mostrarToast('⚠️ Error: La lista de bailes no se cargó.');
+                document.getElementById("bailesRestantes").textContent = '⚠️ Error: Bailes no cargados';
+                return;
+            }
+            
+            console.log(`✅ App iniciada. ${BAILES.length} bailes cargados.`);
+            // Mezclar bailes al inicio
+            for (let i = BAILES.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [BAILES[i], BAILES[j]] = [BAILES[j], BAILES[i]];
             }
             actualizarBailesRestantes();
             cargarPartidaAuto();
         }
 
-        iniciarApp();
+        // Esperar a que el DOM esté listo
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', iniciarApp);
+        } else {
+            iniciarApp();
+        }
     </script>
 </body>
 </html>
