@@ -108,6 +108,11 @@
         .btn-oro:hover {
             box-shadow: 0 6px 20px rgba(241, 196, 15, 0.4);
         }
+        .btn-desactivado {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
         .input-nombre {
             padding: 12px;
             font-size: 16px;
@@ -274,6 +279,11 @@
             margin: 5px;
             border: 1px solid rgba(46, 204, 113, 0.3);
         }
+        .bailes-restantes.agotados {
+            background: rgba(231, 76, 60, 0.2);
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
         .clasificacion-container {
             max-height: 300px;
             overflow-y: auto;
@@ -355,6 +365,11 @@
             from { transform: translateX(-50%) translateY(100px); opacity: 0; }
             to { transform: translateX(-50%) translateY(0); opacity: 1; }
         }
+        .baile-actual-info {
+            font-size: 0.8em;
+            color: #95a5a6;
+            margin-top: 5px;
+        }
         @media (max-width: 480px) {
             body { padding: 5px; font-size: 14px; }
             button { font-size: 14px; padding: 10px 14px; min-height: 44px; }
@@ -390,7 +405,7 @@
     <div class="panel">
         <div class="panel-titulo">🎮 Control de partida</div>
         <span class="bailes-restantes" id="bailesRestantes">🎯 Bailes restantes: 0</span>
-        <button onclick="sortearBaile()" class="btn-naranja">🎲 Sortear baile</button>
+        <button onclick="sortearBaile()" class="btn-naranja" id="btnSortearBaile">🎲 Sortear baile</button>
         <button onclick="saltarTurno()" style="background: #7f8c8d;">⏭️ Saltar turno</button>
         <button onclick="reiniciarPartida()" class="btn-rojo">🔄 Reiniciar partida</button>
         <button onclick="finalizarPartida()" class="btn-rojo">🏁 Finalizar partida</button>
@@ -410,6 +425,7 @@
         <div id="estrellasBaile" class="estrellas"></div>
         <p id="puntosBaile" style="color: #95a5a6;"></p>
         <p><a id="enlaceBaile" href="#" target="_blank" style="color: #3498db; text-decoration: none;">🎬 Ver vídeo</a></p>
+        <div class="baile-actual-info" id="baileActualInfo"></div>
         
         <div class="seccion-votacion">
             <div style="font-weight:bold; margin-bottom:10px; color: #f1c40f;">🎯 Elige tu modalidad:</div>
@@ -420,7 +436,7 @@
 
         <div class="seccion-votacion" id="seccionVotacion">
             <div style="font-weight:bold; margin-bottom:10px; color: #f1c40f;">🗳️ Votación</div>
-            <button onclick="iniciarVotacion()" class="btn-naranja" style="font-size:18px; padding:10px 30px;">🗳️ Iniciar votación</button>
+            <button onclick="iniciarVotacion()" class="btn-naranja" style="font-size:18px; padding:10px 30px;" id="btnIniciarVotacion">🗳️ Iniciar votación</button>
             
             <div id="votacionPanel" style="display:none; margin-top:15px;">
                 <div class="turno-votacion">
@@ -449,7 +465,7 @@
     <!-- Luego el resto del código del juego -->
     <script>
         // ============================================================
-        // 🎮 CÓDIGO DEL JUEGO (usa BAILES del archivo externo)
+        // 🎮 CÓDIGO DEL JUEGO
         // ============================================================
         let jugadores = [];
         let puntuaciones = {};
@@ -476,13 +492,30 @@
         }
 
         function actualizarBailesRestantes() {
-            // Verificar que BAILES existe
             if (typeof BAILES === 'undefined') {
                 document.getElementById("bailesRestantes").textContent = "⚠️ Bailes no cargados";
                 return;
             }
             const restantes = BAILES.length - bailesUsados.length;
-            document.getElementById("bailesRestantes").textContent = `🎯 Bailes restantes: ${restantes}`;
+            const elemento = document.getElementById("bailesRestantes");
+            elemento.textContent = `🎯 Bailes restantes: ${restantes}`;
+            
+            // Cambiar estilo si ya no quedan bailes
+            if (restantes === 0) {
+                elemento.classList.add('agotados');
+                document.getElementById('btnSortearBaile').classList.add('btn-desactivado');
+                document.getElementById('btnSortearBaile').disabled = true;
+            } else {
+                elemento.classList.remove('agotados');
+                document.getElementById('btnSortearBaile').classList.remove('btn-desactivado');
+                document.getElementById('btnSortearBaile').disabled = false;
+            }
+            
+            // Actualizar info del baile actual
+            if (baileActual) {
+                document.getElementById('baileActualInfo').textContent = 
+                    `🎯 Baile #${baileActual.id} - ${bailesUsados.length} de ${BAILES.length} bailes usados`;
+            }
         }
 
         function actualizarListaJugadores() {
@@ -626,22 +659,37 @@
                 mostrarToast("⚠️ Hay una votación activa. Finalízala primero.");
                 return;
             }
+            
+            // Filtrar bailes no usados
             let disponibles = BAILES.filter(b => !bailesUsados.includes(b.id));
+            
             if (disponibles.length === 0) {
                 mostrarToast("🎉 ¡Ya se han bailado todos los bailes!");
+                actualizarBailesRestantes();
                 return;
             }
+            
+            // Seleccionar baile aleatorio de los disponibles
             let indice = Math.floor(Math.random() * disponibles.length);
             let baile = disponibles[indice];
+            
+            // Guardar el baile como usado
             bailesUsados.push(baile.id);
             baileActual = baile;
             modalidadActual = null;
+            
+            // Mostrar el baile
             mostrarBaile(baile);
             mostrarTurnoActual(false);
             document.getElementById("estadoVotacion").style.display = "none";
             document.getElementById("seccionVotacion").style.display = "block";
+            document.getElementById("btnIniciarVotacion").disabled = false;
+            document.getElementById("btnIniciarVotacion").classList.remove('btn-desactivado');
+            
             actualizarBailesRestantes();
             guardarPartidaAuto();
+            
+            console.log(`🎲 Baile sorteado: ${baile.id} - ${baile.nombre} (${bailesUsados.length}/${BAILES.length} usados)`);
         }
 
         function mostrarBaile(baile) {
@@ -659,6 +707,8 @@
             document.getElementById("modalidadSeleccionada").textContent = "";
             document.getElementById("resultadoPuntosGrande").style.display = "none";
             document.getElementById("botonSiguienteBaile").style.display = "none";
+            document.getElementById('baileActualInfo').textContent = 
+                `🎯 Baile #${baile.id} - ${bailesUsados.length} de ${BAILES.length} bailes usados`;
             votos = [];
             ultimoVoto = null;
             if (timeoutResultado) {
@@ -710,6 +760,14 @@
                 mostrarToast("❌ Sortea un baile primero.");
                 return;
             }
+            
+            // Verificar que aún quedan bailes
+            const disponibles = BAILES.filter(b => !bailesUsados.includes(b.id));
+            if (disponibles.length === 0) {
+                mostrarToast("🎉 ¡Ya se han bailado todos los bailes!");
+                return;
+            }
+            
             const nombre = jugadores[turnoActual];
             jugadorVotado = nombre;
             votacionActiva = true;
@@ -842,7 +900,18 @@
                 `;
             }
             
-            document.getElementById("botonSiguienteBaile").style.display = "block";
+            // Verificar si quedan bailes antes de mostrar el botón
+            const disponibles = BAILES.filter(b => !bailesUsados.includes(b.id));
+            if (disponibles.length > 0) {
+                document.getElementById("botonSiguienteBaile").style.display = "block";
+                document.getElementById("botonSiguienteBaile").textContent = `🎯 Siguiente baile (${disponibles.length} disponibles) ➜`;
+            } else {
+                document.getElementById("botonSiguienteBaile").style.display = "block";
+                document.getElementById("botonSiguienteBaile").textContent = "🎉 ¡No quedan más bailes!";
+                document.getElementById("botonSiguienteBaile").classList.add('btn-desactivado');
+                document.getElementById("botonSiguienteBaile").disabled = true;
+            }
+            
             guardarPartidaAuto();
         }
 
@@ -850,13 +919,23 @@
             if (partidaFinalizada) return;
             if (jugadores.length === 0) return;
             
+            // Verificar si quedan bailes
+            const disponibles = BAILES.filter(b => !bailesUsados.includes(b.id));
+            if (disponibles.length === 0) {
+                mostrarToast("🎉 ¡Ya no quedan más bailes por bailar!");
+                return;
+            }
+            
             document.getElementById("botonSiguienteBaile").style.display = "none";
             document.getElementById("resultadoPuntosGrande").style.display = "none";
             document.getElementById("votacionPanel").style.display = "none";
             document.getElementById("resultadoVotacion").style.display = "none";
             
+            // Pasar al siguiente turno
             turnoActual = (turnoActual + 1) % jugadores.length;
             mostrarTurnoActual(true);
+            
+            // Sortear nuevo baile automáticamente
             sortearBaile();
         }
 
@@ -885,6 +964,7 @@
             const ordenados = [...jugadores].sort((a, b) => puntuaciones[b] - puntuaciones[a]);
             let html = `<div class="clasificacion-final">`;
             html += `<h2 style="color: #f1c40f;">🏆 CLASIFICACIÓN FINAL <span class="bandera-canaria">🇮🇨</span></h2>`;
+            html += `<p style="color: #95a5a6; margin-bottom: 15px;">Total de bailes bailados: ${bailesUsados.length}</p>`;
             ordenados.forEach((nombre, index) => {
                 const posicion = index + 1;
                 const medalla = posicion === 1 ? '🥇' : posicion === 2 ? '🥈' : posicion === 3 ? '🥉' : `#${posicion}`;
@@ -921,6 +1001,10 @@
             document.getElementById("seccionVotacion").style.display = "block";
             document.getElementById("resultadoPuntosGrande").style.display = "none";
             document.getElementById("botonSiguienteBaile").style.display = "none";
+            document.getElementById("botonSiguienteBaile").classList.remove('btn-desactivado');
+            document.getElementById("botonSiguienteBaile").disabled = false;
+            document.getElementById('btnSortearBaile').classList.remove('btn-desactivado');
+            document.getElementById('btnSortearBaile').disabled = false;
             actualizarClasificacion();
             if (jugadores.length > 0) {
                 mostrarTurnoActual(true);
@@ -1035,20 +1119,21 @@
         }
 
         function iniciarApp() {
-            // Verificar que los bailes se cargaron correctamente
             if (typeof BAILES === 'undefined') {
-                console.error('❌ Error: BAILES no está definido. Revisa que lista_bailes.js se cargó correctamente.');
+                console.error('❌ Error: BAILES no está definido.');
                 mostrarToast('⚠️ Error: La lista de bailes no se cargó.');
                 document.getElementById("bailesRestantes").textContent = '⚠️ Error: Bailes no cargados';
                 return;
             }
             
             console.log(`✅ App iniciada. ${BAILES.length} bailes cargados.`);
+            
             // Mezclar bailes al inicio
             for (let i = BAILES.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [BAILES[i], BAILES[j]] = [BAILES[j], BAILES[i]];
             }
+            
             actualizarBailesRestantes();
             cargarPartidaAuto();
         }
