@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -326,7 +325,9 @@
     <p class="subtitulo">Escucha, elige y demuestra cuánto sabes</p>
     <div id="toastContainer"></div>
 
-    <!-- NAVEGACIÓN ENTRE MODALIDADES -->
+    <!-- ============================================================ -->
+    <!-- NAVEGACIÓN ENTRE MODALIDADES (4 BOTONES)                      -->
+    <!-- ============================================================ -->
     <div class="panel" style="background: var(--basalt-2); border-color: var(--ochre);">
         <div class="panel-titulo" style="border-bottom-color: var(--ochre);">🎮 Modalidades</div>
         <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
@@ -342,13 +343,20 @@
             </a>
             <a href="modalidad_adivina.html" style="flex: 1; min-width: 120px; text-decoration: none;">
                 <button class="btn-modalidad-juego activo" style="width: 100%;">
-                    🎧 Adivina el Baile <small>Nueva modalidad</small>
+                    🎧 Adivina (Música) <small>Modalidad actual</small>
+                </button>
+            </a>
+            <a href="modalidad_adivina_visual.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">
+                    👀 Adivina Visual <small>Cuarta modalidad</small>
                 </button>
             </a>
         </div>
     </div>
 
-    <!-- PANEL DE JUGADORES -->
+    <!-- ============================================================ -->
+    <!-- PANEL DE JUGADORES                                             -->
+    <!-- ============================================================ -->
     <div class="panel">
         <div class="panel-titulo">👥 Jugadores</div>
         <input type="text" id="nombreJugador" class="input-nombre" placeholder="Nombre del jugador">
@@ -360,7 +368,9 @@
         <div id="listaJugadores" style="margin-top:10px;"></div>
     </div>
 
-    <!-- PANEL DE PARTIDA -->
+    <!-- ============================================================ -->
+    <!-- PANEL DE PARTIDA                                               -->
+    <!-- ============================================================ -->
     <div class="panel">
         <div class="panel-titulo">🎲 Partida</div>
         <div id="infoPartida" style="font-size:0.85em; color:var(--sand-dim); margin-bottom:8px; text-align:center;">
@@ -375,7 +385,9 @@
         </div>
     </div>
 
-    <!-- CLASIFICACIÓN -->
+    <!-- ============================================================ -->
+    <!-- CLASIFICACIÓN                                                  -->
+    <!-- ============================================================ -->
     <div class="panel" id="panelClasificacion">
         <div class="panel-titulo">🏆 Clasificación</div>
         <div id="clasificacionContainer" class="clasificacion-container">
@@ -383,10 +395,14 @@
         </div>
     </div>
 
-    <!-- ESTADO DEL JUEGO -->
+    <!-- ============================================================ -->
+    <!-- ESTADO DEL JUEGO                                               -->
+    <!-- ============================================================ -->
     <div id="estadoJuego" class="estado-juego" style="display:none;"></div>
 
-    <!-- ZONA DE JUEGO -->
+    <!-- ============================================================ -->
+    <!-- ZONA DE JUEGO                                                  -->
+    <!-- ============================================================ -->
     <div id="zonaJuego" class="billete" style="display:none;">
         <div class="num" id="numeroRonda"></div>
         <h2 id="tituloRonda"></h2>
@@ -730,7 +746,7 @@
         }
 
         // ============================================================
-        // GENERACIÓN DE TURNOS (CORREGIDO - EQUITATIVO)
+        // GENERACIÓN DE TURNOS (EQUITATIVO)
         // ============================================================
         function generarTurnos() {
             const n = jugadores.length;
@@ -797,7 +813,7 @@
         }
 
         // ============================================================
-        // FUNCIÓN INICIAR RONDA (CON TURNOS CORREGIDOS)
+        // FUNCIÓN INICIAR RONDA
         // ============================================================
         function iniciarRonda() {
             if (bailesUsados.length >= BAILES.length) {
@@ -806,11 +822,9 @@
                 return;
             }
 
-            // 🔥 Obtener el siguiente turno (genera nuevo ciclo si es necesario)
             const turno = obtenerSiguienteTurno();
             rondaResuelta = false;
 
-            // Seleccionar baile correcto (no usado)
             const disponibles = BAILES.filter(b => !bailesUsados.includes(b.id));
             if (disponibles.length < 4) {
                 mostrarToast("⚠️ No quedan suficientes bailes para continuar.");
@@ -822,7 +836,6 @@
             baileCorrecto = disponibles[idxCorrecto];
             bailesUsados.push(baileCorrecto.id);
 
-            // Filtrar bailes similares
             function esSimilar(nombre1, nombre2) {
                 const palabrasClave = ['FOLÍAS', 'MALAGUEÑAS', 'MAZURCA', 'SEGUIDILLAS', 'ISA', 'POLCA', 'BERLINA', 
                                        'TANGANILLO', 'TAJARASTE', 'CARINGA', 'SORONDONGO', 'PASACATRE', 'VALS', 'JOTA',
@@ -852,7 +865,6 @@
 
             opcionesActuales = mezclarArray([baileCorrecto, ...falsos]);
 
-            // Mostrar información de la ronda
             document.getElementById("numeroRonda").textContent = `RONDA ${rondaActual + 1}`;
             document.getElementById("tituloRonda").textContent = `🎧 Adivina el Baile`;
             document.getElementById("nombreDJ").textContent = turno.dj;
