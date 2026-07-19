@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Baile de Taifas · Folclore Canario</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=Work+Sans:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --basalt-0: #161210;
+            --basalt-1: #211a16;
+            --basalt-2: #2c2420;
+            --sand: #f4ead4;
+            --sand-dim: #c9bba0;
+            --terracota: #c1502e;
+            --terracota-dark: #8f3a21;
+            --terracota-light: #e07a52;
+            --ocean: #1f6f78;
+            --ocean-light: #4fa3ab;
+            --ochre: #d4a017;
+            --ochre-light: #eac35c;
+            --line: rgba(244,234,212,0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: radial-gradient(circle at 15% 0%, rgba(193,80,46,0.18), transparent 45%), radial-gradient(circle at 100% 20%, rgba(31,111,120,0.16), transparent 50%), var(--basalt-0);
+            color: var(--sand);
+            min-height: 100vh;
+            padding: 14px;
+            max-width: 520px;
+            margin: 0 auto;
+            font-size: 16px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        h1 {
+            font-family: 'Fraunces', serif;
+            font-weight: 800;
+            font-size: 1.7em;
+            text-align: center;
+            letter-spacing: 0.5px;
+            color: var(--sand);
+            margin: 6px 0 2px;
+        }
+        h1 .isla {
+            display: block;
+            font-family: 'Work Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.32em;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--ochre-light);
+            margin-top: 4px;
+        }
+
+        .subtitulo {
+            text-align: center;
+            color: var(--sand-dim);
+            font-size: 0.85em;
+            margin-bottom: 16px;
+        }
+
+        .panel {
+            margin-top: 14px;
+            padding: 16px;
+            background: var(--basalt-1);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+        }
+        .panel-titulo {
+            font-family: 'Fraunces', serif;
+            font-weight: 700;
+            font-size: 1.05em;
+            color: var(--ochre-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        button {
+            font-family: 'Work Sans', sans-serif;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: transform 0.15s ease, opacity 0.15s ease;
+        }
+        button:active {
+            transform: scale(0.97);
+        }
+
+        .btn-principal {
+            display: block;
+            width: 100%;
+            background: var(--terracota);
+            color: var(--sand);
+            font-weight: 700;
+            font-size: 1.15em;
+            padding: 16px;
+            border-radius: 14px;
+            box-shadow: 0 6px 0 var(--terracota-dark);
+        }
+        .btn-principal:active {
+            box-shadow: 0 3px 0 var(--terracota-dark);
+            transform: translateY(3px) scale(1);
+        }
+        .btn-principal:disabled {
+            opacity: 0.35;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+        .btn-principal.secundario {
+            background: var(--ocean);
+            box-shadow: 0 6px 0 var(--ocean);
+        }
+
+        .btn-secundario {
+            background: transparent;
+            color: var(--sand);
+            border: 1.5px solid var(--line);
+            font-size: 0.85em;
+            font-weight: 600;
+            padding: 9px 14px;
+        }
+        .btn-secundario:hover {
+            border-color: var(--ocean-light);
+        }
+
+        .btn-texto {
+            background: none;
+            color: var(--sand-dim);
+            font-size: 0.8em;
+            text-decoration: underline;
+            padding: 6px 4px;
+        }
+
+        .btn-modalidad-juego {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+            background: var(--basalt-1);
+            color: var(--sand);
+            border: 2px solid var(--line);
+        }
+        .btn-modalidad-juego.activo {
+            background: var(--terracota);
+            border-color: var(--ochre);
+        }
+        .btn-modalidad-juego small {
+            display: block;
+            font-weight: 400;
+            font-size: 0.7em;
+            opacity: 0.8;
+        }
+
+        .fila-botones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        .acciones-menores {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .input-nombre {
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 9px;
+            border: 1.5px solid var(--line);
+            background: var(--basalt-2);
+            color: var(--sand);
+            width: 100%;
+            margin-bottom: 8px;
+        }
+        .input-nombre:focus {
+            outline: none;
+            border-color: var(--ocean-light);
+        }
+
+        .jugador-item {
+            padding: 6px 12px;
+            background: var(--basalt-2);
+            margin: 3px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 0.9em;
+            border: 1px solid var(--line);
+        }
+
+        .clasificacion-container {
+            max-height: 280px;
+            overflow-y: auto;
+        }
+        .clasificacion-item {
+            padding: 9px 12px;
+            background: var(--basalt-2);
+            margin: 5px 0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 3px solid var(--ochre);
+        }
+        .clasificacion-item .posicion {
+            font-family: 'Fraunces', serif;
+            font-weight: 700;
+            color: var(--ochre-light);
+            min-width: 26px;
+        }
+        .clasificacion-item .nombre {
+            flex: 1;
+            font-weight: 600;
+        }
+        .clasificacion-item .puntos {
+            color: var(--terracota-light);
+            font-weight: 700;
+        }
+
+        .estado-juego {
+            text-align: center;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 8px 0;
+            font-weight: 600;
+        }
+        .estado-juego.draft {
+            background: rgba(31, 111, 120, 0.15);
+            border: 1px solid var(--ocean);
+            color: var(--ocean-light);
+        }
+        .estado-juego.baile {
+            background: rgba(212, 160, 23, 0.12);
+            border: 1px solid var(--ochre);
+            color: var(--ochre-light);
+        }
+        .estado-juego.final {
+            background: rgba(193, 80, 46, 0.12);
+            border: 1px solid var(--terracota);
+            color: var(--terracota-light);
+        }
+
+        .billete {
+            display: none;
+            margin-top: 16px;
+            position: relative;
+            background: var(--basalt-2);
+            border-radius: 16px;
+            padding: 20px 18px 18px;
+            border: 1px solid var(--line);
+        }
+        .billete::before,
+        .billete::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 22px;
+            height: 22px;
+            background: var(--basalt-0);
+            border-radius: 50%;
+            transform: translateY(-50%);
+        }
+        .billete::before {
+            left: -11px;
+        }
+        .billete::after {
+            right: -11px;
+        }
+        .billete .num {
+            font-family: 'Fraunces', serif;
+            font-size: 0.75em;
+            color: var(--sand-dim);
+            letter-spacing: 1px;
+        }
+        .billete h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.2em;
+            color: var(--sand);
+            margin: 4px 0 10px;
+            line-height: 1.25;
+        }
+        .sello-estrellas {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 2px solid var(--ochre);
+            color: var(--ochre-light);
+            border-radius: 30px;
+            padding: 5px 14px;
+            font-weight: 700;
+            font-size: 0.9em;
+            transform: rotate(-2deg);
+        }
+        .linea-divisoria {
+            border-top: 1.5px dashed var(--line);
+            margin: 16px 0;
+        }
+        .enlace-video {
+            display: block;
+            text-align: center;
+            color: var(--ocean-light);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 14px;
+            padding: 10px;
+            border: 1.5px solid var(--ocean);
+            border-radius: 10px;
+            font-size: 0.9em;
+        }
+        .enlace-video:active {
+            background: rgba(31, 111, 120, 0.15);
+        }
+
+        .votos-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+        }
+        .voto-boton {
+            flex: 1;
+            font-size: 1.6em;
+            padding: 16px 8px;
+            border: 2px solid var(--line);
+            border-radius: 14px;
+            background: var(--basalt-1);
+            color: var(--sand);
+        }
+        .voto-boton span {
+            display: block;
+            font-size: 0.4em;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        .voto-boton.maximo {
+            border-color: var(--ochre);
+        }
+        .voto-boton.maximo.seleccionado {
+            background: var(--ochre);
+            color: var(--basalt-0);
+        }
+        .voto-boton.mitad {
+            border-color: var(--ocean);
+        }
+        .voto-boton.mitad.seleccionado {
+            background: var(--ocean);
+        }
+        .voto-boton.cero {
+            border-color: var(--terracota);
+        }
+        .voto-boton.cero.seleccionado {
+            background: var(--terracota);
+        }
+
+        .resultado-votacion {
+            margin-top: 14px;
+            padding: 12px;
+            background: var(--basalt-1);
+            border-radius: 10px;
+            font-size: 0.85em;
+            color: var(--sand-dim);
+            display: none;
+        }
+        .resultado-puntos {
+            display: none;
+            text-align: center;
+            padding: 22px 14px;
+            border-radius: 16px;
+            margin: 16px 0;
+            font-family: 'Fraunces', serif;
+        }
+        .resultado-puntos.aprobado {
+            background: rgba(31, 111, 120, 0.18);
+            border: 2px solid var(--ocean);
+        }
+        .resultado-puntos.reprobado {
+            background: rgba(193, 80, 46, 0.14);
+            border: 2px solid var(--terracota);
+        }
+        .resultado-puntos .puntos-grande {
+            font-size: 2em;
+            font-weight: 800;
+            display: block;
+        }
+        .resultado-puntos .votos-detalle {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 10px;
+            font-family: 'Work Sans', sans-serif;
+            font-size: 0.55em;
+            color: var(--sand-dim);
+        }
+
+        .lista-bailes-jugador {
+            background: var(--basalt-2);
+            border-radius: 10px;
+            padding: 12px;
+            margin: 6px 0;
+            border-left: 3px solid var(--ocean);
+        }
+        .lista-bailes-jugador .nombre-jugador {
+            font-weight: 700;
+            color: var(--ochre-light);
+        }
+        .lista-bailes-jugador .bailes-lista {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 4px;
+        }
+        .lista-bailes-jugador .baile-tag {
+            background: var(--basalt-1);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            border: 1px solid var(--line);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--basalt-2);
+            color: var(--sand);
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--ochre);
+            z-index: 1000;
+            font-size: 0.85em;
+            max-width: 90%;
+            text-align: center;
+            animation: subir 0.25s ease;
+        }
+        @keyframes subir {
+            from {
+                opacity: 0;
+                transform: translate(-50%, 15px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
+        .clasificacion-final {
+            border: 2px solid var(--ochre);
+            border-radius: 16px;
+            padding: 18px;
+            margin-top: 12px;
+            background: rgba(212, 160, 23, 0.08);
+            text-align: center;
+        }
+        .clasificacion-final h2 {
+            font-family: 'Fraunces', serif;
+            color: var(--ochre-light);
+            margin-bottom: 4px;
+        }
+        .clasificacion-final p {
+            color: var(--sand-dim);
+            font-size: 0.85em;
+            margin-bottom: 14px;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+                font-size: 14px;
+            }
+            h1 {
+                font-size: 1.5em;
+            }
+            .voto-boton {
+                font-size: 1.4em;
+                padding: 12px 6px;
+            }
+            .billete h2 {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Baile de Taifas<span class="isla">Folclore Canario · Juego de grupo</span></h1>
+    <p class="subtitulo">Elige, baila, vota y gana el Baile de Taifas</p>
+
+    <div id="toastContainer"></div>
+
+</body>
+</html>
