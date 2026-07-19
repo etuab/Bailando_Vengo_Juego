@@ -268,6 +268,7 @@
             border:1.5px solid var(--ocean);
             border-radius:10px;
             font-size:0.9em;
+            cursor:pointer;
         }
         .enlace-video:active{background:rgba(31,111,120,0.15);}
         .opciones-grid{
@@ -299,6 +300,42 @@
             color:var(--sand-dim);
             margin-bottom:4px;
         }
+        
+        /* Temporizador */
+        .temporizador-container{
+            text-align:center;
+            margin:10px 0;
+            padding:12px;
+            background:var(--basalt-2);
+            border-radius:12px;
+            border:1px solid var(--line);
+        }
+        .temporizador-container .display{
+            font-size:3em;
+            font-weight:800;
+            font-family:'Fraunces',serif;
+            color:var(--ochre-light);
+            transition:color 0.3s;
+        }
+        .temporizador-container .display.urgente{
+            color:var(--terracota-light);
+            animation:pulso 0.5s ease infinite;
+        }
+        .btn-tiempo{
+            padding:6px 12px;
+            border-radius:8px;
+            background:var(--basalt-1);
+            color:var(--sand);
+            border:1px solid var(--line);
+            font-size:0.85em;
+            cursor:pointer;
+        }
+        .btn-tiempo.activo{
+            background:var(--ocean);
+            border-color:var(--ocean-light);
+        }
+        @keyframes pulso{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+        
         .toast{
             position:fixed;
             bottom:18px;
@@ -331,6 +368,7 @@
             h1{font-size:1.5em;}
             .opciones-grid{grid-template-columns:1fr 1fr;}
             .btn-opcion{font-size:0.75em; min-height:50px; padding:8px 4px;}
+            .temporizador-container .display{font-size:2.5em;}
         }
     </style>
 </head>
@@ -347,7 +385,7 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- NAVEGACIÓN ENTRE MODALIDADES (4 BOTONES)                      -->
+    <!-- NAVEGACIÓN ENTRE MODALIDADES                                   -->
     <!-- ============================================================ -->
     <div class="panel" style="background: var(--basalt-2); border-color: var(--ochre);">
         <div class="panel-titulo" style="border-bottom-color: var(--ochre);">🎮 Modalidades</div>
@@ -395,7 +433,7 @@
     <div class="panel">
         <div class="panel-titulo">🎲 Partida</div>
         <div id="infoPartida" style="font-size:0.85em; color:var(--sand-dim); margin-bottom:8px; text-align:center;">
-            Mínimo 3 jugadores para empezar
+            Mínimo 2 jugadores para empezar
         </div>
         <button class="btn-principal" onclick="iniciarPartida()" id="btnIniciarPartida">👀 Iniciar Adivina Visual</button>
         <div class="acciones-menores">
@@ -433,7 +471,21 @@
             👀 Adivina: <span id="nombreAdivinador" style="font-weight:700;"></span>
         </div>
 
-        <a id="enlaceVideo" href="#" target="_blank" class="enlace-video">🎬 Reproducir vídeo (15 segundos SIN SONIDO)</a>
+        <!-- 🔥 TEMPORIZADOR -->
+        <div class="temporizador-container">
+            <div style="display:flex; gap:8px; justify-content:center; margin-bottom:8px; flex-wrap:wrap;">
+                <button class="btn-tiempo activo" data-tiempo="15" onclick="seleccionarTiempo(15)">15s</button>
+                <button class="btn-tiempo" data-tiempo="20" onclick="seleccionarTiempo(20)">20s</button>
+                <button class="btn-tiempo" data-tiempo="30" onclick="seleccionarTiempo(30)">30s</button>
+                <button onclick="iniciarTemporizador()" style="padding:6px 16px; border-radius:8px; background:var(--terracota); color:var(--sand); font-weight:700;">▶ Iniciar</button>
+                <button onclick="detenerTemporizador()" style="padding:6px 16px; border-radius:8px; background:var(--basalt-1); color:var(--sand); border:1px solid var(--line);">⏹ Detener</button>
+            </div>
+            <div class="display" id="displayTiempo">15</div>
+            <div style="font-size:0.7em; color:var(--sand-dim);">segundos</div>
+        </div>
+
+        <!-- 🔥 ENLACE CON POPUP -->
+        <a href="#" onclick="abrirVideoPopup(); return false;" class="enlace-video" id="enlaceVideo">🎬 Reproducir vídeo (15 segundos SIN SONIDO)</a>
 
         <div class="linea-divisoria"></div>
         <div style="font-weight:600; margin-bottom:8px; text-align:center; color:var(--sand-dim); font-size:0.85em;">
@@ -635,6 +687,90 @@
         ];
 
         // ============================================================
+        // FUNCIÓN PARA ABRIR VÍDEO EN POPUP
+        // ============================================================
+        function abrirVideoPopup() {
+            const enlace = document.getElementById('enlaceVideo');
+            const url = enlace.getAttribute('data-url') || enlace.href;
+            
+            if (!url || url === '#') {
+                mostrarToast("⚠️ No hay vídeo disponible para este baile.");
+                return;
+            }
+            
+            guardarPartidaAuto();
+            
+            const ancho = Math.min(600, window.innerWidth * 0.9);
+            const alto = Math.min(500, window.innerHeight * 0.8);
+            const izquierda = (window.innerWidth - ancho) / 2;
+            const arriba = (window.innerHeight - alto) / 2;
+            
+            const opciones = `width=${ancho},height=${alto},left=${izquierda},top=${arriba},scrollbars=yes,resizable=yes,menubar=no,toolbar=no`;
+            
+            window.open(url, 'videoPopup', opciones);
+            
+            mostrarToast("📺 Vídeo abierto. Cuando termines, cierra la ventana y vuelve al juego.");
+        }
+
+        // ============================================================
+        // TEMPORIZADOR
+        // ============================================================
+        let tiempoSeleccionado = 15;
+        let tiempoRestante = 15;
+        let temporizadorActivo = false;
+        let intervalo = null;
+
+        function seleccionarTiempo(segundos) {
+            tiempoSeleccionado = segundos;
+            tiempoRestante = segundos;
+            actualizarDisplayTiempo();
+            document.querySelectorAll('.btn-tiempo').forEach(b => b.classList.remove('activo'));
+            document.querySelector(`.btn-tiempo[data-tiempo="${segundos}"]`).classList.add('activo');
+            detenerTemporizador();
+        }
+
+        function iniciarTemporizador() {
+            if (temporizadorActivo) {
+                detenerTemporizador();
+                return;
+            }
+            
+            tiempoRestante = tiempoSeleccionado;
+            temporizadorActivo = true;
+            actualizarDisplayTiempo();
+            
+            intervalo = setInterval(() => {
+                tiempoRestante--;
+                actualizarDisplayTiempo();
+                
+                if (tiempoRestante <= 0) {
+                    detenerTemporizador();
+                    mostrarToast("⏰ ¡Tiempo!");
+                }
+            }, 1000);
+        }
+
+        function detenerTemporizador() {
+            temporizadorActivo = false;
+            if (intervalo) {
+                clearInterval(intervalo);
+                intervalo = null;
+            }
+            actualizarDisplayTiempo();
+        }
+
+        function actualizarDisplayTiempo() {
+            const display = document.getElementById("displayTiempo");
+            if (!display) return;
+            display.textContent = tiempoRestante;
+            if (tiempoRestante <= 5 && tiempoRestante > 0) {
+                display.className = "display urgente";
+            } else {
+                display.className = "display";
+            }
+        }
+
+        // ============================================================
         // ESTADO DEL JUEGO
         // ============================================================
         let jugadores = [];
@@ -737,8 +873,8 @@
             container.innerHTML = html;
 
             const info = document.getElementById("infoPartida");
-            if (jugadores.length < 3) {
-                info.textContent = `Mínimo 3 jugadores para empezar (actual: ${jugadores.length})`;
+            if (jugadores.length < 2) {
+                info.textContent = `Mínimo 2 jugadores para empezar (actual: ${jugadores.length})`;
                 info.style.color = "var(--terracota-light)";
             } else {
                 info.textContent = `${jugadores.length} jugadores listos para jugar`;
@@ -800,8 +936,8 @@
         // FUNCIONES PRINCIPALES DEL JUEGO
         // ============================================================
         function iniciarPartida() {
-            if (jugadores.length < 3) {
-                mostrarToast("❌ Necesitas al menos 3 jugadores.");
+            if (jugadores.length < 2) {
+                mostrarToast("❌ Necesitas al menos 2 jugadores.");
                 return;
             }
             if (partidaActiva) {
@@ -845,6 +981,11 @@
 
             const turno = obtenerSiguienteTurno();
             rondaResuelta = false;
+
+            // Restaurar temporizador
+            detenerTemporizador();
+            tiempoRestante = tiempoSeleccionado;
+            actualizarDisplayTiempo();
 
             const disponibles = BAILES.filter(b => !bailesUsados.includes(b.id));
             if (disponibles.length < 4) {
@@ -891,7 +1032,11 @@
             document.getElementById("nombreDJ").textContent = turno.dj;
             document.getElementById("nombreAdivinador").textContent = turno.adivinador;
 
-            document.getElementById("enlaceVideo").href = baileCorrecto.enlace;
+            // Guardar URL en data-url para el popup
+            const enlace = document.getElementById("enlaceVideo");
+            enlace.setAttribute('data-url', baileCorrecto.enlace);
+            enlace.href = baileCorrecto.enlace;
+            enlace.style.display = "block";
 
             const container = document.getElementById("opcionesContainer");
             container.innerHTML = "";
@@ -1001,6 +1146,8 @@
             fase = 'final';
             partidaActiva = false;
 
+            detenerTemporizador();
+
             const container = document.getElementById("clasificacionContainer");
             const ordenados = [...jugadores].sort((a, b) => (puntuaciones[b] || 0) - (puntuaciones[a] || 0));
 
@@ -1048,13 +1195,14 @@
             rondaResuelta = false;
             historialRondas = [];
             jugadores.forEach(n => puntuaciones[n] = 0);
+            detenerTemporizador();
 
             document.getElementById("zonaJuego").style.display = "none";
             document.getElementById("btnIniciarPartida").style.display = "block";
             document.getElementById("btnIniciarPartida").textContent = "👀 Iniciar Adivina Visual";
             document.getElementById("btnTerminarPartida").style.display = "none";
             document.getElementById("estadoJuego").style.display = "none";
-            document.getElementById("infoPartida").textContent = "Mínimo 3 jugadores para empezar";
+            document.getElementById("infoPartida").textContent = "Mínimo 2 jugadores para empezar";
             document.getElementById("infoPartida").style.color = "var(--sand-dim)";
 
             actualizarClasificacion();
@@ -1140,7 +1288,11 @@
                                 btn.onclick = () => seleccionarOpcion(baile.id, btn);
                                 container.appendChild(btn);
                             });
-                            document.getElementById("enlaceVideo").href = baileCorrecto.enlace;
+                            const enlace = document.getElementById("enlaceVideo");
+                            if (baileCorrecto) {
+                                enlace.setAttribute('data-url', baileCorrecto.enlace);
+                                enlace.href = baileCorrecto.enlace;
+                            }
                             document.getElementById("enlaceVideo").style.display = "block";
                             document.getElementById("resultadoRonda").style.display = "none";
                             document.getElementById("botonSiguienteRonda").style.display = "none";
@@ -1234,7 +1386,11 @@
                                         btn.onclick = () => seleccionarOpcion(baile.id, btn);
                                         container.appendChild(btn);
                                     });
-                                    document.getElementById("enlaceVideo").href = baileCorrecto.enlace;
+                                    const enlace = document.getElementById("enlaceVideo");
+                                    if (baileCorrecto) {
+                                        enlace.setAttribute('data-url', baileCorrecto.enlace);
+                                        enlace.href = baileCorrecto.enlace;
+                                    }
                                     document.getElementById("enlaceVideo").style.display = "block";
                                     document.getElementById("resultadoRonda").style.display = "none";
                                     document.getElementById("botonSiguienteRonda").style.display = "none";
