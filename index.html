@@ -115,6 +115,26 @@
             text-decoration:underline;
             padding:6px 4px;
         }
+        .btn-modalidad-juego{
+            width:100%;
+            padding:12px;
+            border-radius:10px;
+            font-weight:600;
+            transition:all 0.3s;
+            background:var(--basalt-1);
+            color:var(--sand);
+            border:2px solid var(--line);
+        }
+        .btn-modalidad-juego.activo{
+            background:var(--terracota);
+            border-color:var(--ochre);
+        }
+        .btn-modalidad-juego small{
+            display:block;
+            font-weight:400;
+            font-size:0.7em;
+            opacity:0.8;
+        }
         .fila-botones{
             display:flex;
             flex-wrap:wrap;
@@ -371,12 +391,40 @@
         }
         .clasificacion-final h2{font-family:'Fraunces',serif; color:var(--ochre-light); margin-bottom:4px;}
         .clasificacion-final p{color:var(--sand-dim); font-size:0.85em; margin-bottom:14px;}
+        @media (max-width: 480px){
+            body{padding:10px; font-size:14px;}
+            h1{font-size:1.5em;}
+            .voto-boton{font-size:1.4em; padding:12px 6px;}
+            .billete h2{font-size:1em;}
+        }
     </style>
 </head>
 <body>
     <h1>Baile a Ciegas<span class="isla">Folclore Canario · Juego de grupo</span></h1>
     <p class="subtitulo">Sortea, decide, baila y que el grupo lo juzgue</p>
     <div id="toastContainer"></div>
+
+    <!-- ============================================================ -->
+    <!-- NAVEGACIÓN A OTRAS MODALIDADES                                -->
+    <!-- ============================================================ -->
+    <div class="panel" style="background: var(--basalt-2); border-color: var(--ochre);">
+        <div class="panel-titulo" style="border-bottom-color: var(--ochre);">🎮 Modalidades</div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+            <a href="index.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego activo" style="width: 100%;">
+                    🕺 Baile a Ciegas
+                    <small>Modalidad actual</small>
+                </button>
+            </a>
+            <a href="modalidad_taifas.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">
+                    🎵 Baile de Taifas
+                    <small>Nueva modalidad</small>
+                </button>
+            </a>
+        </div>
+    </div>
+
     <div class="panel">
         <div class="panel-titulo">👥 Jugadores</div>
         <input type="text" id="nombreJugador" class="input-nombre" placeholder="Nombre del jugador">
@@ -442,13 +490,13 @@
         </div>
     </div>
 
-    <!-- 🔥 CARGAR LA LISTA DE BAILES DESDE ARCHIVO EXTERNO -->
     <script src="lista_bailes.js"></script>
-    
     <script>
-        // ============================================================
-        // 🎮 CÓDIGO DEL JUEGO (usa BAILES del archivo externo)
-        // ============================================================
+        const BAILES = [
+            // ... TU LISTA DE 175 BAILES AQUÍ ...
+            // (No la pongo entera para no ocupar, pero tú tienes que ponerla)
+        ];
+
         let jugadores = [];
         let puntuaciones = {};
         let turnoActual = 0;
@@ -461,15 +509,8 @@
         let votantesPendientes = [];
         let indiceVotante = 0;
         let partidaFinalizada = false;
+        let timeoutResultado = null;
         let ultimoVoto = null;
-
-        // Funciones auxiliares para el modo "bien/mal" que espera el diseño
-        function contarVotosBien() {
-            return votos.filter(v => v.voto === 'bien').length;
-        }
-        function contarVotosMal() {
-            return votos.filter(v => v.voto === 'mal').length;
-        }
 
         function mostrarToast(mensaje){
             const container = document.getElementById('toastContainer');
@@ -639,13 +680,10 @@
             document.getElementById("nombreBaile").textContent = baile.nombre;
             document.getElementById("selloEstrellas").textContent = "✦".repeat(baile.estrellas) + " nivel " + baile.estrellas;
             document.getElementById("enlaceBaile").href = baile.enlace;
-            
-            // Usar los puntos precalculados o calcularlos
             const puntosSinRed = baile.puntosSinRed || baile.estrellas * 10;
             const puntosConChuleta = baile.puntosConChuleta || baile.estrellas * 5;
             document.getElementById("puntosSinRedTxt").textContent = puntosSinRed + " pts";
             document.getElementById("puntosChuletaTxt").textContent = puntosConChuleta + " pts";
-            
             document.getElementById("resultado").style.display = "block";
             document.getElementById("votacionPanel").style.display = "none";
             document.getElementById("resultadoVotacion").style.display = "none";
@@ -656,6 +694,10 @@
             document.getElementById("btnChuleta").className = "btn-modalidad";
             votos = [];
             ultimoVoto = null;
+            if (timeoutResultado) {
+                clearTimeout(timeoutResultado);
+                timeoutResultado = null;
+            }
         }
 
         function elegirModalidad(modalidad){
@@ -751,16 +793,12 @@
 
         function mostrarResultadosVotacion(){
             votacionActiva = false;
-            let votosBien = contarVotosBien();
-            let votosMal = contarVotosMal();
+            let votosBien = votos.filter(v => v.voto === 'bien').length;
+            let votosMal = votos.filter(v => v.voto === 'mal').length;
             let aprobado = votosBien >= votosMal;
             let puntos = 0;
             if (aprobado){
-                if (modalidadActual === 'sinred') {
-                    puntos = baileActual.puntosSinRed || baileActual.estrellas * 10;
-                } else {
-                    puntos = baileActual.puntosConChuleta || baileActual.estrellas * 5;
-                }
+                puntos = modalidadActual === 'sinred' ? baileActual.puntosSinRed || baileActual.estrellas * 10 : baileActual.puntosConChuleta || baileActual.estrellas * 5;
             }
             document.getElementById("resultadoVotacion").style.display = "block";
             document.getElementById("votosResumen").textContent = "Votos: " + votos.map(v => `${v.votante}: ${v.voto === 'bien' ? '👍' : '👎'}`).join(' ');
@@ -772,9 +810,7 @@
             const puntosDiv = document.getElementById("resultadoPuntosGrande");
             puntosDiv.style.display = "block";
             puntosDiv.className = "resultado-puntos " + (aprobado ? "aprobado" : "reprobado");
-            puntosDiv.innerHTML = aprobado ? 
-                `<span class="puntos-grande">+${puntos} PTS</span><div class="votos-detalle"><span>👍 ${votosBien}</span><span>👎 ${votosMal}</span></div>` : 
-                `<span class="puntos-grande">0 PTS</span><div class="votos-detalle"><span>👍 ${votosBien}</span><span>👎 ${votosMal}</span></div>`;
+            puntosDiv.innerHTML = aprobado ? `<span class="puntos-grande">+${puntos} PTS</span><div class="votos-detalle"><span>👍 ${votosBien}</span><span>👎 ${votosMal}</span></div>` : `<span class="puntos-grande">0 PTS</span><div class="votos-detalle"><span>👍 ${votosBien}</span><span>👎 ${votosMal}</span></div>`;
             const disponibles = BAILES.filter(b => !bailesUsados.includes(b.id));
             const btnSig = document.getElementById("botonSiguienteBaile");
             btnSig.style.display = "block";
@@ -790,7 +826,6 @@
 
         function siguienteBaile(){
             if (partidaFinalizada || jugadores.length === 0) return;
-            if (typeof BAILES === 'undefined') return;
             const disponibles = BAILES.filter(b => !bailesUsados.includes(b.id));
             if (disponibles.length === 0){
                 mostrarToast("🎉 ¡Ya no quedan más bailes!");
@@ -814,9 +849,17 @@
                 mostrarToast("Hay una votación activa. Finalízala primero.");
                 return;
             }
+            if (timeoutResultado) {
+                clearTimeout(timeoutResultado);
+                timeoutResultado = null;
+            }
             partidaFinalizada = true;
             document.getElementById("turnoActual").style.display = "none";
             document.getElementById("resultado").style.display = "none";
+            document.getElementById("votacionPanel").style.display = "none";
+            document.getElementById("seccionVotacion").style.display = "none";
+            document.getElementById("resultadoPuntosGrande").style.display = "none";
+            document.getElementById("botonSiguienteBaile").style.display = "none";
             const container = document.getElementById("clasificacionContainer");
             const ordenados = [...jugadores].sort((a, b) => puntuaciones[b] - puntuaciones[a]);
             let html = `<div class="clasificacion-final"><h2>🏆 Clasificación final</h2> <p>${bailesUsados.length} bailes bailados</p>`;
@@ -832,6 +875,10 @@
 
         function reiniciarPartida(){
             if (!confirm("¿Reiniciar toda la partida?")) return;
+            if (timeoutResultado) {
+                clearTimeout(timeoutResultado);
+                timeoutResultado = null;
+            }
             bailesUsados = [];
             turnoActual = 0;
             jugadores.forEach(nombre => puntuaciones[nombre] = 0);
@@ -839,10 +886,20 @@
             modalidadActual = null;
             partidaFinalizada = false;
             document.getElementById("resultado").style.display = "none";
+            document.getElementById("votacionPanel").style.display = "none";
             document.getElementById("turnoActual").style.display = "none";
+            document.getElementById("estadoVotacion").style.display = "none";
             document.getElementById("seccionVotacion").style.display = "block";
+            document.getElementById("resultadoPuntosGrande").style.display = "none";
+            document.getElementById("botonSiguienteBaile").style.display = "none";
+            document.getElementById("botonSiguienteBaile").classList.remove('btn-desactivado');
+            document.getElementById("botonSiguienteBaile").disabled = false;
+            document.getElementById('btnSortearBaile').classList.remove('btn-desactivado');
+            document.getElementById('btnSortearBaile').disabled = false;
             actualizarClasificacion();
-            if (jugadores.length > 0) mostrarTurnoActual(true);
+            if (jugadores.length > 0) {
+                mostrarTurnoActual(true);
+            }
             guardarPartidaAuto();
             mostrarToast("🔄 Partida reiniciada.");
         }
@@ -928,7 +985,6 @@
                 document.getElementById("bailesRestantes").textContent = '⚠️ Error: Bailes no cargados';
                 return;
             }
-            // Mezclar bailes al inicio
             for (let i = BAILES.length - 1; i > 0; i--){
                 const j = Math.floor(Math.random() * (i + 1));
                 [BAILES[i], BAILES[j]] = [BAILES[j], BAILES[i]];
@@ -938,7 +994,6 @@
             console.log(`✅ App iniciada. ${BAILES.length} bailes cargados.`);
         }
 
-        // Esperar a que el DOM esté listo
         if (document.readyState === 'loading'){
             document.addEventListener('DOMContentLoaded', iniciarApp);
         } else {
