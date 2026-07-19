@@ -68,7 +68,6 @@
             margin-bottom: 16px;
         }
 
-        /* --- Paneles --- */
         .panel {
             margin-top: 14px;
             padding: 16px;
@@ -89,7 +88,6 @@
             border-bottom: 1px solid var(--line);
         }
 
-        /* --- Botones --- */
         button {
             font-family: 'Work Sans', sans-serif;
             border: none;
@@ -242,7 +240,6 @@
             font-weight: 700;
         }
 
-        /* --- Estados del juego --- */
         .estado-juego {
             text-align: center;
             padding: 12px;
@@ -266,7 +263,6 @@
             color: var(--terracota-light);
         }
 
-        /* --- Billete (tarjeta de baile) --- */
         .billete {
             display: none;
             margin-top: 16px;
@@ -322,6 +318,7 @@
             border-top: 1.5px dashed var(--line);
             margin: 16px 0;
         }
+        
         .enlace-video {
             display: block;
             text-align: center;
@@ -333,12 +330,48 @@
             border: 1.5px solid var(--ocean);
             border-radius: 10px;
             font-size: 0.9em;
+            cursor: pointer;
         }
         .enlace-video:active {
             background: rgba(31, 111, 120, 0.15);
         }
 
-        /* --- Votación --- */
+        /* Temporizador */
+        .temporizador-container {
+            text-align: center;
+            margin: 10px 0;
+            padding: 12px;
+            background: var(--basalt-2);
+            border-radius: 12px;
+            border: 1px solid var(--line);
+        }
+        .temporizador-container .display {
+            font-size: 3em;
+            font-weight: 800;
+            font-family: 'Fraunces', serif;
+            color: var(--ochre-light);
+            transition: color 0.3s;
+        }
+        .temporizador-container .display.urgente {
+            color: var(--terracota-light);
+            animation: pulso 0.5s ease infinite;
+        }
+        .btn-tiempo {
+            padding: 6px 12px;
+            border-radius: 8px;
+            background: var(--basalt-1);
+            color: var(--sand);
+            border: 1px solid var(--line);
+            font-size: 0.85em;
+            cursor: pointer;
+        }
+        .btn-tiempo.activo {
+            background: var(--ocean);
+            border-color: var(--ocean-light);
+        }
+        @keyframes pulso { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+        /* Votación */
         .votos-row {
             display: flex;
             gap: 10px;
@@ -419,7 +452,6 @@
             color: var(--sand-dim);
         }
 
-        /* --- Lista de bailes por jugador --- */
         .lista-bailes-jugador {
             background: var(--basalt-2);
             border-radius: 10px;
@@ -445,7 +477,6 @@
             border: 1px solid var(--line);
         }
 
-        /* --- Toast --- */
         .toast {
             position: fixed;
             bottom: 18px;
@@ -463,17 +494,10 @@
             animation: subir 0.25s ease;
         }
         @keyframes subir {
-            from {
-                opacity: 0;
-                transform: translate(-50%, 15px);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, 0);
-            }
+            from { opacity: 0; transform: translate(-50%, 15px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
         }
 
-        /* --- Final --- */
         .clasificacion-final {
             border: 2px solid var(--ochre);
             border-radius: 16px;
@@ -493,22 +517,12 @@
             margin-bottom: 14px;
         }
 
-        /* --- Responsive --- */
         @media (max-width: 480px) {
-            body {
-                padding: 10px;
-                font-size: 14px;
-            }
-            h1 {
-                font-size: 1.5em;
-            }
-            .voto-boton {
-                font-size: 1.4em;
-                padding: 12px 6px;
-            }
-            .billete h2 {
-                font-size: 1em;
-            }
+            body { padding: 10px; font-size: 14px; }
+            h1 { font-size: 1.5em; }
+            .voto-boton { font-size: 1.4em; padding: 12px 6px; }
+            .billete h2 { font-size: 1em; }
+            .temporizador-container .display { font-size: 2.5em; }
         }
     </style>
 </head>
@@ -520,7 +534,7 @@
     <div id="toastContainer"></div>
 
     <!-- ============================================================ -->
-    <!-- NAVEGACIÓN ENTRE MODALIDADES (4 BOTONES)                      -->
+    <!-- NAVEGACIÓN ENTRE MODALIDADES                                   -->
     <!-- ============================================================ -->
     <div class="panel" style="background: var(--basalt-2); border-color: var(--ochre);">
         <div class="panel-titulo" style="border-bottom-color: var(--ochre);">🎮 Modalidades</div>
@@ -568,7 +582,7 @@
     <div class="panel">
         <div class="panel-titulo">🎲 Partida</div>
         <div id="infoAgrupaciones" style="font-size:0.85em; color:var(--sand-dim); margin-bottom:8px; text-align:center;">
-            Esperando a que comience la partida...
+            Mínimo 2 jugadores para empezar
         </div>
         <button class="btn-principal" onclick="iniciarPartida()" id="btnIniciarPartida">🎵 Iniciar Baile de Taifas</button>
         <div class="acciones-menores">
@@ -601,7 +615,9 @@
         <div class="num" id="numeroInfo"></div>
         <h2 id="nombreInfo"></h2>
         <span class="sello-estrellas" id="selloEstrellas"></span>
-        <a id="enlaceInfo" href="#" target="_blank" class="enlace-video">🎬 Ver vídeo de referencia</a>
+        
+        <!-- 🔥 ENLACE CON POPUP -->
+        <a href="#" onclick="abrirVideoPopup(); return false;" class="enlace-video" id="enlaceInfo">🎬 Ver vídeo de referencia</a>
 
         <!-- DRAFT: Elección de bailes -->
         <div id="zonaDraft">
@@ -623,6 +639,19 @@
             </div>
             <div style="text-align:center; font-size:0.8em; color:var(--sand-dim); margin-bottom:8px;">
                 Agrupación: <span id="bailaAgrupacion"></span> · Baile <span id="bailaNumero"></span> de <span id="bailaTotal"></span>
+            </div>
+
+            <!-- 🔥 TEMPORIZADOR -->
+            <div class="temporizador-container">
+                <div style="display:flex; gap:8px; justify-content:center; margin-bottom:8px; flex-wrap:wrap;">
+                    <button class="btn-tiempo activo" data-tiempo="15" onclick="seleccionarTiempo(15)">15s</button>
+                    <button class="btn-tiempo" data-tiempo="20" onclick="seleccionarTiempo(20)">20s</button>
+                    <button class="btn-tiempo" data-tiempo="30" onclick="seleccionarTiempo(30)">30s</button>
+                    <button onclick="iniciarTemporizador()" style="padding:6px 16px; border-radius:8px; background:var(--terracota); color:var(--sand); font-weight:700;">▶ Iniciar</button>
+                    <button onclick="detenerTemporizador()" style="padding:6px 16px; border-radius:8px; background:var(--basalt-1); color:var(--sand); border:1px solid var(--line);">⏹ Detener</button>
+                </div>
+                <div class="display" id="displayTiempo">15</div>
+                <div style="font-size:0.7em; color:var(--sand-dim);">segundos</div>
             </div>
 
             <!-- 🔥 BOTÓN INICIAR VOTACIÓN -->
@@ -861,6 +890,90 @@
         ];
 
         // ============================================================
+        // FUNCIÓN PARA ABRIR VÍDEO EN POPUP
+        // ============================================================
+        function abrirVideoPopup() {
+            const enlace = document.getElementById('enlaceInfo');
+            const url = enlace.getAttribute('data-url') || enlace.href;
+            
+            if (!url || url === '#') {
+                mostrarToast("⚠️ No hay vídeo disponible para este baile.");
+                return;
+            }
+            
+            guardarPartidaAuto();
+            
+            const ancho = Math.min(600, window.innerWidth * 0.9);
+            const alto = Math.min(500, window.innerHeight * 0.8);
+            const izquierda = (window.innerWidth - ancho) / 2;
+            const arriba = (window.innerHeight - alto) / 2;
+            
+            const opciones = `width=${ancho},height=${alto},left=${izquierda},top=${arriba},scrollbars=yes,resizable=yes,menubar=no,toolbar=no`;
+            
+            window.open(url, 'videoPopup', opciones);
+            
+            mostrarToast("📺 Vídeo abierto. Cuando termines, cierra la ventana y vuelve al juego.");
+        }
+
+        // ============================================================
+        // TEMPORIZADOR
+        // ============================================================
+        let tiempoSeleccionado = 15;
+        let tiempoRestante = 15;
+        let temporizadorActivo = false;
+        let intervalo = null;
+
+        function seleccionarTiempo(segundos) {
+            tiempoSeleccionado = segundos;
+            tiempoRestante = segundos;
+            actualizarDisplayTiempo();
+            document.querySelectorAll('.btn-tiempo').forEach(b => b.classList.remove('activo'));
+            document.querySelector(`.btn-tiempo[data-tiempo="${segundos}"]`).classList.add('activo');
+            detenerTemporizador();
+        }
+
+        function iniciarTemporizador() {
+            if (temporizadorActivo) {
+                detenerTemporizador();
+                return;
+            }
+            
+            tiempoRestante = tiempoSeleccionado;
+            temporizadorActivo = true;
+            actualizarDisplayTiempo();
+            
+            intervalo = setInterval(() => {
+                tiempoRestante--;
+                actualizarDisplayTiempo();
+                
+                if (tiempoRestante <= 0) {
+                    detenerTemporizador();
+                    mostrarToast("⏰ ¡Tiempo!");
+                }
+            }, 1000);
+        }
+
+        function detenerTemporizador() {
+            temporizadorActivo = false;
+            if (intervalo) {
+                clearInterval(intervalo);
+                intervalo = null;
+            }
+            actualizarDisplayTiempo();
+        }
+
+        function actualizarDisplayTiempo() {
+            const display = document.getElementById("displayTiempo");
+            if (!display) return;
+            display.textContent = tiempoRestante;
+            if (tiempoRestante <= 5 && tiempoRestante > 0) {
+                display.className = "display urgente";
+            } else {
+                display.className = "display";
+            }
+        }
+
+        // ============================================================
         // ESTADO DEL JUEGO
         // ============================================================
         let jugadores = [];
@@ -1076,7 +1189,17 @@
             document.getElementById("numeroInfo").textContent = `AGRUPACIÓN ${agrupacionActual + 1} DE 4`;
             document.getElementById("nombreInfo").textContent = agrupacion;
             document.getElementById("selloEstrellas").textContent = `🎵 ${bailesIds.length} bailes disponibles`;
-            document.getElementById("enlaceInfo").style.display = "none";
+            
+            // Guardar URL en data-url para el popup
+            const enlace = document.getElementById("enlaceInfo");
+            if (bailesIds.length > 0) {
+                const primerBaile = getBailePorId(bailesIds[0]);
+                if (primerBaile) {
+                    enlace.setAttribute('data-url', primerBaile.enlace);
+                    enlace.href = primerBaile.enlace;
+                }
+            }
+            enlace.style.display = "block";
 
             const jugadorActual = ordenDraft[indiceDraft];
             document.getElementById("turnoDraftNombre").textContent = jugadorActual;
@@ -1197,11 +1320,20 @@
             indiceVotante = 0;
             ultimoVoto = null;
 
+            // Restaurar temporizador
+            detenerTemporizador();
+            tiempoRestante = tiempoSeleccionado;
+            actualizarDisplayTiempo();
+
             document.getElementById("numeroInfo").textContent = `BAILE ${indiceBaile + 1} DE ${colaBailes.length}`;
             document.getElementById("nombreInfo").textContent = baile.nombre;
             document.getElementById("selloEstrellas").textContent = "✦".repeat(baile.estrellas) + " nivel " + baile.estrellas;
-            document.getElementById("enlaceInfo").style.display = "block";
-            document.getElementById("enlaceInfo").href = baile.enlace;
+            
+            // Guardar URL en data-url para el popup
+            const enlace = document.getElementById("enlaceInfo");
+            enlace.setAttribute('data-url', baile.enlace);
+            enlace.href = baile.enlace;
+            enlace.style.display = "block";
 
             document.getElementById("bailaNombre").textContent = baileInfo.jugador;
             document.getElementById("bailaAgrupacion").textContent = baileInfo.agrupacion;
@@ -1521,6 +1653,7 @@
             indiceDraft = 0;
             votos = [];
             votacionActiva = false;
+            detenerTemporizador();
 
             document.getElementById("resultado").style.display = "none";
             document.getElementById("listaBailesJugadores").style.display = "none";
@@ -1528,7 +1661,7 @@
             document.getElementById("btnIniciarPartida").textContent = "🎵 Iniciar Baile de Taifas";
             document.getElementById("btnTerminarPartida").style.display = "none";
             document.getElementById("estadoJuego").style.display = "none";
-            document.getElementById("infoAgrupaciones").innerHTML = "Esperando a que comience la partida...";
+            document.getElementById("infoAgrupaciones").innerHTML = "Mínimo 2 jugadores para empezar";
 
             actualizarClasificacion();
             guardarPartidaAuto();
