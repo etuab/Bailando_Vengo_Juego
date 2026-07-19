@@ -405,26 +405,8 @@
     <div id="toastContainer"></div>
 
     <!-- ============================================================ -->
-    <!-- NAVEGACIÓN A OTRAS MODALIDADES                                -->
+    <!-- PANEL DE JUGADORES                                             -->
     <!-- ============================================================ -->
-    <div class="panel" style="background: var(--basalt-2); border-color: var(--ochre);">
-        <div class="panel-titulo" style="border-bottom-color: var(--ochre);">🎮 Modalidades</div>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
-            <a href="index.html" style="flex: 1; min-width: 120px; text-decoration: none;">
-                <button class="btn-modalidad-juego activo" style="width: 100%;">
-                    🕺 Baile a Ciegas
-                    <small>Modalidad actual</small>
-                </button>
-            </a>
-            <a href="modalidad_taifas.html" style="flex: 1; min-width: 120px; text-decoration: none;">
-                <button class="btn-modalidad-juego" style="width: 100%;">
-                    🎵 Baile de Taifas
-                    <small>Nueva modalidad</small>
-                </button>
-            </a>
-        </div>
-    </div>
-
     <div class="panel">
         <div class="panel-titulo">👥 Jugadores</div>
         <input type="text" id="nombreJugador" class="input-nombre" placeholder="Nombre del jugador">
@@ -435,14 +417,22 @@
         </div>
         <div id="listaJugadores" style="margin-top:10px;"></div>
     </div>
+
+    <!-- ============================================================ -->
+    <!-- TURNO ACTUAL                                                   -->
+    <!-- ============================================================ -->
     <div id="turnoActual" class="turno-actual">
         <span class="etiqueta">Turno de</span>
         <span class="nombre" id="nombreTurno"></span>
         <div><span id="estadoVotacion" class="votacion-activa" style="display:none;">🗳️ Votación en curso</span></div>
     </div>
+
+    <!-- ============================================================ -->
+    <!-- PANEL DE PARTIDA                                               -->
+    <!-- ============================================================ -->
     <div class="panel">
         <div class="panel-titulo">🎲 Partida</div>
-        <div class="bailes-restantes" id="bailesRestantes">175 bailes disponibles</div>
+        <div class="bailes-restantes" id="bailesRestantes">Cargando bailes...</div>
         <button class="btn-principal" onclick="sortearBaile()" id="btnSortearBaile">🎲 Sortear baile</button>
         <div class="acciones-menores">
             <button class="btn-texto" onclick="saltarTurno()">Saltar turno</button>
@@ -452,17 +442,25 @@
             <button class="btn-texto" onclick="reiniciarPartida()">Reiniciar todo</button>
         </div>
     </div>
+
+    <!-- ============================================================ -->
+    <!-- CLASIFICACIÓN                                                  -->
+    <!-- ============================================================ -->
     <div class="panel" id="panelClasificacion">
         <div class="panel-titulo">🏆 Clasificación</div>
         <div id="clasificacionContainer" class="clasificacion-container">
             <p style="color:var(--sand-dim); font-size:0.85em;">Aún no hay puntuaciones.</p>
         </div>
     </div>
+
+    <!-- ============================================================ -->
+    <!-- RESULTADO (BILLETE)                                            -->
+    <!-- ============================================================ -->
     <div id="resultado" class="billete">
         <div class="num" id="numeroBaile"></div>
         <h2 id="nombreBaile"></h2>
         <span class="sello-estrellas" id="selloEstrellas"></span>
-        <a id="enlaceBaile" href="#" target="_blank" class="enlace-video">🎬 Ver vídeo de referencia</a>
+        <a id="enlaceBaile" href="#" target="_blank" class="enlace-video" rel="noopener noreferrer">🎬 Ver vídeo de referencia</a>
         <div class="linea-divisoria"></div>
         <div style="font-weight:600; margin-bottom:8px; text-align:center; color:var(--sand-dim); font-size:0.85em;">¿CÓMO QUIERE BAILARLO?</div>
         <div class="modalidad-row">
@@ -490,13 +488,36 @@
         </div>
     </div>
 
-    <script src="lista_bailes.js"></script>
-    <script>
-        const BAILES = [
-            // ... TU LISTA DE 175 BAILES AQUÍ ...
-            // (No la pongo entera para no ocupar, pero tú tienes que ponerla)
-        ];
+    <!-- ============================================================ -->
+    <!-- NAVEGACIÓN A OTRAS MODALIDADES (AL FINAL, SIN TOCAR EL JS)    -->
+    <!-- ============================================================ -->
+    <div class="panel" style="background: var(--basalt-2); border-color: var(--ochre); margin-top:20px;">
+        <div class="panel-titulo" style="border-bottom-color: var(--ochre);">🎮 Otras modalidades</div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+            <a href="index.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego activo" style="width: 100%;">
+                    🕺 Baile a Ciegas
+                    <small>Modalidad actual</small>
+                </button>
+            </a>
+            <a href="modalidad_taifas.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">
+                    🎵 Baile de Taifas
+                    <small>Nueva modalidad</small>
+                </button>
+            </a>
+        </div>
+    </div>
 
+    <!-- ============================================================ -->
+    <!-- CARGAR LA LISTA DE BAILES DESDE ARCHIVO EXTERNO               -->
+    <!-- ============================================================ -->
+    <script src="lista_bailes.js"></script>
+
+    <!-- ============================================================ -->
+    <!-- CÓDIGO DEL JUEGO                                              -->
+    <!-- ============================================================ -->
+    <script>
         let jugadores = [];
         let puntuaciones = {};
         let turnoActual = 0;
@@ -512,7 +533,7 @@
         let timeoutResultado = null;
         let ultimoVoto = null;
 
-        function mostrarToast(mensaje){
+        function mostrarToast(mensaje) {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = 'toast';
@@ -521,7 +542,7 @@
             setTimeout(() => toast.remove(), 2800);
         }
 
-        function actualizarBailesRestantes(){
+        function actualizarBailesRestantes() {
             if (typeof BAILES === 'undefined') {
                 document.getElementById("bailesRestantes").textContent = "⚠️ Bailes no cargados";
                 return;
@@ -533,9 +554,9 @@
             document.getElementById('btnSortearBaile').disabled = (restantes === 0);
         }
 
-        function actualizarListaJugadores(){
+        function actualizarListaJugadores() {
             const container = document.getElementById("listaJugadores");
-            if (jugadores.length === 0){
+            if (jugadores.length === 0) {
                 container.innerHTML = "<p style='color:var(--sand-dim); font-size:0.85em;'>No hay jugadores todavía.</p>";
                 return;
             }
@@ -547,23 +568,23 @@
             container.innerHTML = html;
         }
 
-        function mostrarTurnoActual(nuevoTurno = false){
+        function mostrarTurnoActual(nuevoTurno = false) {
             if (jugadores.length === 0 || partidaFinalizada) return;
             const nombre = jugadores[turnoActual];
             const el = document.getElementById("turnoActual");
             document.getElementById("nombreTurno").textContent = nombre;
             el.style.display = "block";
             el.classList.remove('nuevo-turno');
-            if (nuevoTurno){
+            if (nuevoTurno) {
                 el.classList.add('nuevo-turno');
                 setTimeout(() => el.classList.remove('nuevo-turno'), 1600);
             }
             actualizarListaJugadores();
         }
 
-        function actualizarClasificacion(){
+        function actualizarClasificacion() {
             const container = document.getElementById("clasificacionContainer");
-            if (jugadores.length === 0){
+            if (jugadores.length === 0) {
                 container.innerHTML = "<p style='color:var(--sand-dim); font-size:0.85em;'>Aún no hay puntuaciones.</p>";
                 return;
             }
@@ -578,18 +599,18 @@
             actualizarBailesRestantes();
         }
 
-        function añadirJugador(){
-            if (partidaFinalizada){
+        function añadirJugador() {
+            if (partidaFinalizada) {
                 mostrarToast("La partida ha finalizado. Reinicia para añadir jugadores.");
                 return;
             }
             const input = document.getElementById("nombreJugador");
             const nombre = input.value.trim();
-            if (!nombre){
+            if (!nombre) {
                 mostrarToast("Escribe un nombre primero.");
                 return;
             }
-            if (jugadores.includes(nombre)){
+            if (jugadores.includes(nombre)) {
                 mostrarToast("Ese jugador ya está en la lista.");
                 return;
             }
@@ -598,15 +619,15 @@
             input.value = "";
             actualizarListaJugadores();
             actualizarClasificacion();
-            if (jugadores.length === 1){
+            if (jugadores.length === 1) {
                 turnoActual = 0;
                 mostrarTurnoActual(true);
             }
             guardarPartidaAuto();
         }
 
-        function eliminarJugadores(){
-            if (partidaFinalizada){
+        function eliminarJugadores() {
+            if (partidaFinalizada) {
                 mostrarToast("Reinicia la partida primero.");
                 return;
             }
@@ -624,12 +645,12 @@
             guardarPartidaAuto();
         }
 
-        function barajarOrden(){
-            if (jugadores.length < 2){
+        function barajarOrden() {
+            if (jugadores.length < 2) {
                 mostrarToast("Necesitas al menos 2 jugadores.");
                 return;
             }
-            for (let i = jugadores.length - 1; i > 0; i--){
+            for (let i = jugadores.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [jugadores[i], jugadores[j]] = [jugadores[j], jugadores[i]];
             }
@@ -640,25 +661,25 @@
             mostrarToast("🔀 Orden barajado.");
         }
 
-        function sortearBaile(){
-            if (partidaFinalizada){
+        function sortearBaile() {
+            if (partidaFinalizada) {
                 mostrarToast("La partida ha finalizado.");
                 return;
             }
-            if (jugadores.length === 0){
+            if (jugadores.length === 0) {
                 mostrarToast("Añade jugadores primero.");
                 return;
             }
-            if (typeof BAILES === 'undefined'){
+            if (typeof BAILES === 'undefined') {
                 mostrarToast('⏳ La lista de bailes no está cargada.');
                 return;
             }
-            if (votacionActiva){
+            if (votacionActiva) {
                 mostrarToast("Hay una votación activa. Finalízala primero.");
                 return;
             }
             let disponibles = BAILES.filter(b => !bailesUsados.includes(b.id));
-            if (disponibles.length === 0){
+            if (disponibles.length === 0) {
                 mostrarToast("🎉 ¡Ya se han bailado todos los bailes!");
                 return;
             }
@@ -675,7 +696,7 @@
             guardarPartidaAuto();
         }
 
-        function mostrarBaile(baile){
+        function mostrarBaile(baile) {
             document.getElementById("numeroBaile").textContent = `BAILE Nº ${baile.id} DE ${BAILES.length}`;
             document.getElementById("nombreBaile").textContent = baile.nombre;
             document.getElementById("selloEstrellas").textContent = "✦".repeat(baile.estrellas) + " nivel " + baile.estrellas;
@@ -700,7 +721,7 @@
             }
         }
 
-        function elegirModalidad(modalidad){
+        function elegirModalidad(modalidad) {
             if (partidaFinalizada) return;
             modalidadActual = modalidad;
             document.getElementById("btnSinRed").className = "btn-modalidad" + (modalidad === 'sinred' ? " activo-verde" : "");
@@ -708,9 +729,9 @@
             document.getElementById("modalidadSeleccionada").textContent = modalidad === 'sinred' ? "Sin red: puntuación completa si sale bien." : "Con chuleta: mitad de puntos si sale bien.";
         }
 
-        function saltarTurno(){
+        function saltarTurno() {
             if (jugadores.length === 0) return;
-            if (votacionActiva){
+            if (votacionActiva) {
                 mostrarToast("Hay una votación activa. Finalízala primero.");
                 return;
             }
@@ -719,21 +740,21 @@
             mostrarToast(`⏭️ Turno saltado. Ahora le toca a ${jugadores[turnoActual]}`);
         }
 
-        function iniciarVotacion(){
+        function iniciarVotacion() {
             if (partidaFinalizada) return;
-            if (jugadores.length < 2){
+            if (jugadores.length < 2) {
                 mostrarToast("Se necesitan al menos 2 jugadores para votar.");
                 return;
             }
-            if (votacionActiva){
+            if (votacionActiva) {
                 mostrarToast("Ya hay una votación en curso.");
                 return;
             }
-            if (!modalidadActual){
+            if (!modalidadActual) {
                 mostrarToast("Elige antes: sin red o con chuleta.");
                 return;
             }
-            if (!baileActual){
+            if (!baileActual) {
                 mostrarToast("Sortea un baile primero.");
                 return;
             }
@@ -744,7 +765,7 @@
             ultimoVoto = null;
             const indiceActual = jugadores.indexOf(nombre);
             votantesPendientes = [];
-            for (let i = 1; i < jugadores.length; i++){
+            for (let i = 1; i < jugadores.length; i++) {
                 votantesPendientes.push(jugadores[(indiceActual + i) % jugadores.length]);
             }
             votantesPendientes.push(nombre);
@@ -752,7 +773,7 @@
             actualizarVotante();
         }
 
-        function actualizarVotante(){
+        function actualizarVotante() {
             const votanteActual = votantesPendientes[indiceVotante];
             document.getElementById("votacionJugador").textContent = votanteActual;
             document.getElementById("progresoVotacion").textContent = ` (${indiceVotante + 1}/${votantesPendientes.length})`;
@@ -765,7 +786,7 @@
             ultimoVoto = null;
         }
 
-        function votar(valor){
+        function votar(valor) {
             if (!votacionActiva) return;
             const votanteActual = votantesPendientes[indiceVotante];
             document.querySelectorAll('.voto-boton').forEach(b => b.classList.remove('seleccionado'));
@@ -773,15 +794,15 @@
             ultimoVoto = { votante: votanteActual, voto: valor };
             votos.push(ultimoVoto);
             indiceVotante++;
-            if (indiceVotante < votantesPendientes.length){
+            if (indiceVotante < votantesPendientes.length) {
                 setTimeout(actualizarVotante, 400);
             } else {
                 setTimeout(mostrarResultadosVotacion, 400);
             }
         }
 
-        function deshacerVoto(){
-            if (!votacionActiva || votos.length === 0){
+        function deshacerVoto() {
+            if (!votacionActiva || votos.length === 0) {
                 mostrarToast("No hay voto que deshacer.");
                 return;
             }
@@ -791,18 +812,18 @@
             mostrarToast("↩️ Último voto deshecho.");
         }
 
-        function mostrarResultadosVotacion(){
+        function mostrarResultadosVotacion() {
             votacionActiva = false;
             let votosBien = votos.filter(v => v.voto === 'bien').length;
             let votosMal = votos.filter(v => v.voto === 'mal').length;
             let aprobado = votosBien >= votosMal;
             let puntos = 0;
-            if (aprobado){
+            if (aprobado) {
                 puntos = modalidadActual === 'sinred' ? baileActual.puntosSinRed || baileActual.estrellas * 10 : baileActual.puntosConChuleta || baileActual.estrellas * 5;
             }
             document.getElementById("resultadoVotacion").style.display = "block";
             document.getElementById("votosResumen").textContent = "Votos: " + votos.map(v => `${v.votante}: ${v.voto === 'bien' ? '👍' : '👎'}`).join(' ');
-            if (jugadorVotado && aprobado){
+            if (jugadorVotado && aprobado) {
                 puntuaciones[jugadorVotado] = (puntuaciones[jugadorVotado] || 0) + puntos;
                 actualizarClasificacion();
             }
@@ -814,7 +835,7 @@
             const disponibles = BAILES.filter(b => !bailesUsados.includes(b.id));
             const btnSig = document.getElementById("botonSiguienteBaile");
             btnSig.style.display = "block";
-            if (disponibles.length > 0){
+            if (disponibles.length > 0) {
                 btnSig.textContent = `🎯 Siguiente baile (${disponibles.length} disponibles) ➜`;
                 btnSig.disabled = false;
             } else {
@@ -824,10 +845,10 @@
             guardarPartidaAuto();
         }
 
-        function siguienteBaile(){
+        function siguienteBaile() {
             if (partidaFinalizada || jugadores.length === 0) return;
             const disponibles = BAILES.filter(b => !bailesUsados.includes(b.id));
-            if (disponibles.length === 0){
+            if (disponibles.length === 0) {
                 mostrarToast("🎉 ¡Ya no quedan más bailes!");
                 return;
             }
@@ -840,12 +861,12 @@
             sortearBaile();
         }
 
-        function finalizarPartida(){
-            if (jugadores.length === 0){
+        function finalizarPartida() {
+            if (jugadores.length === 0) {
                 mostrarToast("No hay jugadores en la partida.");
                 return;
             }
-            if (votacionActiva){
+            if (votacionActiva) {
                 mostrarToast("Hay una votación activa. Finalízala primero.");
                 return;
             }
@@ -873,7 +894,7 @@
             guardarPartidaAuto();
         }
 
-        function reiniciarPartida(){
+        function reiniciarPartida() {
             if (!confirm("¿Reiniciar toda la partida?")) return;
             if (timeoutResultado) {
                 clearTimeout(timeoutResultado);
@@ -904,30 +925,38 @@
             mostrarToast("🔄 Partida reiniciada.");
         }
 
-        function guardarPartidaAuto(){
-            try{
+        function guardarPartidaAuto() {
+            try {
                 localStorage.setItem('baileACiegasPartida', JSON.stringify({
-                    jugadores, puntuaciones, turnoActual, bailesUsados, partidaFinalizada
+                    jugadores,
+                    puntuaciones,
+                    turnoActual,
+                    bailesUsados,
+                    partidaFinalizada
                 }));
-            }catch(e){ console.log('No se pudo autoguardar:', e); }
+            } catch (e) { console.log('No se pudo autoguardar:', e); }
         }
 
-        function exportarPartida(){
+        function exportarPartida() {
             const datos = {
-                jugadores, puntuaciones, turnoActual, bailesUsados, partidaFinalizada,
+                jugadores,
+                puntuaciones,
+                turnoActual,
+                bailesUsados,
+                partidaFinalizada,
                 fecha: new Date().toISOString()
             };
-            const blob = new Blob([JSON.stringify(datos, null, 2)], {type: 'application/json'});
+            const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `partida_baile_${new Date().toISOString().slice(0,10)}.json`;
+            a.download = `partida_baile_${new Date().toISOString().slice(0, 10)}.json`;
             a.click();
             URL.revokeObjectURL(url);
             mostrarToast("💾 Partida exportada.");
         }
 
-        function cargarPartida(){
+        function cargarPartida() {
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = '.json';
@@ -936,7 +965,7 @@
                 if (!file) return;
                 const reader = new FileReader();
                 reader.onload = (event) => {
-                    try{
+                    try {
                         const datos = JSON.parse(event.target.result);
                         jugadores = datos.jugadores || [];
                         puntuaciones = datos.puntuaciones || {};
@@ -950,7 +979,7 @@
                         if (jugadores.length > 0 && !partidaFinalizada) mostrarTurnoActual(true);
                         guardarPartidaAuto();
                         mostrarToast("📂 Partida cargada.");
-                    }catch(e){
+                    } catch (e) {
                         mostrarToast("Error al leer el archivo.");
                     }
                 };
@@ -959,12 +988,12 @@
             input.click();
         }
 
-        function cargarPartidaAuto(){
-            try{
+        function cargarPartidaAuto() {
+            try {
                 const datos = localStorage.getItem('baileACiegasPartida');
                 if (!datos) return;
                 const parsed = JSON.parse(datos);
-                if (parsed.jugadores && parsed.jugadores.length > 0){
+                if (parsed.jugadores && parsed.jugadores.length > 0) {
                     jugadores = parsed.jugadores;
                     puntuaciones = parsed.puntuaciones || {};
                     turnoActual = parsed.turnoActual || 0;
@@ -975,17 +1004,17 @@
                     actualizarClasificacion();
                     if (jugadores.length > 0 && !partidaFinalizada) mostrarTurnoActual(true);
                 }
-            }catch(e){ console.log('Error cargando partida:', e); }
+            } catch (e) { console.log('Error cargando partida:', e); }
         }
 
-        function iniciarApp(){
-            if (typeof BAILES === 'undefined'){
+        function iniciarApp() {
+            if (typeof BAILES === 'undefined') {
                 console.error('❌ Error: BAILES no está definido.');
                 mostrarToast('⚠️ Error: La lista de bailes no se cargó.');
                 document.getElementById("bailesRestantes").textContent = '⚠️ Error: Bailes no cargados';
                 return;
             }
-            for (let i = BAILES.length - 1; i > 0; i--){
+            for (let i = BAILES.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [BAILES[i], BAILES[j]] = [BAILES[j], BAILES[i]];
             }
@@ -994,7 +1023,7 @@
             console.log(`✅ App iniciada. ${BAILES.length} bailes cargados.`);
         }
 
-        if (document.readyState === 'loading'){
+        if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', iniciarApp);
         } else {
             iniciarApp();
