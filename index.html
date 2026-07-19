@@ -301,6 +301,7 @@
             padding:10px;
             border:1.5px solid var(--ocean);
             border-radius:10px;
+            cursor:pointer;
         }
         .enlace-video:active{background:rgba(31,111,120,0.15);}
         .modalidad-row{display:flex; gap:8px; margin-bottom:6px;}
@@ -405,7 +406,7 @@
     <div id="toastContainer"></div>
 
     <!-- ============================================================ -->
-    <!-- NAVEGACIÓN ENTRE MODALIDADES (4 BOTONES)                      -->
+    <!-- NAVEGACIÓN ENTRE MODALIDADES                                   -->
     <!-- ============================================================ -->
     <div class="panel" style="background: var(--basalt-2); border-color: var(--ochre);">
         <div class="panel-titulo" style="border-bottom-color: var(--ochre);">🎮 Modalidades</div>
@@ -489,7 +490,7 @@
         <div class="num" id="numeroBaile"></div>
         <h2 id="nombreBaile"></h2>
         <span class="sello-estrellas" id="selloEstrellas"></span>
-        <a id="enlaceBaile" href="#" target="_blank" class="enlace-video" rel="noopener noreferrer">🎬 Ver vídeo de referencia</a>
+        <a href="#" onclick="abrirVideoPopup(); return false;" class="enlace-video" id="enlaceBaile">🎬 Ver vídeo de referencia</a>
         <div class="linea-divisoria"></div>
         <div style="font-weight:600; margin-bottom:8px; text-align:center; color:var(--sand-dim); font-size:0.85em;">¿CÓMO QUIERE BAILARLO?</div>
         <div class="modalidad-row">
@@ -517,9 +518,6 @@
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- CÓDIGO DEL JUEGO                                               -->
-    <!-- ============================================================ -->
     <script>
         // ============================================================
         // 🎵 LISTA DE BAILES (175 bailes)
@@ -701,6 +699,34 @@
             { "id": 2, "nombre": "FOLÍAS DE ARICO", "enlace": "https://telegram.me/c/2585777945/22", "estrellas": 4 },
             { "id": 1, "nombre": "FOLÍAS DE ARICO (A.F. LAS HIEDRAS)", "enlace": "https://telegram.me/c/2585777945/18", "estrellas": 4 }
         ];
+
+        // ============================================================
+        // FUNCIÓN PARA ABRIR VÍDEO EN POPUP
+        // ============================================================
+        function abrirVideoPopup() {
+            const enlace = document.getElementById('enlaceBaile');
+            const url = enlace.getAttribute('data-url') || enlace.href;
+            
+            if (!url || url === '#') {
+                mostrarToast("⚠️ No hay vídeo disponible para este baile.");
+                return;
+            }
+            
+            // Guardar estado antes de abrir
+            guardarPartidaAuto();
+            
+            // Abrir ventana emergente
+            const ancho = Math.min(600, window.innerWidth * 0.9);
+            const alto = Math.min(500, window.innerHeight * 0.8);
+            const izquierda = (window.innerWidth - ancho) / 2;
+            const arriba = (window.innerHeight - alto) / 2;
+            
+            const opciones = `width=${ancho},height=${alto},left=${izquierda},top=${arriba},scrollbars=yes,resizable=yes,menubar=no,toolbar=no`;
+            
+            window.open(url, 'videoPopup', opciones);
+            
+            mostrarToast("📺 Vídeo abierto. Cuando termines, cierra la ventana y vuelve al juego.");
+        }
 
         // ============================================================
         // CÓDIGO DEL JUEGO
@@ -887,7 +913,10 @@
             document.getElementById("numeroBaile").textContent = `BAILE Nº ${baile.id} DE ${BAILES.length}`;
             document.getElementById("nombreBaile").textContent = baile.nombre;
             document.getElementById("selloEstrellas").textContent = "✦".repeat(baile.estrellas) + " nivel " + baile.estrellas;
-            document.getElementById("enlaceBaile").href = baile.enlace;
+            // Guardar URL en data-url para el popup
+            const enlace = document.getElementById("enlaceBaile");
+            enlace.setAttribute('data-url', baile.enlace);
+            enlace.href = baile.enlace;
             const puntosSinRed = baile.puntosSinRed || baile.estrellas * 10;
             const puntosConChuleta = baile.puntosConChuleta || baile.estrellas * 5;
             document.getElementById("puntosSinRedTxt").textContent = puntosSinRed + " pts";
