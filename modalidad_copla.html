@@ -1,1 +1,1284 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Completa La Copla · Folclore Canario</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=Work+Sans:wght@400;500;600;700&display=swap');
+        :root{
+            --basalt-0:#161210;
+            --basalt-1:#211a16;
+            --basalt-2:#2c2420;
+            --sand:#f4ead4;
+            --sand-dim:#c9bba0;
+            --terracota:#c1502e;
+            --terracota-dark:#8f3a21;
+            --terracota-light:#e07a52;
+            --ocean:#1f6f78;
+            --ocean-light:#4fa3ab;
+            --ochre:#d4a017;
+            --ochre-light:#eac35c;
+            --line: rgba(244,234,212,0.12);
+        }
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{
+            font-family:'Work Sans', sans-serif;
+            background: radial-gradient(circle at 15% 0%, rgba(193,80,46,0.18), transparent 45%), radial-gradient(circle at 100% 20%, rgba(31,111,120,0.16), transparent 50%), var(--basalt-0);
+            color:var(--sand);
+            min-height:100vh;
+            padding:14px;
+            max-width:520px;
+            margin:0 auto;
+            font-size:16px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        h1{
+            font-family:'Fraunces', serif;
+            font-weight:800;
+            font-size:1.7em;
+            text-align:center;
+            letter-spacing:0.5px;
+            color:var(--sand);
+            margin:6px 0 2px;
+        }
+        h1 .isla{
+            display:block;
+            font-family:'Work Sans', sans-serif;
+            font-weight:600;
+            font-size:0.32em;
+            letter-spacing:3px;
+            text-transform:uppercase;
+            color:var(--ochre-light);
+            margin-top:4px;
+        }
+        .subtitulo{
+            text-align:center;
+            color:var(--sand-dim);
+            font-size:0.85em;
+            margin-bottom:16px;
+        }
+        .panel{
+            margin-top:14px;
+            padding:16px;
+            background:var(--basalt-1);
+            border:1px solid var(--line);
+            border-radius:14px;
+        }
+        .panel-titulo{
+            font-family:'Fraunces', serif;
+            font-weight:700;
+            font-size:1.05em;
+            color:var(--ochre-light);
+            display:flex;
+            align-items:center;
+            gap:8px;
+            margin-bottom:12px;
+            padding-bottom:8px;
+            border-bottom:1px solid var(--line);
+        }
+        button{
+            font-family:'Work Sans', sans-serif;
+            border:none;
+            border-radius:10px;
+            cursor:pointer;
+            touch-action:manipulation;
+            transition:transform 0.15s ease, opacity 0.15s ease;
+        }
+        button:active{transform:scale(0.97);}
+        .btn-principal{
+            display:block;
+            width:100%;
+            background:var(--terracota);
+            color:var(--sand);
+            font-weight:700;
+            font-size:1.15em;
+            padding:16px;
+            border-radius:14px;
+            box-shadow:0 6px 0 var(--terracota-dark);
+        }
+        .btn-principal:active{box-shadow:0 3px 0 var(--terracota-dark); transform:translateY(3px) scale(1);}
+        .btn-principal:disabled{opacity:0.35; box-shadow:none; cursor:not-allowed;}
+        .btn-principal.secundario{background:var(--ocean); box-shadow:0 6px 0 var(--ocean);}
+        .btn-secundario{
+            background:transparent;
+            color:var(--sand);
+            border:1.5px solid var(--line);
+            font-size:0.85em;
+            font-weight:600;
+            padding:9px 14px;
+        }
+        .btn-secundario:hover{border-color:var(--ocean-light);}
+        .btn-texto{
+            background:none;
+            color:var(--sand-dim);
+            font-size:0.8em;
+            text-decoration:underline;
+            padding:6px 4px;
+        }
+        .btn-modalidad-juego{
+            width:100%;
+            padding:12px;
+            border-radius:10px;
+            font-weight:600;
+            transition:all 0.3s;
+            background:var(--basalt-1);
+            color:var(--sand);
+            border:2px solid var(--line);
+        }
+        .btn-modalidad-juego.activo{
+            background:var(--terracota);
+            border-color:var(--ochre);
+        }
+        .btn-modalidad-juego small{
+            display:block;
+            font-weight:400;
+            font-size:0.7em;
+            opacity:0.8;
+        }
+        .fila-botones{
+            display:flex;
+            flex-wrap:wrap;
+            gap:8px;
+            margin-top:10px;
+            justify-content:center;
+        }
+        .acciones-menores{
+            display:flex;
+            justify-content:center;
+            gap:14px;
+            margin-top:10px;
+            flex-wrap:wrap;
+        }
+        .input-nombre{
+            padding:12px;
+            font-size:16px;
+            border-radius:9px;
+            border:1.5px solid var(--line);
+            background:var(--basalt-2);
+            color:var(--sand);
+            width:100%;
+            margin-bottom:8px;
+        }
+        .input-nombre:focus{outline:none; border-color:var(--ocean-light);}
+        .jugador-item{
+            padding:6px 12px;
+            background:var(--basalt-2);
+            margin:3px;
+            border-radius:20px;
+            display:inline-block;
+            font-size:0.9em;
+            border:1px solid var(--line);
+        }
+        .clasificacion-container{max-height:280px; overflow-y:auto;}
+        .clasificacion-item{
+            padding:9px 12px;
+            background:var(--basalt-2);
+            margin:5px 0;
+            border-radius:10px;
+            display:flex;
+            align-items:center;
+            gap:10px;
+            border-left:3px solid var(--ochre);
+        }
+        .clasificacion-item .posicion{
+            font-family:'Fraunces', serif;
+            font-weight:700;
+            color:var(--ochre-light);
+            min-width:26px;
+        }
+        .clasificacion-item .nombre{flex:1; font-weight:600;}
+        .clasificacion-item .puntos{color:var(--terracota-light); font-weight:700;}
+        .estado-juego{
+            text-align:center;
+            padding:12px;
+            border-radius:12px;
+            margin:8px 0;
+            font-weight:600;
+        }
+        .estado-juego.ronda{
+            background:rgba(212,160,23,0.12);
+            border:1px solid var(--ochre);
+            color:var(--ochre-light);
+        }
+        .estado-juego.final{
+            background:rgba(193,80,46,0.12);
+            border:1px solid var(--terracota);
+            color:var(--terracota-light);
+        }
+        .billete{
+            display:none;
+            margin-top:16px;
+            position:relative;
+            background:var(--basalt-2);
+            border-radius:16px;
+            padding:20px 18px 18px;
+            border:1px solid var(--line);
+        }
+        .billete::before, .billete::after{
+            content:"";
+            position:absolute;
+            top:50%;
+            width:22px;
+            height:22px;
+            background:var(--basalt-0);
+            border-radius:50%;
+            transform:translateY(-50%);
+        }
+        .billete::before{left:-11px;}
+        .billete::after{right:-11px;}
+        .billete .num{
+            font-family:'Fraunces', serif;
+            font-size:0.75em;
+            color:var(--sand-dim);
+            letter-spacing:1px;
+        }
+        .billete h2{
+            font-family:'Fraunces', serif;
+            font-size:1.2em;
+            color:var(--sand);
+            margin:4px 0 10px;
+            line-height:1.25;
+        }
+        .linea-divisoria{
+            border-top:1.5px dashed var(--line);
+            margin:16px 0;
+        }
+        .copla-texto{
+            font-size:1.05em;
+            line-height:1.6;
+            color:var(--sand);
+            text-align:center;
+            padding:10px;
+            background:var(--basalt-1);
+            border-radius:10px;
+            border:1px solid var(--line);
+            margin:10px 0;
+        }
+        .copla-texto .hueco{
+            display:inline-block;
+            color:var(--ochre-light);
+            font-weight:700;
+            text-decoration:underline;
+            text-decoration-style:dotted;
+            padding:0 4px;
+            min-width:60px;
+        }
+        .palabras-grid{
+            display:grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            gap:6px;
+            margin-top:14px;
+        }
+        .btn-palabra{
+            padding:8px 4px;
+            border-radius:8px;
+            border:2px solid var(--line);
+            background:var(--basalt-1);
+            color:var(--sand);
+            font-weight:600;
+            font-size:0.8em;
+            transition:all 0.3s;
+            text-align:center;
+            cursor:pointer;
+            min-height:40px;
+        }
+        .btn-palabra:active{transform:scale(0.95);}
+        .btn-palabra.seleccionada{
+            background:var(--ocean);
+            border-color:var(--ocean-light);
+        }
+        .btn-palabra.correcta{
+            background:var(--ocean);
+            border-color:var(--ocean);
+        }
+        .btn-palabra.incorrecta{
+            background:var(--terracota);
+            border-color:var(--terracota);
+        }
+        .btn-palabra:disabled{
+            opacity:0.5;
+            cursor:not-allowed;
+            transform:none;
+        }
+        .seleccionadas-container{
+            display:flex;
+            gap:10px;
+            justify-content:center;
+            margin:12px 0;
+            flex-wrap:wrap;
+        }
+        .seleccionada-tag{
+            padding:6px 14px;
+            border-radius:20px;
+            background:var(--basalt-2);
+            border:1px solid var(--ochre);
+            color:var(--ochre-light);
+            font-size:0.85em;
+        }
+        .seleccionada-tag .eliminar{
+            margin-left:6px;
+            cursor:pointer;
+            color:var(--terracota-light);
+            font-weight:700;
+        }
+        .temporizador-container{
+            text-align:center;
+            margin:10px 0;
+            padding:12px;
+            background:var(--basalt-2);
+            border-radius:12px;
+            border:1px solid var(--line);
+        }
+        .temporizador-container .display{
+            font-size:3em;
+            font-weight:800;
+            font-family:'Fraunces',serif;
+            color:var(--ochre-light);
+            transition:color 0.3s;
+        }
+        .temporizador-container .display.urgente{
+            color:var(--terracota-light);
+            animation:pulso 0.5s ease infinite;
+        }
+        .btn-tiempo{
+            padding:6px 12px;
+            border-radius:8px;
+            background:var(--basalt-1);
+            color:var(--sand);
+            border:1px solid var(--line);
+            font-size:0.85em;
+            cursor:pointer;
+        }
+        .btn-tiempo.activo{
+            background:var(--ocean);
+            border-color:var(--ocean-light);
+        }
+        @keyframes pulso{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+        .toast{
+            position:fixed;
+            bottom:18px;
+            left:50%;
+            transform:translateX(-50%);
+            background:var(--basalt-2);
+            color:var(--sand);
+            padding:12px 20px;
+            border-radius:12px;
+            border:1px solid var(--ochre);
+            z-index:1000;
+            font-size:0.85em;
+            max-width:90%;
+            text-align:center;
+            animation:subir 0.25s ease;
+        }
+        @keyframes subir{from{opacity:0; transform:translate(-50%,15px);} to{opacity:1; transform:translate(-50%,0);}}
+        .clasificacion-final{
+            border:2px solid var(--ochre);
+            border-radius:16px;
+            padding:18px;
+            margin-top:12px;
+            background:rgba(212,160,23,0.08);
+            text-align:center;
+        }
+        .clasificacion-final h2{font-family:'Fraunces',serif; color:var(--ochre-light); margin-bottom:4px;}
+        .clasificacion-final p{color:var(--sand-dim); font-size:0.85em; margin-bottom:14px;}
+        .copla-completa{
+            background:var(--basalt-1);
+            border-radius:10px;
+            padding:12px;
+            margin:10px 0;
+            border-left:3px solid var(--ochre);
+            font-size:0.95em;
+            line-height:1.6;
+            color:var(--sand);
+        }
+        .copla-completa .resaltada{
+            color:var(--ochre-light);
+            font-weight:700;
+        }
+        @media (max-width: 480px){
+            body{padding:10px; font-size:14px;}
+            h1{font-size:1.5em;}
+            .palabras-grid{grid-template-columns:1fr 1fr 1fr;}
+            .btn-palabra{font-size:0.7em; min-height:36px;}
+            .temporizador-container .display{font-size:2.5em;}
+            .copla-texto{font-size:0.9em;}
+        }
+    </style>
+</head>
+<body>
+    <h1>Completa La Copla<span class="isla">Folclore Canario · Juego de grupo</span></h1>
+    <p class="subtitulo">Completa la copla con las palabras que faltan</p>
+    <div id="toastContainer"></div>
+
+    <!-- ============================================================ -->
+    <!-- NAVEGACIÓN ENTRE MODALIDADES (9 BOTONES)                      -->
+    <!-- ============================================================ -->
+    <div class="panel" style="background: var(--basalt-2); border-color: var(--ochre);">
+        <div class="panel-titulo" style="border-bottom-color: var(--ochre);">🎮 Modalidades</div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+            <a href="index.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">🕺 Baile a Ciegas <small>Modalidad original</small></button>
+            </a>
+            <a href="modalidad_taifas.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">🎵 Baile de Taifas <small>Segunda modalidad</small></button>
+            </a>
+            <a href="modalidad_adivina.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">🎧 Pon La Oreja <small>Tercera modalidad</small></button>
+            </a>
+            <a href="modalidad_adivina_visual.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">👀 Miralo bien mi niño <small>Cuarta modalidad</small></button>
+            </a>
+            <a href="modalidad_saber.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">📝 ¡A que lo Sabes! <small>Quinta modalidad</small></button>
+            </a>
+            <a href="modalidad_islas.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">👗 Adivina La Isla <small>Sexta modalidad</small></button>
+            </a>
+            <a href="modalidad_copla.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego activo" style="width: 100%;">🎵 Completa La Copla <small>Modalidad actual</small></button>
+            </a>
+            <a href="modalidad_senas.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">🎭 ¡A Señas Chacho! <small>Octava modalidad</small></button>
+            </a>
+            <a href="modalidad_gran_juego.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">🎵 BAILANDO VENGO <small>El Gran Juego</small></button>
+            </a>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PANEL DE JUGADORES                                             -->
+    <!-- ============================================================ -->
+    <div class="panel">
+        <div class="panel-titulo">👥 Jugadores</div>
+        <input type="text" id="nombreJugador" class="input-nombre" placeholder="Nombre del jugador">
+        <div class="fila-botones">
+            <button class="btn-secundario" onclick="añadirJugador()">➕ Añadir</button>
+            <button class="btn-secundario" onclick="barajarOrden()">🔀 Barajar</button>
+            <button class="btn-secundario" onclick="eliminarJugadores()">🗑️ Vaciar</button>
+        </div>
+        <div id="listaJugadores" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PANEL DE PARTIDA                                               -->
+    <!-- ============================================================ -->
+    <div class="panel">
+        <div class="panel-titulo">🎲 Partida</div>
+        <div id="infoPartida" style="font-size:0.85em; color:var(--sand-dim); margin-bottom:8px; text-align:center;">
+            Mínimo 1 jugador para empezar
+        </div>
+        <button class="btn-principal" onclick="iniciarPartida()" id="btnIniciarPartida">🎵 Iniciar Completa La Copla</button>
+        <div class="acciones-menores">
+            <button class="btn-texto" onclick="terminarPartida()" id="btnTerminarPartida" style="display:none;">🏁 Terminar partida</button>
+            <button class="btn-texto" onclick="exportarPartida()">💾 Guardar</button>
+            <button class="btn-texto" onclick="cargarPartida()">📂 Cargar</button>
+            <button class="btn-texto" onclick="reiniciarPartida()">🔄 Reiniciar</button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- CLASIFICACIÓN                                                  -->
+    <!-- ============================================================ -->
+    <div class="panel" id="panelClasificacion">
+        <div class="panel-titulo">🏆 Clasificación</div>
+        <div id="clasificacionContainer" class="clasificacion-container">
+            <p style="color:var(--sand-dim); font-size:0.85em;">Aún no hay puntuaciones.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ESTADO DEL JUEGO                                               -->
+    <!-- ============================================================ -->
+    <div id="estadoJuego" class="estado-juego" style="display:none;"></div>
+
+    <!-- ============================================================ -->
+    <!-- ZONA DE JUEGO                                                  -->
+    <!-- ============================================================ -->
+    <div id="zonaJuego" class="billete" style="display:none;">
+        <div class="num" id="numeroCopla"></div>
+        <h2 id="tituloCopla"></h2>
+        
+        <div style="text-align:center; font-size:0.9em; color:var(--ochre-light); margin:10px 0;">
+            🎯 Completa: <span id="nombreJugadorTurno" style="font-weight:700;"></span>
+        </div>
+
+        <!-- 🔥 TEMPORIZADOR -->
+        <div class="temporizador-container">
+            <div style="display:flex; gap:8px; justify-content:center; margin-bottom:8px; flex-wrap:wrap;">
+                <button class="btn-tiempo activo" data-tiempo="15" onclick="seleccionarTiempo(15)">15s</button>
+                <button class="btn-tiempo" data-tiempo="20" onclick="seleccionarTiempo(20)">20s</button>
+                <button class="btn-tiempo" data-tiempo="30" onclick="seleccionarTiempo(30)">30s</button>
+                <button class="btn-tiempo" data-tiempo="60" onclick="seleccionarTiempo(60)">1min</button>
+                <button onclick="iniciarTemporizador()" style="padding:6px 16px; border-radius:8px; background:var(--terracota); color:var(--sand); font-weight:700;">▶ Iniciar</button>
+                <button onclick="detenerTemporizador()" style="padding:6px 16px; border-radius:8px; background:var(--basalt-1); color:var(--sand); border:1px solid var(--line);">⏹ Detener</button>
+            </div>
+            <div class="display" id="displayTiempo">15</div>
+            <div style="font-size:0.7em; color:var(--sand-dim);">segundos</div>
+        </div>
+
+        <div class="copla-texto" id="coplaTexto"></div>
+
+        <div style="text-align:center; font-size:0.8em; color:var(--sand-dim); margin-bottom:6px;">
+            Selecciona las palabras que faltan:
+        </div>
+
+        <div class="seleccionadas-container" id="seleccionadasContainer">
+            <span style="color:var(--sand-dim); font-size:0.85em;">Selecciona 2 palabras...</span>
+        </div>
+
+        <div class="palabras-grid" id="palabrasContainer"></div>
+
+        <button class="btn-principal" onclick="comprobarRespuesta()" id="btnComprobar" style="display:none; margin-top:10px;">
+            ✅ Comprobar
+        </button>
+
+        <div id="resultadoRonda" style="display:none; margin-top:14px; padding:12px; background:var(--basalt-1); border-radius:10px;">
+            <p id="mensajeResultado" style="font-weight:700;"></p>
+            <div id="coplaCompletaContainer" class="copla-completa"></div>
+            <p id="detalleResultado" style="font-size:0.85em; color:var(--sand-dim); margin-top:6px;"></p>
+        </div>
+
+        <button id="botonSiguienteRonda" class="btn-principal secundario" style="display:none; margin-top:10px;" onclick="siguienteCopla()">
+            🎯 Siguiente copla ➜
+        </button>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- CARGAR COPLAS DESDE ARCHIVO EXTERNO                           -->
+    <!-- ============================================================ -->
+    <script src="coplas.js"></script>
+
+    <!-- ============================================================ -->
+    <!-- CÓDIGO DEL JUEGO                                               -->
+    <!-- ============================================================ -->
+    <script>
+        // ============================================================
+        // TEMPORIZADOR
+        // ============================================================
+        let tiempoSeleccionado = 30;
+        let tiempoRestante = 30;
+        let temporizadorActivo = false;
+        let intervalo = null;
+
+        function seleccionarTiempo(segundos) {
+            tiempoSeleccionado = segundos;
+            tiempoRestante = segundos;
+            actualizarDisplayTiempo();
+            document.querySelectorAll('.btn-tiempo').forEach(b => b.classList.remove('activo'));
+            document.querySelector(`.btn-tiempo[data-tiempo="${segundos}"]`).classList.add('activo');
+            detenerTemporizador();
+        }
+
+        function iniciarTemporizador() {
+            if (temporizadorActivo) {
+                detenerTemporizador();
+                return;
+            }
+            tiempoRestante = tiempoSeleccionado;
+            temporizadorActivo = true;
+            actualizarDisplayTiempo();
+            intervalo = setInterval(() => {
+                tiempoRestante--;
+                actualizarDisplayTiempo();
+                if (tiempoRestante <= 0) {
+                    detenerTemporizador();
+                    mostrarToast("⏰ ¡Tiempo!");
+                }
+            }, 1000);
+        }
+
+        function detenerTemporizador() {
+            temporizadorActivo = false;
+            if (intervalo) {
+                clearInterval(intervalo);
+                intervalo = null;
+            }
+            actualizarDisplayTiempo();
+        }
+
+        function actualizarDisplayTiempo() {
+            const display = document.getElementById("displayTiempo");
+            if (!display) return;
+            display.textContent = tiempoRestante;
+            if (tiempoRestante <= 5 && tiempoRestante > 0) {
+                display.className = "display urgente";
+            } else {
+                display.className = "display";
+            }
+        }
+
+        // ============================================================
+        // ESTADO DEL JUEGO
+        // ============================================================
+        let jugadores = [];
+        let puntuaciones = {};
+        let partidaActiva = false;
+        let fase = 'configuracion';
+        let rondaActual = 0;
+        let coplasUsadas = [];
+        let coplaActual = null;
+        let rondaResuelta = false;
+        let historialRondas = [];
+        let palabrasSeleccionadas = [];
+        let todasLasPalabras = [];
+
+        // ============================================================
+        // FUNCIONES AUXILIARES
+        // ============================================================
+        function mostrarToast(mensaje) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = mensaje;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 2800);
+        }
+
+        function mezclarArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // ============================================================
+        // FUNCIONES DE JUGADORES
+        // ============================================================
+        function añadirJugador() {
+            if (partidaActiva) {
+                mostrarToast("⚠️ La partida ya está en curso.");
+                return;
+            }
+            const input = document.getElementById("nombreJugador");
+            const nombre = input.value.trim();
+            if (!nombre) {
+                mostrarToast("Escribe un nombre primero.");
+                return;
+            }
+            if (jugadores.includes(nombre)) {
+                mostrarToast("Ese jugador ya está en la lista.");
+                return;
+            }
+            jugadores.push(nombre);
+            puntuaciones[nombre] = 0;
+            input.value = "";
+            actualizarListaJugadores();
+            actualizarClasificacion();
+            guardarPartidaAuto();
+        }
+
+        function eliminarJugadores() {
+            if (partidaActiva) {
+                mostrarToast("⚠️ La partida está en curso.");
+                return;
+            }
+            if (!confirm("¿Vaciar la lista de jugadores?")) return;
+            jugadores = [];
+            puntuaciones = {};
+            actualizarListaJugadores();
+            actualizarClasificacion();
+            document.getElementById("zonaJuego").style.display = "none";
+            guardarPartidaAuto();
+        }
+
+        function barajarOrden() {
+            if (jugadores.length < 2) {
+                mostrarToast("Necesitas al menos 2 jugadores.");
+                return;
+            }
+            mezclarArray(jugadores);
+            actualizarListaJugadores();
+            guardarPartidaAuto();
+            mostrarToast("🔀 Orden barajado.");
+        }
+
+        function actualizarListaJugadores() {
+            const container = document.getElementById("listaJugadores");
+            if (jugadores.length === 0) {
+                container.innerHTML = "<p style='color:var(--sand-dim); font-size:0.85em;'>No hay jugadores todavía.</p>";
+                return;
+            }
+            let html = "";
+            jugadores.forEach((nombre, index) => {
+                html += `<div class="jugador-item">${index + 1}. ${nombre}</div>`;
+            });
+            container.innerHTML = html;
+
+            const info = document.getElementById("infoPartida");
+            if (jugadores.length < 1) {
+                info.textContent = `Mínimo 1 jugador para empezar (actual: ${jugadores.length})`;
+                info.style.color = "var(--terracota-light)";
+            } else {
+                info.textContent = `${jugadores.length} jugadores listos para jugar`;
+                info.style.color = "var(--ocean-light)";
+            }
+        }
+
+        function actualizarClasificacion() {
+            const container = document.getElementById("clasificacionContainer");
+            if (jugadores.length === 0) {
+                container.innerHTML = "<p style='color:var(--sand-dim); font-size:0.85em;'>Aún no hay puntuaciones.</p>";
+                return;
+            }
+            const ordenados = [...jugadores].sort((a, b) => (puntuaciones[b] || 0) - (puntuaciones[a] || 0));
+            let html = "";
+            ordenados.forEach((nombre, index) => {
+                const posicion = index + 1;
+                const medalla = posicion === 1 ? '🥇' : posicion === 2 ? '🥈' : posicion === 3 ? '🥉' : `#${posicion}`;
+                html += `<div class="clasificacion-item">
+                            <span class="posicion">${medalla}</span>
+                            <span class="nombre">${nombre}</span>
+                            <span class="puntos">${puntuaciones[nombre] || 0} pts</span>
+                        </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        // ============================================================
+        // FUNCIONES PRINCIPALES DEL JUEGO
+        // ============================================================
+        function iniciarPartida() {
+            if (jugadores.length < 1) {
+                mostrarToast("❌ Necesitas al menos 1 jugador.");
+                return;
+            }
+            if (typeof COPLAS === 'undefined' || COPLAS.length === 0) {
+                mostrarToast("⏳ No hay coplas disponibles.");
+                return;
+            }
+            if (partidaActiva) {
+                mostrarToast("⚠️ Ya hay una partida en curso.");
+                return;
+            }
+
+            partidaActiva = true;
+            fase = 'jugando';
+            rondaActual = 0;
+            coplasUsadas = [];
+            historialRondas = [];
+            puntuaciones = {};
+            jugadores.forEach(n => puntuaciones[n] = 0);
+
+            // Extraer todas las palabras para generar opciones
+            todasLasPalabras = [];
+            COPLAS.forEach(c => {
+                c.palabras.forEach(p => {
+                    if (!todasLasPalabras.includes(p)) {
+                        todasLasPalabras.push(p);
+                    }
+                });
+            });
+
+            actualizarClasificacion();
+
+            document.getElementById("btnIniciarPartida").style.display = "none";
+            document.getElementById("btnTerminarPartida").style.display = "inline-block";
+            document.getElementById("infoPartida").textContent = "🎵 ¡Partida iniciada!";
+
+            document.getElementById("zonaJuego").style.display = "block";
+
+            iniciarRonda();
+            guardarPartidaAuto();
+        }
+
+        function generarOpciones(copla) {
+            const palabrasCorrectas = copla.palabras;
+            const palabrasFalsas = todasLasPalabras.filter(p => !palabrasCorrectas.includes(p));
+            const mezcladas = mezclarArray([...palabrasFalsas]);
+            const seleccionadas = [];
+            for (let i = 0; i < Math.min(8, mezcladas.length); i++) {
+                if (!seleccionadas.includes(mezcladas[i])) {
+                    seleccionadas.push(mezcladas[i]);
+                }
+            }
+            // Rellenar con genéricas si faltan
+            const genericas = ["amor", "mar", "tierra", "cielo", "vida", "sol", "luna", "flor"];
+            while (seleccionadas.length < 8) {
+                const gen = genericas[Math.floor(Math.random() * genericas.length)];
+                if (!seleccionadas.includes(gen) && !palabrasCorrectas.includes(gen)) {
+                    seleccionadas.push(gen);
+                }
+            }
+            const opciones = mezclarArray([...palabrasCorrectas, ...seleccionadas]);
+            return opciones;
+        }
+
+        function iniciarRonda() {
+            const disponibles = COPLAS.filter(c => !coplasUsadas.includes(c.id));
+            if (disponibles.length === 0) {
+                mostrarToast("🎉 ¡Se han agotado todas las coplas!");
+                finalizarPartida();
+                return;
+            }
+
+            const idx = Math.floor(Math.random() * disponibles.length);
+            coplaActual = disponibles[idx];
+            coplasUsadas.push(coplaActual.id);
+
+            rondaResuelta = false;
+            palabrasSeleccionadas = [];
+
+            const jugador = jugadores[rondaActual % jugadores.length];
+
+            detenerTemporizador();
+            tiempoRestante = tiempoSeleccionado;
+            actualizarDisplayTiempo();
+
+            document.getElementById("numeroCopla").textContent = `COPLA ${coplaActual.id}`;
+            document.getElementById("tituloCopla").textContent = "🎵 Completa La Copla";
+            document.getElementById("nombreJugadorTurno").textContent = jugador;
+
+            const textoConHuecos = coplaActual.texto
+                .replace(/\.{9}1/g, '<span class="hueco" id="hueco1">_ _ _ _ _</span>')
+                .replace(/\.{9,}2/g, '<span class="hueco" id="hueco2">_ _ _ _ _</span>')
+                .replace(/\.{9,}/g, '<span class="hueco">_ _ _ _ _</span>');
+            document.getElementById("coplaTexto").innerHTML = textoConHuecos;
+
+            const opciones = generarOpciones(coplaActual);
+            const container = document.getElementById("palabrasContainer");
+            container.innerHTML = "";
+            opciones.forEach((palabra) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-palabra';
+                btn.textContent = palabra;
+                btn.dataset.palabra = palabra;
+                btn.onclick = () => seleccionarPalabra(palabra, btn);
+                container.appendChild(btn);
+            });
+
+            document.getElementById("seleccionadasContainer").innerHTML = '<span style="color:var(--sand-dim); font-size:0.85em;">Selecciona 2 palabras...</span>';
+            document.getElementById("btnComprobar").style.display = "none";
+            document.getElementById("resultadoRonda").style.display = "none";
+            document.getElementById("botonSiguienteRonda").style.display = "none";
+            document.querySelectorAll('.btn-palabra').forEach(b => b.disabled = false);
+
+            mostrarEstado('ronda', `🎵 Copla ${coplaActual.id} · Turno: ${jugador}`);
+            guardarPartidaAuto();
+        }
+
+        function seleccionarPalabra(palabra, btn) {
+            if (rondaResuelta) return;
+            if (palabrasSeleccionadas.includes(palabra)) return;
+            if (palabrasSeleccionadas.length >= 2) {
+                mostrarToast("⚠️ Ya has seleccionado 2 palabras.");
+                return;
+            }
+            palabrasSeleccionadas.push(palabra);
+            btn.classList.add('seleccionada');
+            actualizarSeleccionadas();
+            if (palabrasSeleccionadas.length === 2) {
+                document.getElementById("btnComprobar").style.display = "block";
+            }
+        }
+
+        function actualizarSeleccionadas() {
+            const container = document.getElementById("seleccionadasContainer");
+            if (palabrasSeleccionadas.length === 0) {
+                container.innerHTML = '<span style="color:var(--sand-dim); font-size:0.85em;">Selecciona 2 palabras...</span>';
+                return;
+            }
+            let html = '<span style="color:var(--sand-dim); font-size:0.85em; margin-right:8px;">Seleccionadas:</span>';
+            palabrasSeleccionadas.forEach((palabra) => {
+                html += `<span class="seleccionada-tag">
+                            ${palabra}
+                            <span class="eliminar" onclick="eliminarPalabra('${palabra}')">✕</span>
+                        </span>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function eliminarPalabra(palabra) {
+            if (rondaResuelta) return;
+            palabrasSeleccionadas = palabrasSeleccionadas.filter(p => p !== palabra);
+            document.querySelectorAll('.btn-palabra').forEach(b => {
+                if (b.dataset.palabra === palabra) {
+                    b.classList.remove('seleccionada');
+                }
+            });
+            actualizarSeleccionadas();
+            document.getElementById("btnComprobar").style.display = "none";
+        }
+
+        function comprobarRespuesta() {
+            if (rondaResuelta) return;
+            if (palabrasSeleccionadas.length !== 2) {
+                mostrarToast("Selecciona 2 palabras.");
+                return;
+            }
+
+            const jugador = jugadores[rondaActual % jugadores.length];
+            const correctas = coplaActual.palabras;
+            const seleccionadasOrdenadas = [...palabrasSeleccionadas].sort();
+            const correctasOrdenadas = [...correctas].sort();
+            const esCorrecto = JSON.stringify(seleccionadasOrdenadas) === JSON.stringify(correctasOrdenadas);
+
+            document.querySelectorAll('.btn-palabra').forEach(b => b.disabled = true);
+            document.getElementById("btnComprobar").style.display = "none";
+
+            document.querySelectorAll('.btn-palabra').forEach(b => {
+                const palabra = b.dataset.palabra;
+                if (correctas.includes(palabra)) {
+                    b.classList.add('correcta');
+                } else if (palabrasSeleccionadas.includes(palabra)) {
+                    b.classList.add('incorrecta');
+                }
+            });
+
+            rondaResuelta = true;
+
+            let puntos = 0;
+            if (esCorrecto) {
+                puntos = 10;
+                puntuaciones[jugador] = (puntuaciones[jugador] || 0) + puntos;
+                mostrarToast(`✅ ¡Correcto! +${puntos} pts para ${jugador}`);
+            } else {
+                mostrarToast(`❌ ¡Falló! Las palabras eran: ${correctas.join(' y ')}`);
+            }
+            actualizarClasificacion();
+
+            historialRondas.push({
+                id: coplaActual.id,
+                jugador: jugador,
+                correcto: esCorrecto,
+                puntos: puntos,
+                palabras: correctas
+            });
+
+            document.getElementById("resultadoRonda").style.display = "block";
+            const mensaje = document.getElementById("mensajeResultado");
+            const detalle = document.getElementById("detalleResultado");
+            const coplaCompleta = document.getElementById("coplaCompletaContainer");
+
+            if (esCorrecto) {
+                mensaje.textContent = `✅ ¡${jugador} ha completado la copla!`;
+                mensaje.style.color = "var(--ocean-light)";
+                detalle.textContent = `+${puntos} pts`;
+            } else {
+                mensaje.textContent = `❌ ${jugador} ha fallado`;
+                mensaje.style.color = "var(--terracota-light)";
+                detalle.textContent = `Las palabras eran: ${correctas.join(' y ')}`;
+            }
+
+            let textoCompleto = coplaActual.texto;
+            correctas.forEach((palabra, i) => {
+                const marcador = i === 0 ? '.........1' : '.............2';
+                textoCompleto = textoCompleto.replace(marcador, `<span class="resaltada">${palabra}</span>`);
+            });
+            coplaCompleta.innerHTML = `📖 ${textoCompleto}`;
+            if (coplaActual.autor && coplaActual.autor !== '·') {
+                coplaCompleta.innerHTML += `<br><small style="color:var(--sand-dim);">👤 ${coplaActual.autor}</small>`;
+            }
+
+            const btnSig = document.getElementById("botonSiguienteRonda");
+            btnSig.style.display = "block";
+            btnSig.textContent = `🎯 Siguiente copla ➜`;
+
+            guardarPartidaAuto();
+        }
+
+        function siguienteCopla() {
+            if (fase !== 'jugando') return;
+            rondaActual++;
+            iniciarRonda();
+        }
+
+        function terminarPartida() {
+            if (!partidaActiva) {
+                mostrarToast("⚠️ No hay una partida activa.");
+                return;
+            }
+            if (!confirm("¿Terminar la partida? Se mostrará la clasificación final.")) return;
+            finalizarPartida();
+        }
+
+        function finalizarPartida() {
+            fase = 'final';
+            partidaActiva = false;
+            detenerTemporizador();
+
+            const container = document.getElementById("clasificacionContainer");
+            const ordenados = [...jugadores].sort((a, b) => (puntuaciones[b] || 0) - (puntuaciones[a] || 0));
+
+            let html = `<div class="clasificacion-final">
+                            <h2>🏆 Clasificación Final</h2>
+                            <p>${historialRondas.length} coplas completadas</p>`;
+
+            ordenados.forEach((nombre, index) => {
+                const posicion = index + 1;
+                const medalla = posicion === 1 ? '🥇' : posicion === 2 ? '🥈' : posicion === 3 ? '🥉' : `#${posicion}`;
+                html += `<div class="clasificacion-item">
+                                <span class="posicion">${medalla}</span>
+                                <span class="nombre">${nombre}</span>
+                                <span class="puntos">${puntuaciones[nombre] || 0} pts</span>
+                            </div>`;
+            });
+
+            html += `<button class="btn-principal" style="margin-top:14px;" onclick="reiniciarPartida()">🔄 Nueva partida</button>`;
+            html += `</div>`;
+
+            container.innerHTML = html;
+
+            document.getElementById("zonaJuego").style.display = "none";
+            document.getElementById("btnIniciarPartida").style.display = "block";
+            document.getElementById("btnIniciarPartida").textContent = "🎵 Nueva partida";
+            document.getElementById("btnTerminarPartida").style.display = "none";
+            document.getElementById("infoPartida").textContent = "Partida finalizada";
+
+            const ganador = ordenados[0];
+            mostrarToast(`🏆 ¡${ganador} ha ganado!`);
+            guardarPartidaAuto();
+        }
+
+        function reiniciarPartida() {
+            if (!confirm("¿Reiniciar toda la partida?")) return;
+
+            partidaActiva = false;
+            fase = 'configuracion';
+            rondaActual = 0;
+            coplasUsadas = [];
+            historialRondas = [];
+            jugadores.forEach(n => puntuaciones[n] = 0);
+            detenerTemporizador();
+
+            document.getElementById("zonaJuego").style.display = "none";
+            document.getElementById("btnIniciarPartida").style.display = "block";
+            document.getElementById("btnIniciarPartida").textContent = "🎵 Iniciar Completa La Copla";
+            document.getElementById("btnTerminarPartida").style.display = "none";
+            document.getElementById("estadoJuego").style.display = "none";
+            document.getElementById("infoPartida").textContent = "Mínimo 1 jugador para empezar";
+            document.getElementById("infoPartida").style.color = "var(--sand-dim)";
+
+            actualizarClasificacion();
+            actualizarListaJugadores();
+            guardarPartidaAuto();
+            mostrarToast("🔄 Partida reiniciada.");
+        }
+
+        function mostrarEstado(tipo, mensaje) {
+            const el = document.getElementById("estadoJuego");
+            el.style.display = "block";
+            el.className = "estado-juego " + tipo;
+            el.textContent = mensaje;
+        }
+
+        // ============================================================
+        // GUARDADO Y CARGA
+        // ============================================================
+        function guardarPartidaAuto() {
+            try {
+                const datos = {
+                    jugadores,
+                    puntuaciones,
+                    partidaActiva,
+                    fase,
+                    rondaActual,
+                    coplasUsadas,
+                    coplaActual: coplaActual ? coplaActual.id : null,
+                    rondaResuelta,
+                    historialRondas
+                };
+                localStorage.setItem('coplaPartida', JSON.stringify(datos));
+            } catch (e) { console.log('No se pudo autoguardar:', e); }
+        }
+
+        function cargarPartidaAuto() {
+            try {
+                const datos = localStorage.getItem('coplaPartida');
+                if (!datos) return;
+                const parsed = JSON.parse(datos);
+                if (!parsed.jugadores || parsed.jugadores.length === 0) return;
+
+                jugadores = parsed.jugadores;
+                puntuaciones = parsed.puntuaciones || {};
+                partidaActiva = parsed.partidaActiva || false;
+                fase = parsed.fase || 'configuracion';
+                rondaActual = parsed.rondaActual || 0;
+                coplasUsadas = parsed.coplasUsadas || [];
+                rondaResuelta = parsed.rondaResuelta || false;
+                historialRondas = parsed.historialRondas || [];
+
+                if (parsed.coplaActual) {
+                    coplaActual = COPLAS.find(c => c.id === parsed.coplaActual) || null;
+                }
+
+                actualizarListaJugadores();
+                actualizarClasificacion();
+
+                if (partidaActiva && fase === 'jugando') {
+                    document.getElementById("btnIniciarPartida").style.display = "none";
+                    document.getElementById("btnTerminarPartida").style.display = "inline-block";
+                    document.getElementById("infoPartida").textContent = "🎵 Partida en curso";
+
+                    if (coplaActual && !rondaResuelta) {
+                        document.getElementById("zonaJuego").style.display = "block";
+                        const jugador = jugadores[rondaActual % jugadores.length];
+                        document.getElementById("numeroCopla").textContent = `COPLA ${coplaActual.id}`;
+                        document.getElementById("tituloCopla").textContent = "🎵 Completa La Copla";
+                        document.getElementById("nombreJugadorTurno").textContent = jugador;
+
+                        const textoConHuecos = coplaActual.texto
+                            .replace(/\.{9}1/g, '<span class="hueco" id="hueco1">_ _ _ _ _</span>')
+                            .replace(/\.{9,}2/g, '<span class="hueco" id="hueco2">_ _ _ _ _</span>')
+                            .replace(/\.{9,}/g, '<span class="hueco">_ _ _ _ _</span>');
+                        document.getElementById("coplaTexto").innerHTML = textoConHuecos;
+
+                        const opciones = generarOpciones(coplaActual);
+                        const container = document.getElementById("palabrasContainer");
+                        container.innerHTML = "";
+                        opciones.forEach((palabra) => {
+                            const btn = document.createElement('button');
+                            btn.className = 'btn-palabra';
+                            btn.textContent = palabra;
+                            btn.dataset.palabra = palabra;
+                            btn.onclick = () => seleccionarPalabra(palabra, btn);
+                            container.appendChild(btn);
+                        });
+
+                        document.getElementById("seleccionadasContainer").innerHTML = '<span style="color:var(--sand-dim); font-size:0.85em;">Selecciona 2 palabras...</span>';
+                        document.getElementById("btnComprobar").style.display = "none";
+                        document.getElementById("resultadoRonda").style.display = "none";
+                        document.getElementById("botonSiguienteRonda").style.display = "none";
+                        palabrasSeleccionadas = [];
+                        mostrarEstado('ronda', `🎵 Copla ${coplaActual.id} · Turno: ${jugador}`);
+                    } else if (rondaResuelta) {
+                        document.getElementById("zonaJuego").style.display = "block";
+                        document.getElementById("resultadoRonda").style.display = "block";
+                        document.getElementById("botonSiguienteRonda").style.display = "block";
+                        document.querySelectorAll('.btn-palabra').forEach(b => b.disabled = true);
+                    }
+                }
+
+                console.log('✅ Partida de Completa La Copla cargada automáticamente');
+            } catch (e) { console.log('Error cargando partida:', e); }
+        }
+
+        function exportarPartida() {
+            const datos = {
+                jugadores,
+                puntuaciones,
+                partidaActiva,
+                fase,
+                rondaActual,
+                coplasUsadas,
+                coplaActual: coplaActual ? coplaActual.id : null,
+                rondaResuelta,
+                historialRondas,
+                fecha: new Date().toISOString()
+            };
+            const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `copla_${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            mostrarToast("💾 Partida exportada.");
+        }
+
+        function cargarPartida() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const datos = JSON.parse(event.target.result);
+                        jugadores = datos.jugadores || [];
+                        puntuaciones = datos.puntuaciones || {};
+                        partidaActiva = datos.partidaActiva || false;
+                        fase = datos.fase || 'configuracion';
+                        rondaActual = datos.rondaActual || 0;
+                        coplasUsadas = datos.coplasUsadas || [];
+                        rondaResuelta = datos.rondaResuelta || false;
+                        historialRondas = datos.historialRondas || [];
+
+                        if (datos.coplaActual) {
+                            coplaActual = COPLAS.find(c => c.id === datos.coplaActual) || null;
+                        }
+
+                        actualizarListaJugadores();
+                        actualizarClasificacion();
+
+                        if (partidaActiva && fase === 'jugando') {
+                            document.getElementById("btnIniciarPartida").style.display = "none";
+                            document.getElementById("btnTerminarPartida").style.display = "inline-block";
+                            document.getElementById("infoPartida").textContent = "🎵 Partida en curso";
+                            document.getElementById("zonaJuego").style.display = "block";
+
+                            if (coplaActual && !rondaResuelta) {
+                                const jugador = jugadores[rondaActual % jugadores.length];
+                                document.getElementById("numeroCopla").textContent = `COPLA ${coplaActual.id}`;
+                                document.getElementById("tituloCopla").textContent = "🎵 Completa La Copla";
+                                document.getElementById("nombreJugadorTurno").textContent = jugador;
+
+                                const textoConHuecos = coplaActual.texto
+                                    .replace(/\.{9}1/g, '<span class="hueco" id="hueco1">_ _ _ _ _</span>')
+                                    .replace(/\.{9,}2/g, '<span class="hueco" id="hueco2">_ _ _ _ _</span>')
+                                    .replace(/\.{9,}/g, '<span class="hueco">_ _ _ _ _</span>');
+                                document.getElementById("coplaTexto").innerHTML = textoConHuecos;
+
+                                const opciones = generarOpciones(coplaActual);
+                                const container = document.getElementById("palabrasContainer");
+                                container.innerHTML = "";
+                                opciones.forEach((palabra) => {
+                                    const btn = document.createElement('button');
+                                    btn.className = 'btn-palabra';
+                                    btn.textContent = palabra;
+                                    btn.dataset.palabra = palabra;
+                                    btn.onclick = () => seleccionarPalabra(palabra, btn);
+                                    container.appendChild(btn);
+                                });
+
+                                document.getElementById("seleccionadasContainer").innerHTML = '<span style="color:var(--sand-dim); font-size:0.85em;">Selecciona 2 palabras...</span>';
+                                document.getElementById("btnComprobar").style.display = "none";
+                                document.getElementById("resultadoRonda").style.display = "none";
+                                document.getElementById("botonSiguienteRonda").style.display = "none";
+                                palabrasSeleccionadas = [];
+                            } else if (rondaResuelta) {
+                                document.getElementById("resultadoRonda").style.display = "block";
+                                document.getElementById("botonSiguienteRonda").style.display = "block";
+                                document.querySelectorAll('.btn-palabra').forEach(b => b.disabled = true);
+                            }
+                        }
+
+                        guardarPartidaAuto();
+                        mostrarToast("📂 Partida cargada.");
+                    } catch (e) {
+                        mostrarToast("Error al leer el archivo.");
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        // ============================================================
+        // INICIO DE LA APLICACIÓN
+        // ============================================================
+        function iniciarApp() {
+            if (typeof COPLAS === 'undefined' || COPLAS.length === 0) {
+                console.error('❌ Error: COPLAS no está definido o está vacío.');
+                mostrarToast('⚠️ Error: No hay coplas disponibles.');
+                return;
+            }
+
+            cargarPartidaAuto();
+            actualizarListaJugadores();
+            console.log(`✅ App "Completa La Copla" iniciada. ${COPLAS.length} coplas cargadas.`);
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', iniciarApp);
+        } else {
+            iniciarApp();
+        }
+    </script>
+</body>
+</html>
