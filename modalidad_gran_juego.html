@@ -1,1 +1,259 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BAILANDO VENGO · El Gran Juego</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=Work+Sans:wght@400;500;600;700&display=swap');
+        :root{
+            --basalt-0:#161210;
+            --basalt-1:#211a16;
+            --basalt-2:#2c2420;
+            --sand:#f4ead4;
+            --sand-dim:#c9bba0;
+            --terracota:#c1502e;
+            --terracota-dark:#8f3a21;
+            --terracota-light:#e07a52;
+            --ocean:#1f6f78;
+            --ocean-light:#4fa3ab;
+            --ochre:#d4a017;
+            --ochre-light:#eac35c;
+            --line: rgba(244,234,212,0.12);
+        }
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{
+            font-family:'Work Sans', sans-serif;
+            background: radial-gradient(circle at 15% 0%, rgba(193,80,46,0.18), transparent 45%), radial-gradient(circle at 100% 20%, rgba(31,111,120,0.16), transparent 50%), var(--basalt-0);
+            color:var(--sand);
+            min-height:100vh;
+            padding:14px;
+            max-width:520px;
+            margin:0 auto;
+            font-size:16px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        h1{
+            font-family:'Fraunces', serif;
+            font-weight:800;
+            font-size:1.8em;
+            text-align:center;
+            letter-spacing:0.5px;
+            color:var(--sand);
+            margin:6px 0 2px;
+        }
+        h1 .isla{
+            display:block;
+            font-family:'Work Sans', sans-serif;
+            font-weight:600;
+            font-size:0.32em;
+            letter-spacing:3px;
+            text-transform:uppercase;
+            color:var(--ochre-light);
+            margin-top:4px;
+        }
+        .subtitulo{
+            text-align:center;
+            color:var(--sand-dim);
+            font-size:0.85em;
+            margin-bottom:16px;
+        }
+        .panel{
+            margin-top:14px;
+            padding:16px;
+            background:var(--basalt-1);
+            border:1px solid var(--line);
+            border-radius:14px;
+        }
+        .panel-titulo{
+            font-family:'Fraunces', serif;
+            font-weight:700;
+            font-size:1.05em;
+            color:var(--ochre-light);
+            display:flex;
+            align-items:center;
+            gap:8px;
+            margin-bottom:12px;
+            padding-bottom:8px;
+            border-bottom:1px solid var(--line);
+        }
+        .gran-juego-placeholder{
+            text-align:center;
+            padding:40px 20px;
+        }
+        .gran-juego-placeholder .icono{
+            font-size:4em;
+            margin-bottom:16px;
+        }
+        .gran-juego-placeholder h2{
+            font-family:'Fraunces',serif;
+            color:var(--ochre-light);
+            font-size:1.5em;
+            margin-bottom:12px;
+        }
+        .gran-juego-placeholder p{
+            color:var(--sand-dim);
+            font-size:0.95em;
+            line-height:1.6;
+            margin-bottom:8px;
+        }
+        .gran-juego-placeholder .mensaje-especial{
+            background:var(--basalt-2);
+            border:2px solid var(--ochre);
+            border-radius:12px;
+            padding:16px;
+            margin:16px 0;
+            font-weight:600;
+            color:var(--ochre-light);
+            font-size:1.1em;
+        }
+        .btn-volver{
+            display:inline-block;
+            padding:12px 30px;
+            background:var(--terracota);
+            color:var(--sand);
+            border:none;
+            border-radius:10px;
+            font-weight:700;
+            font-size:1em;
+            cursor:pointer;
+            text-decoration:none;
+            margin-top:10px;
+        }
+        .btn-volver:hover{background:var(--terracota-dark);}
+        
+        .btn-modalidad-juego{
+            width:100%;
+            padding:12px;
+            border-radius:10px;
+            font-weight:600;
+            transition:all 0.3s;
+            background:var(--basalt-1);
+            color:var(--sand);
+            border:2px solid var(--line);
+        }
+        .btn-modalidad-juego.activo{
+            background:var(--terracota);
+            border-color:var(--ochre);
+        }
+        .btn-modalidad-juego small{
+            display:block;
+            font-weight:400;
+            font-size:0.7em;
+            opacity:0.8;
+        }
+        @media (max-width: 480px){
+            body{padding:10px; font-size:14px;}
+            h1{font-size:1.5em;}
+            .gran-juego-placeholder .icono{font-size:3em;}
+        }
+    </style>
+</head>
+<body>
+    <h1>BAILANDO VENGO<span class="isla">El Gran Juego de Folclore Canario</span></h1>
+    <p class="subtitulo">La experiencia completa</p>
+    <div id="toastContainer"></div>
+
+    <!-- ============================================================ -->
+    <!-- NAVEGACIÓN                                                    -->
+    <!-- ============================================================ -->
+    <div class="panel" style="background: var(--basalt-2); border-color: var(--ochre);">
+        <div class="panel-titulo" style="border-bottom-color: var(--ochre);">🎮 Modalidades</div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+            <a href="index.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">🕺 Baile a Ciegas <small>Modalidad original</small></button>
+            </a>
+            <a href="modalidad_taifas.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">🎵 Baile de Taifas <small>Segunda modalidad</small></button>
+            </a>
+            <a href="modalidad_adivina.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">🎧 Pon La Oreja <small>Tercera modalidad</small></button>
+            </a>
+            <a href="modalidad_adivina_visual.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">👀 Miralo bien mi niño <small>Cuarta modalidad</small></button>
+            </a>
+            <a href="modalidad_saber.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">📝 ¡A que lo Sabes! <small>Quinta modalidad</small></button>
+            </a>
+            <a href="modalidad_islas.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">👗 Adivina La Isla <small>Sexta modalidad</small></button>
+            </a>
+            <a href="modalidad_copla.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">🎵 Completa La Copla <small>Séptima modalidad</small></button>
+            </a>
+            <a href="modalidad_senas.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">🎭 ¡A Señas Chacho! <small>Octava modalidad</small></button>
+            </a>
+            <a href="modalidad_gran_juego.html" style="flex: 1; min-width: 120px; text-decoration: none;">
+                <button class="btn-modalidad-juego activo" style="width: 100%;">🎵 BAILANDO VENGO <small>El Gran Juego</small></button>
+            </a>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- CONTENIDO PRINCIPAL (PLACEHOLDER)                              -->
+    <!-- ============================================================ -->
+    <div class="panel">
+        <div class="panel-titulo">🎵 El Gran Juego</div>
+        <div class="gran-juego-placeholder">
+            <div class="icono">🚧</div>
+            <h2>En Construcción</h2>
+            <div class="mensaje-especial">
+                🎵 Próximamente...<br>
+                <span style="font-size:0.8em; font-weight:400; color:var(--sand-dim);">
+                    El juego que lo reúne todo
+                </span>
+            </div>
+            <p>
+                Estamos preparando el <strong>Gran Juego de BAILANDO VENGO</strong>.<br>
+                Una experiencia completa que integrará todas las modalidades<br>
+                en una sola partida épica de folclore canario.
+            </p>
+            <p style="font-size:0.85em; color:var(--sand-dim);">
+                🇮🇨 Mientras tanto, puedes disfrutar de todas las modalidades<br>
+                disponibles en el menú superior.
+            </p>
+            <a href="index.html" class="btn-volver">🏠 Volver al inicio</a>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- TOAST                                                         -->
+    <!-- ============================================================ -->
+    <script>
+        function mostrarToast(mensaje) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = mensaje;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 2800);
+        }
+        // Estilo extra para el toast
+        const styleToast = document.createElement('style');
+        styleToast.textContent = `
+            .toast{
+                position:fixed;
+                bottom:18px;
+                left:50%;
+                transform:translateX(-50%);
+                background:var(--basalt-2);
+                color:var(--sand);
+                padding:12px 20px;
+                border-radius:12px;
+                border:1px solid var(--ochre);
+                z-index:1000;
+                font-size:0.85em;
+                max-width:90%;
+                text-align:center;
+                animation:subir 0.25s ease;
+            }
+            @keyframes subir{from{opacity:0; transform:translate(-50%,15px);} to{opacity:1; transform:translate(-50%,0);}}
+        `;
+        document.head.appendChild(styleToast);
+        
+        console.log('✅ BAILANDO VENGO - El Gran Juego (placeholder)');
+    </script>
+</body>
+</html>
