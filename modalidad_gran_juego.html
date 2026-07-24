@@ -1,1 +1,1475 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BAILANDO VENGO · El Gran Juego</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=Work+Sans:wght@400;500;600;700&display=swap');
+        :root {
+            --basalt-0: #161210;
+            --basalt-1: #211a16;
+            --basalt-2: #2c2420;
+            --sand: #f4ead4;
+            --sand-dim: #c9bba0;
+            --terracota: #c1502e;
+            --terracota-dark: #8f3a21;
+            --terracota-light: #e07a52;
+            --ocean: #1f6f78;
+            --ocean-light: #4fa3ab;
+            --ochre: #d4a017;
+            --ochre-light: #eac35c;
+            --line: rgba(244,234,212,0.12);
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: radial-gradient(circle at 15% 0%, rgba(193, 80, 46, 0.18), transparent 45%), radial-gradient(circle at 100% 20%, rgba(31, 111, 120, 0.16), transparent 50%), var(--basalt-0);
+            color: var(--sand);
+            min-height: 100vh;
+            padding: 14px;
+            max-width: 520px;
+            margin: 0 auto;
+            font-size: 16px;
+        }
+        h1 {
+            font-family: 'Fraunces', serif;
+            font-weight: 800;
+            font-size: 1.7em;
+            text-align: center;
+            color: var(--sand);
+            margin: 6px 0 2px;
+        }
+        h1 .isla {
+            display: block;
+            font-family: 'Work Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.32em;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--ochre-light);
+            margin-top: 4px;
+        }
+        .subtitulo {
+            text-align: center;
+            color: var(--sand-dim);
+            font-size: 0.85em;
+            margin-bottom: 16px;
+        }
+        .panel {
+            margin-top: 14px;
+            padding: 16px;
+            background: var(--basalt-1);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+        }
+        .panel-titulo {
+            font-family: 'Fraunces', serif;
+            font-weight: 700;
+            font-size: 1.05em;
+            color: var(--ochre-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--line);
+        }
+        button {
+            font-family: 'Work Sans', sans-serif;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: transform 0.15s ease, opacity 0.15s ease;
+        }
+        button:active {
+            transform: scale(0.97);
+        }
+        .btn-principal {
+            display: block;
+            width: 100%;
+            background: var(--terracota);
+            color: var(--sand);
+            font-weight: 700;
+            font-size: 1.15em;
+            padding: 16px;
+            border-radius: 14px;
+            box-shadow: 0 6px 0 var(--terracota-dark);
+        }
+        .btn-principal:active {
+            box-shadow: 0 3px 0 var(--terracota-dark);
+            transform: translateY(3px) scale(1);
+        }
+        .btn-principal:disabled {
+            opacity: 0.35;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+        .btn-secundario {
+            background: transparent;
+            color: var(--sand);
+            border: 1.5px solid var(--line);
+            font-size: 0.85em;
+            font-weight: 600;
+            padding: 9px 14px;
+        }
+        .btn-secundario:hover {
+            border-color: var(--ocean-light);
+        }
+        .btn-texto {
+            background: none;
+            color: var(--sand-dim);
+            font-size: 0.8em;
+            text-decoration: underline;
+            padding: 6px 4px;
+        }
+        .btn-modalidad-juego {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+            background: var(--basalt-1);
+            color: var(--sand);
+            border: 2px solid var(--line);
+        }
+        .btn-modalidad-juego.activo {
+            background: var(--terracota);
+            border-color: var(--ochre);
+        }
+        .btn-modalidad-juego small {
+            display: block;
+            font-weight: 400;
+            font-size: 0.7em;
+            opacity: 0.8;
+        }
+        .fila-botones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        .input-nombre {
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 9px;
+            border: 1.5px solid var(--line);
+            background: var(--basalt-2);
+            color: var(--sand);
+            width: 100%;
+            margin-bottom: 8px;
+        }
+        .input-nombre:focus {
+            outline: none;
+            border-color: var(--ocean-light);
+        }
+        .jugador-item {
+            padding: 6px 12px;
+            background: var(--basalt-2);
+            margin: 3px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 0.9em;
+            border: 1px solid var(--line);
+        }
+        .toast {
+            position: fixed;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--basalt-2);
+            color: var(--sand);
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--ochre);
+            z-index: 1000;
+            font-size: 0.85em;
+            max-width: 90%;
+            text-align: center;
+            animation: subir 0.25s ease;
+        }
+        @keyframes subir {
+            from {
+                opacity: 0;
+                transform: translate(-50%, 15px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+        .casillero-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .casillero-jugador {
+            background: var(--basalt-1);
+            border-radius: 12px;
+            padding: 12px;
+            border: 2px solid var(--line);
+            transition: all 0.3s;
+        }
+        .casillero-jugador.turno {
+            border-color: var(--ochre);
+            background: rgba(212, 160, 23, 0.08);
+        }
+        .casillero-jugador.asistente {
+            border-color: var(--ocean);
+            background: rgba(31, 111, 120, 0.08);
+        }
+        .casillero-jugador .nombre {
+            font-family: 'Fraunces', serif;
+            font-weight: 700;
+            font-size: 1.1em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--line);
+        }
+        .casillero-jugador .nombre .etiqueta {
+            font-size: 0.6em;
+            font-family: 'Work Sans', sans-serif;
+            background: var(--ochre);
+            color: var(--basalt-0);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-weight: 700;
+        }
+        .casillero-jugador .nombre .etiqueta.asistente {
+            background: var(--ocean);
+        }
+        .casillero-jugador .seccion {
+            margin-top: 6px;
+        }
+        .casillero-jugador .seccion-titulo {
+            font-size: 0.7em;
+            text-transform: uppercase;
+            color: var(--sand-dim);
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .casillero-jugador .seccion-titulo .contador {
+            color: var(--ochre-light);
+            font-weight: 700;
+        }
+        .casillero-jugador .tarjetas {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+            margin-top: 2px;
+        }
+        .casillero-jugador .tarjeta {
+            background: var(--basalt-2);
+            border-radius: 8px;
+            padding: 2px 8px;
+            font-size: 0.65em;
+            border: 1px solid var(--line);
+            white-space: nowrap;
+        }
+        .casillero-jugador .tarjeta.comodin {
+            border-color: var(--ochre);
+            color: var(--ochre-light);
+        }
+        .casillero-jugador .tarjeta.taifa {
+            border-color: var(--terracota);
+            color: var(--terracota-light);
+        }
+        .casillero-jugador .vacio {
+            color: var(--sand-dim);
+            font-size: 0.65em;
+        }
+        .btn-color {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid var(--line);
+            cursor: pointer;
+            margin: 2px;
+            transition: transform 0.2s;
+        }
+        .btn-color:active {
+            transform: scale(0.9);
+        }
+        .btn-color.seleccionado {
+            border-color: var(--sand);
+            transform: scale(1.1);
+        }
+        .selector-color-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin: 6px 0;
+            justify-content: center;
+        }
+        .btn-accion-jugador {
+            background: var(--basalt-2);
+            color: var(--sand);
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 0.8em;
+            cursor: pointer;
+            margin-top: 6px;
+            margin-right: 4px;
+        }
+        .btn-accion-jugador:active {
+            transform: scale(0.95);
+        }
+        .btn-accion-jugador.taifas {
+            background: var(--ochre);
+            color: var(--basalt-0);
+        }
+        .opciones-dado {
+            background: var(--basalt-2);
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 10px;
+            border: 1px solid var(--ochre);
+            text-align: center;
+        }
+        .opciones-dado .titulo {
+            color: var(--ochre-light);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .opciones-dado .opcion-btn {
+            background: var(--basalt-1);
+            color: var(--sand);
+            border: 2px solid var(--line);
+            border-radius: 8px;
+            padding: 8px 14px;
+            margin: 4px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .opciones-dado .opcion-btn:active {
+            transform: scale(0.95);
+        }
+        .opciones-dado .opcion-btn:hover {
+            border-color: var(--ocean-light);
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-overlay.visible {
+            display: flex;
+        }
+        .modal-content {
+            background: var(--basalt-1);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 400px;
+            width: 100%;
+            border: 2px solid var(--ochre);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-content h3 {
+            font-family: 'Fraunces', serif;
+            color: var(--ochre-light);
+            margin-bottom: 12px;
+        }
+        .modal-content .opcion {
+            padding: 10px;
+            background: var(--basalt-2);
+            border-radius: 10px;
+            margin: 6px 0;
+            cursor: pointer;
+            border: 1px solid var(--line);
+            transition: border-color 0.3s;
+        }
+        .modal-content .opcion:active {
+            border-color: var(--ochre);
+        }
+        .modal-content .opcion .titulo {
+            font-weight: 700;
+            color: var(--sand);
+        }
+        .modal-content .opcion .descripcion {
+            font-size: 0.8em;
+            color: var(--sand-dim);
+        }
+        .btn-cerrar-modal {
+            background: var(--terracota);
+            color: var(--sand);
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 12px;
+            width: 100%;
+            font-weight: 700;
+        }
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+                font-size: 14px;
+            }
+            h1 {
+                font-size: 1.5em;
+            }
+            .casillero-jugador .tarjeta {
+                font-size: 0.6em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>BAILANDO VENGO<span class="isla">El Gran Juego · Folclore Canario</span></h1>
+    <p class="subtitulo">Estrategia, conocimientos y suerte para conseguir los bailes de Taifas</p>
+    <div id="toastContainer"></div>
+
+    <!-- ============================================================ -->
+    <!-- MODAL DE COMODINES                                            -->
+    <!-- ============================================================ -->
+    <div id="modalComodin" class="modal-overlay">
+        <div class="modal-content">
+            <h3>⭐ Canjear comodines</h3>
+            <div id="opcionesComodin"></div>
+            <button class="btn-cerrar-modal" onclick="cerrarModalComodin()">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MODAL DE SELECCIÓN DE BAILES PARA TAIFAS                     -->
+    <!-- ============================================================ -->
+    <div id="modalTaifas" class="modal-overlay">
+        <div class="modal-content">
+            <h3>🏆 Baile de Taifas</h3>
+            <div id="contenidoTaifas"></div>
+            <button class="btn-cerrar-modal" onclick="cerrarModalTaifas()">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MODAL DE VOTACIÓN                                             -->
+    <!-- ============================================================ -->
+    <div id="modalVotacion" class="modal-overlay">
+        <div class="modal-content">
+            <h3>🗳️ Votación</h3>
+            <div id="contenidoVotacion"></div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- NAVEGACIÓN (9 BOTONES)                                        -->
+    <!-- ============================================================ -->
+    <div class="panel" style="background: var(--basalt-2); border-color: var(--ochre);">
+        <div class="panel-titulo" style="border-bottom-color: var(--ochre);">🎮 Modalidades</div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+            <a href="index.html" style="flex: 1; min-width: 90px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">🕺 Baile a Ciegas <small>Original</small></button>
+            </a>
+            <a href="modalidad_taifas.html" style="flex: 1; min-width: 90px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">🎵 Baile de Taifas <small>Segunda</small></button>
+            </a>
+            <a href="modalidad_adivina.html" style="flex: 1; min-width: 90px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">🎧 Pon La Oreja <small>Tercera</small></button>
+            </a>
+            <a href="modalidad_adivina_visual.html" style="flex: 1; min-width: 90px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">👀 Miralo bien mi niño <small>Cuarta</small></button>
+            </a>
+            <a href="modalidad_saber.html" style="flex: 1; min-width: 90px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">📝 ¡A que lo Sabes! <small>Quinta</small></button>
+            </a>
+            <a href="modalidad_islas.html" style="flex: 1; min-width: 90px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">👗 Adivina La Isla <small>Sexta</small></button>
+            </a>
+            <a href="modalidad_copla.html" style="flex: 1; min-width: 90px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">🎵 Completa La Copla <small>Séptima</small></button>
+            </a>
+            <a href="modalidad_senas.html" style="flex: 1; min-width: 90px; text-decoration: none;">
+                <button class="btn-modalidad-juego" style="width: 100%;">🎭 ¡A Señas Chacho! <small>Octava</small></button>
+            </a>
+            <a href="modalidad_gran_juego.html" style="flex: 1; min-width: 90px; text-decoration: none;">
+                <button class="btn-modalidad-juego activo" style="width: 100%;">🎵 BAILANDO VENGO <small>Gran Juego</small></button>
+            </a>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PANEL DE JUGADORES (con selector de color)                    -->
+    <!-- ============================================================ -->
+    <div class="panel">
+        <div class="panel-titulo">👥 Jugadores</div>
+        <input type="text" id="nombreJugador" class="input-nombre" placeholder="Nombre del jugador">
+
+        <div style="text-align:center; font-size:0.8em; color:var(--sand-dim); margin-bottom:4px;">Elige tu color:</div>
+        <div class="selector-color-container" id="selectorColor"></div>
+
+        <div class="fila-botones">
+            <button class="btn-secundario" onclick="añadirJugador()">➕ Añadir</button>
+            <button class="btn-secundario" onclick="barajarOrden()">🔀 Barajar</button>
+            <button class="btn-secundario" onclick="eliminarJugadores()">🗑️ Vaciar</button>
+        </div>
+        <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
+            <button class="btn-secundario" onclick="iniciarPartida()" id="btnIniciarPartida" style="background:var(--terracota); color:var(--sand); font-weight:700;">🎵 Iniciar BAILANDO VENGO</button>
+            <button class="btn-secundario" onclick="siguienteTurno()" id="btnSiguienteTurno" style="display:none;">➜ Siguiente turno</button>
+            <button class="btn-secundario" onclick="terminarPartida()" id="btnTerminarPartida" style="display:none;">🏁 Terminar</button>
+        </div>
+        <div id="listaJugadores" style="margin-top:10px; min-height:40px; color:var(--sand-dim);">
+            No hay jugadores todavía.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- CASILLEROS DE JUGADORES (siempre visibles)                    -->
+    <!-- ============================================================ -->
+    <div id="casillerosContainer" class="casillero-container"></div>
+
+    <!-- ============================================================ -->
+    <!-- ZONA DE DADO (se muestra cuando un jugador tira)             -->
+    <!-- ============================================================ -->
+    <div id="zonaDado" style="display:none; margin-top:10px;"></div>
+
+    <!-- ============================================================ -->
+    <!-- AVISO DE FASE                                                 -->
+    <!-- ============================================================ -->
+    <div class="panel" style="background: var(--basalt-2); border-color: var(--ochre); margin-top:10px;">
+        <div style="text-align:center; color:var(--ochre-light); font-weight:600; font-size:0.9em;">
+            🎵 BAILANDO VENGO - Versión Completa<br>
+            <small style="font-weight:400; color:var(--sand-dim);">
+                Fases 0-7 integradas: Dado · Pruebas · Cartas · Comodines · Taifas · Final
+            </small>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCRIPT                                                        -->
+    <!-- ============================================================ -->
+    <script>
+        // ============================================================
+        // 🎨 COLORES DISPONIBLES (8 fijos)
+        // ============================================================
+        const COLORES = ["#e07a52", "#4fa3ab", "#eac35c", "#a86d9e", "#6cb4a0", "#d48b6a", "#8ab8c9", "#c9a87c"];
+        let colorSeleccionado = COLORES[0];
+
+        // ============================================================
+        // 🗺️ LUGARES DE TAIFAS
+        // ============================================================
+        const LUGARES_TAIFAS = ["La Sabinita", "Támbara", "Arraigo", "El Patio", "Princesa Iraya"];
+
+        // ============================================================
+        // 📦 DATOS DE PRUEBA (simulados para que funcione sin archivos externos)
+        // ============================================================
+        // Estos arrays se reemplazarán por los reales cuando los tengas
+        const BAILES = [
+            { id: 175, nombre: "MAZURCA DE LA PALMA", enlace: "https://telegram.me/c/2585777945/1588", estrellas: 3 },
+            { id: 174, nombre: "MAZURCA DEL NORTE DE GRAN CANARIA", enlace: "https://telegram.me/c/2585777945/1584",
+            estrellas: 4 },
+            { id: 173, nombre: "MAZURCA DE TIJARAFE", enlace: "https://telegram.me/c/2585777945/1580", estrellas: 5 },
+            { id: 172, nombre: "MAZURCA DE FUERTEVENTURA", enlace: "https://telegram.me/c/2585777945/1576", estrellas: 3 },
+            { id: 171, nombre: "VALS CHIQUILLA MÍA", enlace: "https://telegram.me/c/2585777945/1571", estrellas: 1 },
+            { id: 170, nombre: "MALAGUEÑAS LA PALMA (CONDE DE CABRAS)", enlace: "https://telegram.me/c/2585777945/1566",
+                estrellas: 4 },
+            { id: 169, nombre: "FOLÍAS FUERTEVENTURA", enlace: "https://telegram.me/c/2585777945/1561", estrellas: 1 },
+        ];
+
+        const PREGUNTAS = [
+            { id: 501, pregunta: "¿A partir de qué fecha comienza el análisis de la Indumentaria tradicional en Canarias?",
+                opciones: ["S. V antes de Cristo", "Con Cristóbal Colón", "A partir del siglo XVIII"], correcta: 2 },
+            { id: 502, pregunta: "¿En qué se basa el estudio de la Indumentaria Tradicional?",
+                opciones: ["Datos/archivos/grabados", "Prendas testigo", "Testamentos", "Todas son correctas"],
+            correcta: 3 },
+        ];
+
+        const VESTIMENTAS = [
+            { id: 501, titulo: "Mujer del siglo XVIII en traje de diario", enlace: "https://t.me/c/2585777945/1078",
+                isla: "Tenerife" },
+            { id: 502, titulo: "Mujer del siglo XVIII en traje de diario", enlace: "https://t.me/c/2585777945/1082",
+                isla: "Tenerife" },
+        ];
+
+        const COPLAS = [
+            { id: 300, texto: "Lechera de los .........1 a ti ninguna se iguala ¡ay quien fuera un aroplano pa dirte .............2 el ala!",
+                palabras: ["Rodeos", "arrastrar"], autor: "Nijota" },
+            { id: 301, texto: "Isla del Hierro ........ 1, tierra que no olvidaré, para ti son mis ........ 2 recordando al Garoe",
+                palabras: ["bravía", "folías"], autor: "Los Huracheros" },
+        ];
+
+        // ============================================================
+        // 🎮 ESTADO GLOBAL
+        // ============================================================
+        let jugadores = [];
+        let partidaActiva = false;
+        let turnoActual = 0;
+        let asistenteActual = 1;
+        let ronda = 0;
+        let esperandoEleccion = false;
+        let opcionesGeneradas = [];
+        let mazos = { bailes: [], preguntas: [], vestimentas: [], coplas: [] };
+        let historial = [];
+        let pruebaEnCurso = null;
+
+        // ============================================================
+        // 🛠️ FUNCIONES AUXILIARES
+        // ============================================================
+        function mostrarToast(mensaje) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = mensaje;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 2800);
+        }
+
+        function mezclarArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function getJugadorActivo() { return jugadores[turnoActual] || null; }
+
+        function getAsistente() {
+            if (jugadores.length < 2) return null;
+            let idx = (turnoActual + 1) % jugadores.length;
+            if (jugadores.length === 2) return jugadores[idx];
+            return jugadores[idx];
+        }
+
+        function inicializarMazos() {
+            mazos = {
+                bailes: BAILES.map(b => ({ ...b })),
+                preguntas: PREGUNTAS.map(p => ({ ...p })),
+                vestimentas: VESTIMENTAS.map(v => ({ ...v })),
+                coplas: COPLAS.map(c => ({ ...c })),
+            };
+            Object.keys(mazos).forEach(key => mezclarArray(mazos[key]));
+        }
+
+        // ============================================================
+        // 🎨 SELECTOR DE COLOR
+        // ============================================================
+        function renderizarSelectorColor() {
+            const container = document.getElementById('selectorColor');
+            container.innerHTML = '';
+            COLORES.forEach(color => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-color';
+                btn.style.background = color;
+                btn.dataset.color = color;
+                if (color === colorSeleccionado) btn.classList.add('seleccionado');
+                btn.onclick = () => {
+                    colorSeleccionado = color;
+                    document.querySelectorAll('.btn-color').forEach(b => b.classList.remove('seleccionado'));
+                    btn.classList.add('seleccionado');
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        // ============================================================
+        // 👥 FUNCIONES DE JUGADORES
+        // ============================================================
+        function añadirJugador() {
+            const input = document.getElementById("nombreJugador");
+            const nombre = input.value.trim();
+            if (!nombre) { mostrarToast("Escribe un nombre."); return; }
+            if (jugadores.some(j => j.nombre === nombre)) { mostrarToast("Ya existe."); return; }
+            if (jugadores.some(j => j.color === colorSeleccionado)) { mostrarToast("Color en uso."); return; }
+            jugadores.push({
+                nombre,
+                color: colorSeleccionado,
+                casillero: { bailes: [], preguntas: [], vestimentas: [], coplas: [], comodines: [], taifasLogrados: [] }
+            });
+            input.value = "";
+            actualizarListaJugadores();
+            renderizarCasilleros();
+            guardarPartidaAuto();
+            mostrarToast(`✅ ${nombre} añadido.`);
+        }
+
+        function eliminarJugadores() {
+            if (!confirm("¿Vaciar lista?")) return;
+            jugadores = [];
+            partidaActiva = false;
+            turnoActual = 0;
+            ronda = 0;
+            actualizarListaJugadores();
+            renderizarCasilleros();
+            document.getElementById("btnSiguienteTurno").style.display = "none";
+            document.getElementById("btnTerminarPartida").style.display = "none";
+            document.getElementById("btnIniciarPartida").textContent = "🎵 Iniciar BAILANDO VENGO";
+            document.getElementById("zonaDado").style.display = "none";
+            localStorage.removeItem('granJuegoFinal');
+            mostrarToast("🗑️ Lista vaciada.");
+        }
+
+        function barajarOrden() {
+            if (jugadores.length < 2) { mostrarToast("Mínimo 2."); return; }
+            if (partidaActiva) { mostrarToast("⚠️ No durante la partida."); return; }
+            mezclarArray(jugadores);
+            actualizarListaJugadores();
+            renderizarCasilleros();
+            guardarPartidaAuto();
+            mostrarToast("🔀 Orden barajado.");
+        }
+
+        function actualizarListaJugadores() {
+            const container = document.getElementById("listaJugadores");
+            if (jugadores.length === 0) { container.innerHTML = "<span style='color:var(--sand-dim);'>No hay jugadores.</span>"; return; }
+            let html = "";
+            jugadores.forEach((j, index) => {
+                const esTurno = partidaActiva && index === turnoActual;
+                const esAsistente = partidaActiva && index === asistenteActual;
+                let etiqueta = "";
+                if (esTurno) etiqueta = " 🎯";
+                if (esAsistente && !esTurno) etiqueta = " 🎭";
+                html +=
+                    `<div class="jugador-item" style="border-color:${j.color};">${index+1}. ${j.nombre}${etiqueta}</div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        // ============================================================
+        // 🚀 INICIAR PARTIDA
+        // ============================================================
+        function iniciarPartida() {
+            if (jugadores.length < 2) { mostrarToast("❌ Mínimo 2 jugadores."); return; }
+            if (partidaActiva) { mostrarToast("⚠️ Ya en curso."); return; }
+            jugadores.forEach(j => {
+                j.casillero = { bailes: [], preguntas: [], vestimentas: [], coplas: [], comodines: [], taifasLogrados: [] };
+            });
+            inicializarMazos();
+            partidaActiva = true;
+            turnoActual = 0;
+            ronda = 0;
+            asistenteActual = (jugadores.length > 1) ? 1 : 0;
+            historial = [];
+            document.getElementById("btnIniciarPartida").textContent = "🎵 Partida en curso";
+            document.getElementById("btnSiguienteTurno").style.display = "inline-block";
+            document.getElementById("btnTerminarPartida").style.display = "inline-block";
+            renderizarCasilleros();
+            actualizarListaJugadores();
+            guardarPartidaAuto();
+            mostrarToast(`🎵 ¡Comienza! Ronda ${ronda+1}`);
+        }
+
+        // ============================================================
+        // 🔄 SIGUIENTE TURNO
+        // ============================================================
+        function siguienteTurno() {
+            if (!partidaActiva) { mostrarToast("⚠️ No hay partida."); return; }
+            if (esperandoEleccion) { mostrarToast("⚠️ Primero elige una prueba."); return; }
+            document.getElementById("zonaDado").style.display = "none";
+            turnoActual = (turnoActual + 1) % jugadores.length;
+            if (turnoActual === 0) {
+                ronda++;
+                if (jugadores.length > 2) {
+                    const posibles = jugadores.map((_, i) => i).filter(i => i !== 0);
+                    asistenteActual = posibles[Math.floor(Math.random() * posibles.length)];
+                } else {
+                    asistenteActual = 1;
+                }
+                mostrarToast(`🔄 Ronda ${ronda+1} - Asistente: ${jugadores[asistenteActual].nombre}`);
+            } else {
+                if (jugadores.length === 2) asistenteActual = (turnoActual + 1) % 2;
+            }
+            if (asistenteActual === turnoActual) {
+                const posibles = jugadores.map((_, i) => i).filter(i => i !== turnoActual);
+                asistenteActual = posibles[Math.floor(Math.random() * posibles.length)];
+            }
+            renderizarCasilleros();
+            actualizarListaJugadores();
+            guardarPartidaAuto();
+            mostrarToast(`🎯 Turno de ${jugadores[turnoActual].nombre} (Asistente: ${jugadores[asistenteActual].nombre})`);
+        }
+
+        // ============================================================
+        // 🎲 DADO + OPCIONES
+        // ============================================================
+        const NOMBRES_PRUEBAS = {
+            ver: '👀 Ver vídeo',
+            escuchar: '👂 Escuchar',
+            mimica: '💆 Mímica',
+            pregunta: '❓ Pregunta',
+            vestimenta: '👗 Vestimenta',
+            copla: '🎶 Copla'
+        };
+
+        function tirarDado() {
+            if (!partidaActiva) { mostrarToast("⚠️ No hay partida."); return; }
+            const jugador = getJugadorActivo();
+            if (!jugador) return;
+            if (esperandoEleccion) { mostrarToast("⚠️ Ya tienes opciones, elige."); return; }
+
+            const tirada = Math.floor(Math.random() * 6) + 1;
+            let numOpciones = 1;
+            if (tirada === 1) numOpciones = 1;
+            else if (tirada === 2) numOpciones = 2;
+            else if (tirada >= 3 && tirada <= 4) numOpciones = 3;
+            else if (tirada >= 5 && tirada <= 6) numOpciones = 3;
+
+            const pruebas = ['ver', 'escuchar', 'mimica', 'pregunta', 'vestimenta', 'copla'];
+            let opciones = [];
+            for (let i = 0; i < numOpciones; i++) {
+                opciones.push(pruebas[Math.floor(Math.random() * pruebas.length)]);
+            }
+
+            if (tirada >= 5 && tirada <= 6 && opciones.length === 3) {
+                while (new Set(opciones).size < 3) {
+                    const nueva = pruebas[Math.floor(Math.random() * pruebas.length)];
+                    if (!opciones.includes(nueva)) {
+                        const repetida = opciones.find((p, idx) => opciones.indexOf(p) !== idx);
+                        opciones[opciones.indexOf(repetida)] = nueva;
+                    }
+                }
+            }
+
+            if (tirada === 2 && opciones.length === 2 && opciones[0] === opciones[1]) {
+                const nueva = pruebas.find(p => p !== opciones[0]) || 'ver';
+                opciones[1] = nueva;
+            }
+
+            opcionesGeneradas = opciones;
+            esperandoEleccion = true;
+
+            const zona = document.getElementById('zonaDado');
+            zona.style.display = 'block';
+
+            let html = `<div class="opciones-dado">
+                <div class="titulo">🎲 Tirada: ${tirada} → ${opciones.length} opción${opciones.length > 1 ? 'es' : ''}</div>
+                <div style="margin:8px 0; font-size:0.9em; color:var(--sand-dim);">
+                    ${jugador.nombre}, elige una prueba:
+                </div>
+                <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:6px;">`;
+
+            opciones.forEach((op, index) => {
+                const nombre = NOMBRES_PRUEBAS[op] || op;
+                html += `<button class="opcion-btn" onclick="elegirPrueba('${op}', ${index})">${nombre}</button>`;
+            });
+
+            html += `</div>
+                <button class="btn-texto" onclick="cancelarTirada()" style="margin-top:8px;">Cancelar</button>
+            </div>`;
+
+            zona.innerHTML = html;
+            guardarPartidaAuto();
+        }
+
+        function elegirPrueba(opcion, index) {
+            if (!esperandoEleccion) return;
+            esperandoEleccion = false;
+            const jugador = getJugadorActivo();
+            const nombre = NOMBRES_PRUEBAS[opcion] || opcion;
+            mostrarToast(`✅ ${jugador.nombre} elige: ${nombre}`);
+            document.getElementById('zonaDado').style.display = 'none';
+
+            // Simular ejecución de prueba (Fase 3)
+            ejecutarPrueba(opcion);
+            guardarPartidaAuto();
+        }
+
+        function cancelarTirada() {
+            if (!esperandoEleccion) return;
+            esperandoEleccion = false;
+            document.getElementById('zonaDado').style.display = 'none';
+            mostrarToast("🔄 Tirada cancelada.");
+            guardarPartidaAuto();
+        }
+
+        // ============================================================
+        // 🎯 EJECUTAR PRUEBA (Fase 3 - simplificada)
+        // ============================================================
+        function ejecutarPrueba(tipo) {
+            const jugador = getJugadorActivo();
+            const asistente = getAsistente();
+            if (!jugador) return;
+
+            // Simular éxito aleatorio (70% de éxito para demo)
+            const exito = Math.random() < 0.7;
+
+            // Obtener carta del mazo correspondiente
+            let mazoKey = '';
+            let seccion = '';
+            let carta = null;
+
+            switch (tipo) {
+                case 'ver':
+                case 'escuchar':
+                case 'mimica':
+                    mazoKey = 'bailes';
+                    seccion = 'bailes';
+                    break;
+                case 'pregunta':
+                    mazoKey = 'preguntas';
+                    seccion = 'preguntas';
+                    break;
+                case 'vestimenta':
+                    mazoKey = 'vestimentas';
+                    seccion = 'vestimentas';
+                    break;
+                case 'copla':
+                    mazoKey = 'coplas';
+                    seccion = 'coplas';
+                    break;
+            }
+
+            if (mazos[mazoKey] && mazos[mazoKey].length > 0) {
+                carta = mazos[mazoKey].pop();
+            } else {
+                // Si no hay cartas, recargar
+                recargarMazo(mazoKey);
+                if (mazos[mazoKey].length === 0) {
+                    mostrarToast("⚠️ No hay cartas disponibles.");
+                    return;
+                }
+                carta = mazos[mazoKey].pop();
+            }
+
+            if (exito) {
+                // Añadir carta al casillero
+                const casillero = jugador.casillero;
+                const maximo = seccion === 'bailes' ? 5 : 3;
+                if (casillero[seccion].length < maximo) {
+                    casillero[seccion].push(carta);
+                    mostrarToast(`✅ ${jugador.nombre} ha ganado: ${carta.nombre || carta.titulo || `ID ${carta.id}`}`);
+                } else {
+                    // Sección llena: ofrecer descartar
+                    mostrarToast(`⚠️ Sección de ${seccion} llena. Debes descartar una carta.`);
+                    // Simplificado: descartar la primera
+                    const descartada = casillero[seccion].shift();
+                    casillero[seccion].push(carta);
+                    mostrarToast(`🔄 Has descartado: ${descartada.nombre || descartada.titulo || `ID ${descartada.id}`}`);
+                }
+                // Asistente gana comodín
+                if (asistente && asistente.casillero.comodines.length < 5) {
+                    asistente.casillero.comodines.push({});
+                    mostrarToast(`⭐ ${asistente.nombre} gana un comodín.`);
+                }
+            } else {
+                mostrarToast(`❌ ${jugador.nombre} ha fallado.`);
+                // Devolver carta al mazo
+                mazos[mazoKey].push(carta);
+            }
+
+            historial.push({
+                ronda: ronda + 1,
+                jugador: jugador.nombre,
+                tipo: tipo,
+                exito: exito,
+                carta: carta ? carta.id : null
+            });
+
+            renderizarCasilleros();
+            guardarPartidaAuto();
+
+            // Si se cumplen requisitos de Taifas, mostrar notificación
+            if (comprobarRequisitosTaifas(jugador)) {
+                mostrarToast(`🏆 ¡${jugador.nombre} puede realizar un Baile de Taifas!`);
+                renderizarCasilleros();
+            }
+        }
+
+        function recargarMazo(mazoKey) {
+            const todas = mazos[mazoKey];
+            const enUso = [];
+            jugadores.forEach(j => {
+                const seccion = mazoKey === 'bailes' ? 'bailes' : mazoKey === 'preguntas' ? 'preguntas' : mazoKey ===
+                    'vestimentas' ? 'vestimentas' : 'coplas';
+                enUso.push(...j.casillero[seccion].map(c => c.id));
+            });
+            const disponibles = todas.filter(c => !enUso.includes(c.id));
+            mazos[mazoKey] = mezclarArray(disponibles);
+        }
+
+        // ============================================================
+        // 🏆 REQUISITOS PARA BAILE DE TAIFAS
+        // ============================================================
+        function comprobarRequisitosTaifas(jugador) {
+            const c = jugador.casillero;
+            if (c.bailes.length < 5) return false;
+            if (c.preguntas.length < 1) return false;
+            if (c.vestimentas.length < 1) return false;
+            if (c.coplas.length < 1) return false;
+            if (c.comodines.length < 1) return false;
+            const lugaresPendientes = LUGARES_TAIFAS.filter(l => !c.taifasLogrados.includes(l));
+            return lugaresPendientes.length > 0;
+        }
+
+        // ============================================================
+        // ⭐ COMODINES (Fase 5)
+        // ============================================================
+        function abrirModalComodin() {
+            const jugador = getJugadorActivo();
+            if (!jugador) return;
+            if (jugador.casillero.comodines.length === 0) {
+                mostrarToast("No tienes comodines.");
+                return;
+            }
+
+            const modal = document.getElementById("modalComodin");
+            modal.classList.add("visible");
+            const container = document.getElementById("opcionesComodin");
+            container.innerHTML = `
+                <div class="opcion" onclick="usarComodin('doble_tiempo')">
+                    <div class="titulo">⏱️ Doblar tiempo (1 comodín)</div>
+                    <div class="descripcion">Duplica el tiempo de la próxima prueba.</div>
+                </div>
+                <div class="opcion" onclick="usarComodin('repetir')">
+                    <div class="titulo">🔄 Segunda oportunidad (2 comodines)</div>
+                    <div class="descripcion">Si fallas, vuelve a tirar el dado.</div>
+                </div>
+                <div class="opcion" onclick="usarComodin('comprar')">
+                    <div class="titulo">🃏 Comprar carta (2 comodines)</div>
+                    <div class="descripcion">Obtén una carta de pregunta, vestimenta o copla.</div>
+                </div>
+                <div class="opcion" onclick="usarComodin('cambiar_asistente')">
+                    <div class="titulo">🔄 Cambiar asistente (2 comodines)</div>
+                    <div class="descripcion">Elige a otro jugador como tu asistente.</div>
+                </div>
+            `;
+        }
+
+        function cerrarModalComodin() {
+            document.getElementById("modalComodin").classList.remove("visible");
+        }
+
+        function usarComodin(tipo) {
+            const jugador = getJugadorActivo();
+            if (!jugador) return;
+
+            let costo = 0;
+            switch (tipo) {
+                case 'doble_tiempo':
+                    costo = 1;
+                    break;
+                case 'repetir':
+                    costo = 2;
+                    break;
+                case 'comprar':
+                    costo = 2;
+                    break;
+                case 'cambiar_asistente':
+                    costo = 2;
+                    break;
+                default:
+                    return;
+            }
+
+            if (jugador.casillero.comodines.length < costo) {
+                mostrarToast(`Necesitas ${costo} comodines.`);
+                return;
+            }
+
+            for (let i = 0; i < costo; i++) {
+                jugador.casillero.comodines.pop();
+            }
+
+            let mensaje = '';
+            switch (tipo) {
+                case 'doble_tiempo':
+                    jugador.tiempoDoble = true;
+                    mensaje = '⏱️ Próxima prueba con tiempo doble.';
+                    break;
+                case 'repetir':
+                    mensaje = '🔄 Segunda oportunidad activada. Vuelve a tirar el dado.';
+                    setTimeout(tirarDado, 500);
+                    break;
+                case 'comprar':
+                    const tipos = ['preguntas', 'vestimentas', 'coplas'];
+                    const tipoCompra = tipos[Math.floor(Math.random() * tipos.length)];
+                    if (mazos[tipoCompra].length > 0) {
+                        const carta = mazos[tipoCompra].pop();
+                        const seccion = tipoCompra === 'preguntas' ? 'preguntas' : tipoCompra === 'vestimentas' ?
+                            'vestimentas' : 'coplas';
+                        const casillero = jugador.casillero;
+                        if (casillero[seccion].length < 3) {
+                            casillero[seccion].push(carta);
+                            mensaje = `🃏 Has comprado una carta de ${tipoCompra.slice(0,-1)}.`;
+                        } else {
+                            mensaje = `No tienes espacio para más ${tipoCompra}.`;
+                            mazos[tipoCompra].push(carta);
+                        }
+                    } else {
+                        mensaje = 'No hay cartas disponibles para comprar.';
+                    }
+                    break;
+                case 'cambiar_asistente':
+                    const otros = jugadores.filter(j => j.nombre !== jugador.nombre);
+                    if (otros.length > 0) {
+                        const elegido = otros[Math.floor(Math.random() * otros.length)];
+                        const idx = jugadores.indexOf(elegido);
+                        asistenteActual = idx;
+                        mensaje = `🔄 Ahora tu asistente es ${elegido.nombre}.`;
+                    } else {
+                        mensaje = 'No hay otros jugadores.';
+                    }
+                    break;
+            }
+
+            mostrarToast(mensaje);
+            cerrarModalComodin();
+            renderizarCasilleros();
+            guardarPartidaAuto();
+        }
+
+        // ============================================================
+        // 🏆 BAILE DE TAIFAS (Fase 6)
+        // ============================================================
+        function abrirModalTaifas() {
+            const jugador = getJugadorActivo();
+            if (!jugador) return;
+            if (!comprobarRequisitosTaifas(jugador)) {
+                mostrarToast("⚠️ No cumples los requisitos.");
+                return;
+            }
+
+            const modal = document.getElementById("modalTaifas");
+            modal.classList.add("visible");
+            const container = document.getElementById("contenidoTaifas");
+
+            const lugaresPendientes = LUGARES_TAIFAS.filter(l => !jugador.casillero.taifasLogrados.includes(l));
+
+            let html = `
+                <p style="color:var(--sand-dim); margin-bottom:8px;">Elige el lugar:</p>
+                <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;">
+                    ${lugaresPendientes.map(l => `<button class="btn-secundario" onclick="seleccionarLugarTaifas('${l}')">${l}</button>`).join('')}
+                </div>
+                <p style="color:var(--sand-dim); margin-bottom:8px;">Elige 3 bailes (en el orden que los realizarás):</p>
+                <div id="bailesTaifasSeleccion" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;">
+                    ${jugador.casillero.bailes.map((b, i) => `<button class="btn-secundario" onclick="toggleBaileTaifas(${i})" id="btnBaileTaifas_${i}">${b.id} ${b.nombre}</button>`).join('')}
+                </div>
+                <div style="font-size:0.8em; color:var(--sand-dim);">Seleccionados: <span id="contadorBailesTaifas">0</span>/3</div>
+                <button class="btn-principal" onclick="confirmarTaifas()" id="btnConfirmarTaifas" style="margin-top:12px; display:none;">✅ Confirmar</button>
+            `;
+
+            container.innerHTML = html;
+            // Guardar estado para la selección
+            window.taifasState = {
+                lugar: null,
+                bailesSeleccionados: [],
+                jugador: jugador
+            };
+        }
+
+        function seleccionarLugarTaifas(lugar) {
+            window.taifasState.lugar = lugar;
+            mostrarToast(`📍 Lugar seleccionado: ${lugar}`);
+            actualizarBotonConfirmarTaifas();
+        }
+
+        function toggleBaileTaifas(index) {
+            const state = window.taifasState;
+            const idx = state.bailesSeleccionados.indexOf(index);
+            if (idx !== -1) {
+                state.bailesSeleccionados.splice(idx, 1);
+            } else {
+                if (state.bailesSeleccionados.length >= 3) {
+                    mostrarToast("Ya has seleccionado 3 bailes.");
+                    return;
+                }
+                state.bailesSeleccionados.push(index);
+            }
+            // Actualizar visual
+            document.querySelectorAll('#bailesTaifasSeleccion .btn-secundario').forEach((btn, i) => {
+                if (state.bailesSeleccionados.includes(i)) {
+                    btn.style.borderColor = 'var(--ochre)';
+                    btn.style.background = 'rgba(212,160,23,0.2)';
+                } else {
+                    btn.style.borderColor = 'var(--line)';
+                    btn.style.background = 'var(--basalt-1)';
+                }
+            });
+            document.getElementById('contadorBailesTaifas').textContent = state.bailesSeleccionados.length;
+            actualizarBotonConfirmarTaifas();
+        }
+
+        function actualizarBotonConfirmarTaifas() {
+            const state = window.taifasState;
+            const btn = document.getElementById('btnConfirmarTaifas');
+            if (state.lugar && state.bailesSeleccionados.length === 3) {
+                btn.style.display = 'block';
+            } else {
+                btn.style.display = 'none';
+            }
+        }
+
+        function confirmarTaifas() {
+            const state = window.taifasState;
+            if (!state.lugar || state.bailesSeleccionados.length !== 3) {
+                mostrarToast("Selecciona lugar y 3 bailes.");
+                return;
+            }
+
+            const jugador = state.jugador;
+            const bailesElegidos = state.bailesSeleccionados.map(i => jugador.casillero.bailes[i]);
+
+            cerrarModalTaifas();
+
+            // Iniciar votación simplificada
+            mostrarToast(`🗳️ Votación para ${state.lugar} con ${bailesElegidos.map(b => b.nombre).join(', ')}`);
+
+            // Simular votación (todos los jugadores votan)
+            const votantes = jugadores.filter(j => j.nombre !== jugador.nombre);
+            const votos = votantes.map(() => Math.random() < 0.7); // 70% de aprobación para demo
+            const aprobados = votos.filter(v => v).length;
+            const exito = aprobados > votantes.length / 2;
+
+            if (exito) {
+                // Marcar lugar y descartar cartas
+                jugador.casillero.taifasLogrados.push(state.lugar);
+                // Descartar los 3 bailes
+                const idsAEliminar = bailesElegidos.map(b => b.id);
+                jugador.casillero.bailes = jugador.casillero.bailes.filter(b => !idsAEliminar.includes(b.id));
+                // Descartar 1 pregunta, 1 vestimenta, 1 copla, 1 comodín
+                if (jugador.casillero.preguntas.length > 0) jugador.casillero.preguntas.shift();
+                if (jugador.casillero.vestimentas.length > 0) jugador.casillero.vestimentas.shift();
+                if (jugador.casillero.coplas.length > 0) jugador.casillero.coplas.shift();
+                if (jugador.casillero.comodines.length > 0) jugador.casillero.comodines.shift();
+
+                mostrarToast(`🏆 ¡${jugador.nombre} ha conseguido ${state.lugar}!`);
+                historial.push({
+                    ronda: ronda + 1,
+                    jugador: jugador.nombre,
+                    tipo: 'taifas',
+                    exito: true,
+                    lugar: state.lugar
+                });
+            } else {
+                mostrarToast(`❌ ${jugador.nombre} no ha conseguido ${state.lugar}.`);
+                historial.push({
+                    ronda: ronda + 1,
+                    jugador: jugador.nombre,
+                    tipo: 'taifas',
+                    exito: false,
+                    lugar: state.lugar
+                });
+            }
+
+            renderizarCasilleros();
+            guardarPartidaAuto();
+
+            // Verificar si ha ganado la partida
+            if (jugador.casillero.taifasLogrados.length === LUGARES_TAIFAS.length) {
+                mostrarToast(`🏆 ¡${jugador.nombre} ha ganado la partida!`);
+                finalizarPartida();
+            }
+        }
+
+        function cerrarModalTaifas() {
+            document.getElementById("modalTaifas").classList.remove("visible");
+        }
+
+        // ============================================================
+        // 🖼️ RENDERIZAR CASILLEROS
+        // ============================================================
+        function renderizarCasilleros() {
+            const container = document.getElementById('casillerosContainer');
+            if (jugadores.length === 0) {
+                container.innerHTML = '<span style="color:var(--sand-dim);font-size:0.85em;">Añade jugadores.</span>';
+                return;
+            }
+
+            const ordenVisual = [];
+            if (partidaActiva && turnoActual !== undefined) ordenVisual.push(turnoActual);
+            if (partidaActiva && asistenteActual !== undefined && asistenteActual !== turnoActual) ordenVisual.push(
+            asistenteActual);
+            jugadores.forEach((_, i) => { if (!ordenVisual.includes(i)) ordenVisual.push(i); });
+
+            let html = '';
+            ordenVisual.forEach(idx => {
+                const j = jugadores[idx];
+                const esTurno = partidaActiva && idx === turnoActual;
+                const esAsistente = partidaActiva && idx === asistenteActual;
+                const c = j.casillero;
+                let clases = 'casillero-jugador';
+                if (esTurno) clases += ' turno';
+                if (esAsistente) clases += ' asistente';
+                let etiqueta = '';
+                if (esTurno) etiqueta = '🎯 Turno';
+                else if (esAsistente) etiqueta = '🎭 Asistente';
+
+                const puedeTaifas = esTurno && comprobarRequisitosTaifas(j);
+
+                html += `
+                    <div class="${clases}">
+                        <div class="nombre" style="color:${j.color};">
+                            ${j.nombre}
+                            ${etiqueta ? `<span class="etiqueta ${esAsistente ? 'asistente' : ''}">${etiqueta}</span>` : ''}
+                        </div>
+                        <div class="seccion">
+                            <div class="seccion-titulo">🕺 Bailes <span class="contador">${c.bailes.length}/5</span></div>
+                            <div class="tarjetas">${c.bailes.length > 0 ? c.bailes.map(b => `<span class="tarjeta">${b.id} ${b.nombre}</span>`).join('') : '<span class="vacio">Vacío</span>'}</div>
+                        </div>
+                        <div class="seccion">
+                            <div class="seccion-titulo">❓ Preguntas <span class="contador">${c.preguntas.length}/3</span></div>
+                            <div class="tarjetas">${c.preguntas.length > 0 ? c.preguntas.map(p => `<span class="tarjeta">${p.id}</span>`).join('') : '<span class="vacio">Vacío</span>'}</div>
+                        </div>
+                        <div class="seccion">
+                            <div class="seccion-titulo">👗 Vestimentas <span class="contador">${c.vestimentas.length}/3</span></div>
+                            <div class="tarjetas">${c.vestimentas.length > 0 ? c.vestimentas.map(v => `<span class="tarjeta">${v.id}</span>`).join('') : '<span class="vacio">Vacío</span>'}</div>
+                        </div>
+                        <div class="seccion">
+                            <div class="seccion-titulo">🎶 Coplas <span class="contador">${c.coplas.length}/3</span></div>
+                            <div class="tarjetas">${c.coplas.length > 0 ? c.coplas.map(co => `<span class="tarjeta">${co.id}</span>`).join('') : '<span class="vacio">Vacío</span>'}</div>
+                        </div>
+                        <div class="seccion">
+                            <div class="seccion-titulo">⭐ Comodines <span class="contador">${c.comodines.length}/5</span></div>
+                            <div class="tarjetas">${c.comodines.length > 0 ? c.comodines.map((_, i) => `<span class="tarjeta comodin">#${i+1}</span>`).join('') : '<span class="vacio">Vacío</span>'}</div>
+                            ${esTurno && c.comodines.length > 0 ? `<button class="btn-accion-jugador" onclick="abrirModalComodin()">⭐ Canjear</button>` : ''}
+                        </div>
+                        <div class="seccion">
+                            <div class="seccion-titulo">🏆 Taifas <span class="contador">${c.taifasLogrados.length}/${LUGARES_TAIFAS.length}</span></div>
+                            <div class="tarjetas">${c.taifasLogrados.length > 0 ? c.taifasLogrados.map(l => `<span class="tarjeta taifa">✅ ${l}</span>`).join('') : '<span class="vacio">Ninguno</span>'}</div>
+                        </div>
+                        ${esTurno ? `<button class="btn-accion-jugador" onclick="tirarDado()">🎲 Sortear prueba</button>` : ''}
+                        ${puedeTaifas ? `<button class="btn-accion-jugador taifas" onclick="abrirModalTaifas()">🏆 ¡Baile de Taifas!</button>` : ''}
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // ============================================================
+        // 🏁 FINAL DE PARTIDA (Fase 7)
+        // ============================================================
+        function terminarPartida() {
+            if (!partidaActiva) {
+                mostrarToast("⚠️ No hay partida activa.");
+                return;
+            }
+            if (!confirm("¿Terminar la partida?")) return;
+            finalizarPartida();
+        }
+
+        function finalizarPartida() {
+            partidaActiva = false;
+            document.getElementById("btnSiguienteTurno").style.display = "none";
+            document.getElementById("btnTerminarPartida").style.display = "none";
+            document.getElementById("btnIniciarPartida").textContent = "🎵 Nueva partida";
+
+            const ordenados = [...jugadores].sort((a, b) => b.casillero.taifasLogrados.length - a.casillero.taifasLogrados
+                .length);
+
+            let mensaje = "🏆 CLASIFICACIÓN FINAL\n\n";
+            ordenados.forEach((j, i) => {
+                const medalla = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
+                mensaje += `${medalla} ${j.nombre} - ${j.casillero.taifasLogrados.length} Taifas\n`;
+            });
+            mensaje += `\n${historial.length} pruebas realizadas.`;
+
+            mostrarToast(mensaje);
+
+            // Mostrar en el casillero
+            const container = document.getElementById('casillerosContainer');
+            let html = `<div class="panel" style="background:var(--basalt-2); border-color:var(--ochre);">
+                <div style="text-align:center; color:var(--ochre-light); font-weight:700; font-size:1.1em; margin-bottom:8px;">🏆 Clasificación Final</div>
+                <div style="font-size:0.85em; color:var(--sand-dim); text-align:center; margin-bottom:8px;">${historial.length} pruebas realizadas</div>`;
+            ordenados.forEach((j, i) => {
+                const medalla = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
+                html +=
+                    `<div style="display:flex; justify-content:space-between; padding:4px 8px; border-bottom:1px solid var(--line);">
+                    <span style="color:${j.color};">${medalla} ${j.nombre}</span>
+                    <span style="color:var(--ochre-light);">${j.casillero.taifasLogrados.length} Taifas</span>
+                </div>`;
+            });
+            html += `<button class="btn-principal" style="margin-top:12px;" onclick="reiniciarPartida()">🔄 Nueva partida</button>`;
+            html += `</div>`;
+            container.innerHTML = html;
+
+            guardarPartidaAuto();
+        }
+
+        function reiniciarPartida() {
+            if (!confirm("¿Reiniciar partida?")) return;
+            jugadores.forEach(j => {
+                j.casillero = { bailes: [], preguntas: [], vestimentas: [], coplas: [], comodines: [], taifasLogrados: [] };
+            });
+            partidaActiva = false;
+            turnoActual = 0;
+            ronda = 0;
+            historial = [];
+            document.getElementById("zonaDado").style.display = "none";
+            renderizarCasilleros();
+            actualizarListaJugadores();
+            document.getElementById("btnIniciarPartida").textContent = "🎵 Iniciar BAILANDO VENGO";
+            document.getElementById("btnSiguienteTurno").style.display = "none";
+            document.getElementById("btnTerminarPartida").style.display = "none";
+            guardarPartidaAuto();
+            mostrarToast("🔄 Partida reiniciada.");
+        }
+
+        // ============================================================
+        // 💾 PERSISTENCIA
+        // ============================================================
+        function guardarPartidaAuto() {
+            try {
+                const datos = {
+                    jugadores,
+                    partidaActiva,
+                    turnoActual,
+                    asistenteActual,
+                    ronda,
+                    mazos,
+                    historial,
+                    version: "Final"
+                };
+                localStorage.setItem('granJuegoFinal', JSON.stringify(datos));
+            } catch (e) { console.log('Error guardando:', e); }
+        }
+
+        function cargarPartidaAuto() {
+            try {
+                const datos = localStorage.getItem('granJuegoFinal');
+                if (!datos) return;
+                const parsed = JSON.parse(datos);
+                if (!parsed.jugadores || parsed.jugadores.length === 0) return;
+                jugadores = parsed.jugadores;
+                partidaActiva = parsed.partidaActiva || false;
+                turnoActual = parsed.turnoActual || 0;
+                asistenteActual = parsed.asistenteActual || (jugadores.length > 1 ? 1 : 0);
+                ronda = parsed.ronda || 0;
+                mazos = parsed.mazos || {};
+                historial = parsed.historial || [];
+
+                actualizarListaJugadores();
+                renderizarCasilleros();
+
+                if (partidaActiva) {
+                    document.getElementById("btnIniciarPartida").textContent = "🎵 Partida en curso";
+                    document.getElementById("btnSiguienteTurno").style.display = "inline-block";
+                    document.getElementById("btnTerminarPartida").style.display = "inline-block";
+                }
+                console.log('✅ Partida final cargada.');
+            } catch (e) { console.log('Error cargando:', e); }
+        }
+
+        // ============================================================
+        // 🚀 INICIO
+        // ============================================================
+        function iniciarApp() {
+            renderizarSelectorColor();
+            cargarPartidaAuto();
+            if (jugadores.length > 0 && !partidaActiva) renderizarCasilleros();
+            console.log('✅ BAILANDO VENGO - Versión Final iniciada.');
+            console.log(`🎵 ${BAILES.length} bailes, ${PREGUNTAS.length} preguntas, ${VESTIMENTAS.length} vestimentas, ${COPLAS.length} coplas.`);
+        }
+
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciarApp);
+        else iniciarApp();
+    </script>
+</body>
+</html>
