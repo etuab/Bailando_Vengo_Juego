@@ -1901,17 +1901,22 @@
                 });
                 html += `</div>`;
             }
-            // === PREGUNTA ===
-            else if (tipo === 'pregunta') {
-                html += `<p style="color:var(--sand); font-weight:600; margin-bottom:8px;">${carta.pregunta}</p>
-                    <div class="opciones-grid" style="flex-direction:column;">`;
-                carta.opciones.forEach((op, index) => {
-                    const esCorrecta = index === carta.correcta;
-                    const letra = String.fromCharCode(65 + index);
-                    html += `<button class="btn-opcion" data-correcta="${esCorrecta}" onclick="responderPruebaOpcion(this, ${esCorrecta})">${letra}) ${op}</button>`;
-                });
-                html += `</div>`;
-            }
+            // === PREGUNTA (con soporte para imágenes) ===
+else if (tipo === 'pregunta') {
+    let htmlPregunta = `<p style="color:var(--sand); font-weight:600; margin-bottom:8px;">${carta.pregunta}</p>`;
+    // Si la pregunta tiene imagen, mostrar enlace para verla
+    if (carta.imagen && carta.enlace) {
+        htmlPregunta += `<a href="${carta.enlace}" target="_blank" class="enlace-prueba" style="margin:10px 0;">🖼️ Ver imagen del hábito</a>`;
+    }
+    htmlPregunta += `<div class="opciones-grid" style="flex-direction:column;">`;
+    carta.opciones.forEach((op, index) => {
+        const esCorrecta = index === carta.correcta;
+        const letra = String.fromCharCode(65 + index);
+        htmlPregunta += `<button class="btn-opcion" data-correcta="${esCorrecta}" onclick="responderPruebaOpcion(this, ${esCorrecta})">${letra}) ${op}</button>`;
+    });
+    htmlPregunta += `</div>`;
+    html += htmlPregunta;
+}
             // === VESTIMENTA ===
             else if (tipo === 'vestimenta') {
                 html += `<a href="${carta.enlace}" target="_blank" class="enlace-prueba">👗 Ver vestimenta</a>
