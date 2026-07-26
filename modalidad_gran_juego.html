@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,7 +7,7 @@
     <title>BAILANDO VENGO · El Gran Juego</title>
     <style>
         /* ==========================================================
-           ESTILOS COMPLETOS (los que te gustan)
+           ESTILOS (los mismos que te gustan) – solo se ajusta la animación del dado
            ========================================================== */
         @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=Work+Sans:wght@400;500;600;700&display=swap');
         :root {
@@ -665,7 +666,9 @@
             from { opacity: 1; transform: scale(1); }
             to { opacity: 0; transform: scale(0.9); }
         }
-        /* DADO ANIMADO – CORREGIDO */
+        /* ==========================================================
+           DADO ANIMADO – CORREGIDO
+           ========================================================== */
         .dado-animado {
             display: inline-block;
             font-size: 3em;
@@ -861,7 +864,7 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- SCRIPT COMPLETO (con pitidos, dado corregido, sin arrays masivos) -->
+    <!-- SCRIPT COMPLETO (con la animación del dado corregida)        -->
     <!-- ============================================================ -->
     <script>
         // ============================================================
@@ -880,7 +883,7 @@
         const LUGARES_TAIFAS = ["La Sabinita", "Támbara", "Arraigo", "El Patio", "Princesa Iraya"];
 
         // ============================================================
-        // 📦 BAILES – 🔽 RELLENA AQUÍ CON TUS 175 BAILES
+        // 📦 BAILES – RELLENA CON TUS 175 BAILES
         // ============================================================
         const BAILES = [
             { id: 175, nombre: "MAZURCA DE LA PALMA", enlace: "https://telegram.me/c/2585777945/1588", estrellas: 3 },
@@ -1061,10 +1064,10 @@
 ];
 
         // ============================================================
-        // 📝 PREGUNTAS – 🔽 RELLENA AQUÍ CON TUS 150 PREGUNTAS
+        // 📝 PREGUNTAS – RELLENA CON TUS 150 PREGUNTAS
         // ============================================================
         const PREGUNTAS = [
-            {
+           {
         id: 501,
         pregunta: "¿A partir de qué fecha comienza el análisis de la Indumentaria tradicional en Canarias?",
         opciones: ["S. V antes de Cristo", "Con Cristóbal Colón", "A partir del siglo XVIII"],
@@ -2403,7 +2406,7 @@
 ];
 
         // ============================================================
-        // 👗 VESTIMENTAS – 🔽 RELLENA AQUÍ CON TUS 149 VESTIMENTAS
+        // 👗 VESTIMENTAS – RELLENA CON TUS 149 VESTIMENTAS
         // ============================================================
         const VESTIMENTAS = [
             { id: 501, titulo: "Mujer del siglo XVIII en traje de diario", enlace: "https://t.me/c/2585777945/1078", isla: "Tenerife" },
@@ -2560,7 +2563,7 @@
         const VESTIMENTAS_FILTRADAS = VESTIMENTAS.filter(v => v.id < 632 || v.id > 644);
 
         // ============================================================
-        // 🎶 COPLAS – 🔽 RELLENA AQUÍ CON TUS 133 COPLAS
+        // 🎶 COPLAS – RELLENA CON TUS 133 COPLAS
         // ============================================================
         const COPLAS = [
             { id: 300, texto: "Lechera de los .........1 a ti ninguna se iguala ¡ay quien fuera un aroplano pa dirte .............2 el ala!", palabras: ["Rodeos", "arrastrar"], autor: "Nijota", enlace: "https://t.me/c/2585777945/670" },
@@ -2728,7 +2731,7 @@
         let intervaloPrueba = null;
 
         // ============================================================
-        // 🎯 VARIABLES DE COPLA
+        // 🎯 VARIABLES DE COPLA (CORREGIDAS)
         // ============================================================
         let coplaSeleccionadas = [];
         let coplaPalabrasCorrectas = [];
@@ -2761,35 +2764,7 @@
         }
 
         // ============================================================
-        // 🔊 PITIDOS CON WEB AUDIO API
-        // ============================================================
-        let audioCtx = null;
-
-        function reproducirPitido(frecuencia, duracion, volumen = 0.3) {
-            try {
-                if (!audioCtx) {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                if (audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
-                const oscilador = audioCtx.createOscillator();
-                const ganancia = audioCtx.createGain();
-                oscilador.connect(ganancia);
-                ganancia.connect(audioCtx.destination);
-                oscilador.frequency.value = frecuencia;
-                oscilador.type = 'sine';
-                ganancia.gain.setValueAtTime(volumen, audioCtx.currentTime);
-                ganancia.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duracion);
-                oscilador.start(audioCtx.currentTime);
-                oscilador.stop(audioCtx.currentTime + duracion);
-            } catch (e) {
-                // Silenciar errores
-            }
-        }
-
-        // ============================================================
-        // 🃏 INICIALIZAR MAZOS
+        // 🃏 INICIALIZAR MAZOS (ya no filtra hábitos)
         // ============================================================
         function inicializarMazos() {
             mazos.bailes = BAILES.map(b => ({ ...b }));
@@ -2945,7 +2920,7 @@
         }
 
         // ============================================================
-        // 🚀 INICIAR PARTIDA
+        // 🚀 INICIAR PARTIDA (con rotación de asistente)
         // ============================================================
         function iniciarPartida() {
             if (jugadores.length < 2) { mostrarToast("❌ Mínimo 2 jugadores."); return; }
@@ -2976,7 +2951,7 @@
         }
 
         // ============================================================
-        // 🔄 SIGUIENTE TURNO
+        // 🔄 SIGUIENTE TURNO (con rotación de asistente)
         // ============================================================
         function siguienteTurno() {
             if (!partidaActiva) { mostrarToast("⚠️ No hay partida."); return; }
@@ -3007,7 +2982,7 @@
         }
 
         // ============================================================
-        // 🎲 DADO + OPCIONES (CON ANIMACIÓN CORREGIDA Y PITIDOS)
+        // 🎲 DADO + OPCIONES (con animación CORREGIDA)
         // ============================================================
         const NOMBRES_PRUEBAS = {
             ver: '👀 Ver vídeo',
@@ -3043,16 +3018,10 @@
             // --- ANIMACIÓN DEL DADO (CORREGIDA) ---
             const dadoContainer = document.getElementById('dadoResultado');
             if (dadoContainer) {
-                // Crear el elemento con createElement para mejor control
-                const dadoDiv = document.createElement('div');
-                dadoDiv.className = 'dado-animado';
-                dadoDiv.textContent = '🎲 ' + tirada;
-                dadoContainer.innerHTML = ''; // Limpiar
-                dadoContainer.appendChild(dadoDiv);
                 dadoContainer.style.display = 'block';
-                // Forzar reflow
+                dadoContainer.innerHTML = `<div class="dado-animado">🎲 ${tirada}</div>`;
+                // Forzar reflow para que la animación se ejecute siempre
                 void dadoContainer.offsetWidth;
-                // Después de la animación, ocultar
                 setTimeout(() => {
                     dadoContainer.style.display = 'none';
                 }, 1500);
@@ -3120,7 +3089,7 @@
         }
 
         // ============================================================
-        // ⏱️ TEMPORIZADOR (CON PITIDOS)
+        // ⏱️ TEMPORIZADOR: FUNCIONES
         // ============================================================
         function seleccionarTiempoPrueba(segundos) {
             tiempoSeleccionadoPrueba = segundos;
@@ -3137,22 +3106,10 @@
             tiempoRestantePrueba = tiempoSeleccionadoPrueba;
             temporizadorActivoPrueba = true;
             actualizarDisplayTiempoPrueba();
-            // Actualizar el título de la pestaña con el tiempo restante
-            document.title = '⏱️ ' + tiempoRestantePrueba + 's · BAILANDO VENGO';
             intervaloPrueba = setInterval(() => {
                 tiempoRestantePrueba--;
                 actualizarDisplayTiempoPrueba();
-                // Actualizar título de pestaña
-                document.title = '⏱️ ' + tiempoRestantePrueba + 's · BAILANDO VENGO';
-
-                // 🔊 PITIDOS: últimos 10 segundos
-                if (tiempoRestantePrueba > 0 && tiempoRestantePrueba <= 10) {
-                    reproducirPitido(800, 0.12, 0.25);
-                }
-
                 if (tiempoRestantePrueba <= 0) {
-                    // Pitido largo al terminar
-                    reproducirPitido(400, 0.6, 0.35);
                     detenerTemporizadorPrueba();
                     mostrarToast("⏰ ¡Tiempo!");
                     if (pruebaEnCurso && !pruebaEnCurso.respondida) {
@@ -3161,6 +3118,7 @@
                         document.querySelectorAll('#contenidoPrueba .btn-opcion').forEach(b => {
                             if (b.dataset.correcta === 'true') b.classList.add('correcta');
                         });
+                        // Mostrar overlay de fallo por tiempo
                         mostrarResultadoOverlay(false, '⏰ Tiempo agotado');
                         setTimeout(() => {
                             document.getElementById('modalPrueba').classList.remove('visible');
@@ -3178,8 +3136,6 @@
                 intervaloPrueba = null;
             }
             actualizarDisplayTiempoPrueba();
-            // Restaurar título de pestaña
-            document.title = 'BAILANDO VENGO · El Gran Juego';
         }
 
         function actualizarDisplayTiempoPrueba() {
@@ -3200,6 +3156,9 @@
             btn.textContent = tieneComodines ? '⏱️ +60s (1 ⭐)' : '⏱️ sin comodines';
         }
 
+        // ============================================================
+        // ⏱️ BOTÓN +60 SEGUNDOS (1 COMODÍN)
+        // ============================================================
         function sumarTiempoPrueba() {
             const jugador = getJugadorActivo();
             if (!jugador || !pruebaEnCurso) {
@@ -3246,7 +3205,7 @@
         }
 
         // ============================================================
-        // 🎯 ABRIR PRUEBA
+        // 🎯 ABRIR PRUEBA (con soporte para hábitos e imágenes, y carta forzada)
         // ============================================================
         function abrirPrueba(tipo, cartaForzada = null) {
             const jugador = getJugadorActivo();
@@ -3320,7 +3279,7 @@
                 });
                 html += `</div>`;
             }
-            // === PREGUNTA ===
+            // === PREGUNTA (con soporte para imágenes de hábito) ===
             else if (tipo === 'pregunta') {
                 let htmlPregunta = `<p style="color:var(--sand); font-weight:600; margin-bottom:8px;">${carta.pregunta}</p>`;
                 if (carta.imagen && carta.enlace) {
@@ -3433,7 +3392,7 @@
         }
 
         // ============================================================
-        // 🎯 RESPONDER PRUEBA OPCIÓN
+        // 🎯 RESPONDER PRUEBA OPCIÓN (con overlay de resultado)
         // ============================================================
         function responderPruebaOpcion(btn, esCorrecto) {
             if (!pruebaEnCurso || pruebaEnCurso.respondida) return;
@@ -3455,13 +3414,14 @@
         }
 
         // ============================================================
-        // 🎯 FINALIZAR PRUEBA
+        // 🎯 FINALIZAR PRUEBA (con descarte de carta al fallar y repetición con 2 comodines)
         // ============================================================
         function finalizarPrueba(esCorrecto, prueba) {
             detenerTemporizadorPrueba();
             const { tipo, carta, mazoKey, seccion, jugador, asistente } = prueba;
 
             if (esCorrecto) {
+                // === ACIERTO ===
                 const casillero = jugador.casillero;
                 const maximo = seccion === 'bailes' ? 5 : 3;
                 if (casillero[seccion].length < maximo) {
@@ -3496,7 +3456,7 @@
                 return;
             }
 
-            // Fallo: repetir con 2 comodines
+            // === FALLO: ofrecer repetir por 2 comodines ===
             const comodinesDisponibles = jugador.casillero.comodines.length;
             if (comodinesDisponibles >= 2) {
                 if (confirm(`❌ Has fallado. ¿Quieres repetir la prueba por 2 comodines?`)) {
@@ -3512,7 +3472,10 @@
                 }
             }
 
+            // === Fallo sin repetición (la carta se descarta, NO se devuelve al mazo) ===
             mostrarToast(`❌ ${jugador.nombre} ha fallado.`);
+            // 🔥 La carta se descarta: NO se hace mazos[mazoKey].push(carta);
+
             historial.push({
                 ronda: ronda + 1,
                 jugador: jugador.nombre,
@@ -3535,6 +3498,7 @@
         function cancelarPrueba() {
             if (!pruebaEnCurso) return;
             const { carta, mazoKey } = pruebaEnCurso;
+            // Al cancelar, la carta vuelve al mazo (se puede permitir)
             mazos[mazoKey].push(carta);
             pruebaEnCurso = null;
             coplaSeleccionadas = [];
@@ -3551,7 +3515,7 @@
         }
 
         // ============================================================
-        // 🏆 REQUISITOS TAIFAS
+        // 🏆 REQUISITOS PARA BAILE DE TAIFAS
         // ============================================================
         function comprobarRequisitosTaifas(jugador) {
             const c = jugador.casillero;
@@ -3578,7 +3542,8 @@
                 vestimentas: jugador.casillero.vestimentas.length,
                 coplas: jugador.casillero.coplas.length
             };
-            document.getElementById("modalComodin").classList.add("visible");
+            const modal = document.getElementById("modalComodin");
+            modal.classList.add("visible");
             renderPanelComodin(jugador);
         }
 
@@ -3713,7 +3678,7 @@
         }
 
         // ============================================================
-        // 🏆 BAILE DE TAIFAS
+        // 🏆 BAILE DE TAIFAS (con enlaces)
         // ============================================================
         function abrirModalTaifas() {
             const jugador = getJugadorActivo();
@@ -3837,7 +3802,7 @@
         }
 
         // ============================================================
-        // 🗳️ VOTACIÓN
+        // 🗳️ VOTACIÓN (incluye al jugador que propone)
         // ============================================================
         function iniciarVotacionTaifas(jugador, lugar, bailesElegidos) {
             let votantes = [jugador];
@@ -3846,6 +3811,10 @@
                     votantes.push(j);
                 }
             });
+            if (votantes.length === 0) {
+                finalizarVotacionTaifas(jugador, lugar, bailesElegidos, true);
+                return;
+            }
             votacionEnCurso = {
                 tipo: 'taifas',
                 jugador: jugador,
@@ -4044,7 +4013,7 @@
         }
 
         // ============================================================
-        // 🏁 FINAL DE PARTIDA
+        // 🏁 FINAL DE PARTIDA (CON DESEMPATE POR TOTAL DE CARTAS Y BARRAS)
         // ============================================================
         function terminarPartida() {
             if (!partidaActiva) {
