@@ -3135,30 +3135,62 @@
         }
         function iniciarPartida() {
             if (jugadores.length < 2) { mostrarToast("❌ Mínimo 2 jugadores."); return; }
-            if (partidaActiva) { mostrarToast("⚠️ Ya en curso."); return; }
-            jugadores.forEach(j => {
-                j.casillero = { bailes: [], preguntas: [], vestimentas: [], coplas: [], comodines: [], taifasLogrados: [] };
-            });
-            vecesAsistente = jugadores.map(() => 0);
-            inicializarMazos();
-            partidaActiva = true;
-            turnoActual = 0;
-            ronda = 0;
-            asistenteActual = elegirAsistente();
-            historial = [];
-            cambiandoTurno = false;
-            document.getElementById("btnIniciarPartida").textContent = "🎵 Partida en curso";
-            document.getElementById("btnTerminarPartida").style.display = "inline-block";
-            actualizarEstadoPartida();
-            renderizarCasilleros();
-            actualizarListaJugadores();
-            guardarPartidaAuto();
-            const jugador = getJugadorActivo();
-            const asistente = getAsistente();
-            mostrarToast(`🎵 ¡Comienza! Ronda ${ronda+1} · 🎯 Turno de ${jugador.nombre} (Asistente: ${asistente ? asistente.nombre : 'Sin asistente'})`);
-            setTimeout(() => {
-                if (partidaActiva && !pruebaEnCurso && !esperandoEleccion) tirarDado();
-            }, 800);
+    if (partidaActiva) { mostrarToast("⚠️ Ya en curso."); return; }
+
+    // --- LIMPIAR ESTADO ANTERIOR ---
+    esperandoEleccion = false;
+    opcionesGeneradas = [];
+    pruebaEnCurso = null;
+    votacionEnCurso = null;
+    cambiandoTurno = false;
+    coplaSeleccionadas = [];
+    coplaPalabrasCorrectas = [];
+    detenerTemporizadorPrueba();
+
+    // --- OCULTAR CONTENEDORES DEL DADO ---
+    document.getElementById("zonaDado").style.display = "none";
+    document.getElementById("dadoResultado").style.display = "none";
+
+    // --- REINICIAR CASILLEROS ---
+    jugadores.forEach(j => {
+        j.casillero = { bailes: [], preguntas: [], vestimentas: [], coplas: [], comodines: [], taifasLogrados: [] };
+    });
+
+    // --- REINICIAR CONTADORES DE ASISTENTE ---
+    vecesAsistente = jugadores.map(() => 0);
+
+    // --- INICIALIZAR MAZOS ---
+    inicializarMazos();
+
+    // --- ACTIVAR PARTIDA ---
+    partidaActiva = true;
+    turnoActual = 0;
+    ronda = 0;
+    asistenteActual = elegirAsistente();
+    historial = [];
+
+    // --- ACTUALIZAR INTERFAZ ---
+    document.getElementById("btnIniciarPartida").textContent = "🎵 Partida en curso";
+    document.getElementById("btnTerminarPartida").style.display = "inline-block";
+    actualizarEstadoPartida();
+    renderizarCasilleros();
+    actualizarListaJugadores();
+    guardarPartidaAuto();
+
+    const jugador = getJugadorActivo();
+    const asistente = getAsistente();
+    mostrarToast(`🎵 ¡Comienza! Ronda ${ronda+1} · 🎯 Turno de ${jugador.nombre} (Asistente: ${asistente ? asistente.nombre : 'Sin asistente'})`);
+
+    // --- ESPERAR UN MOMENTO Y TIRAR EL DADO ---
+    setTimeout(() => {
+        console.log("⏳ Ejecutando tirarDado() desde iniciarPartida");
+        if (partidaActiva && !pruebaEnCurso && !esperandoEleccion) {
+            tirarDado();
+        } else {
+            console.warn("⚠️ No se pudo tirar dado: partidaActiva=", partidaActiva, "pruebaEnCurso=", pruebaEnCurso, "esperandoEleccion=", esperandoEleccion);
+        }
+    }, 800);
+}
         }
         function siguienteTurno() {
             cambiandoTurno = false;
