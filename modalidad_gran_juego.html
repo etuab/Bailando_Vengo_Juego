@@ -3867,96 +3867,70 @@
         // ============================================================
         // 🗳️ VOTACIÓN
         // ============================================================
-        function iniciarVotacionTaifas(jugador, lugar, bailesElegidos) {
-            sonidoVotacion();
-            let votantes = [jugador];
-            jugadores.forEach(j => { if (!votantes.some(v => v.nombre === j.nombre)) votantes.push(j); });
-            if (votantes.length === 0) { finalizarVotacionTaifas(jugador, lugar, bailesElegidos, true); return; }
-            votacionEnCurso = { tipo: 'taifas', jugador, lugar, bailesElegidos, votantes, votos: [], indiceVotante: 0 };
-            mostrarVotanteTaifas();
-        }
-        function mostrarVotanteTaifas() {
-            const v = votacionEnCurso;
-            if (v.indiceVotante >= v.votantes.length) {
-                const aprobados = v.votos.filter(voto => voto).length;
-                const exito = aprobados > v.votantes.length / 2;
-                finalizarVotacionTaifas(v.jugador, v.lugar, v.bailesElegidos, exito);
-                return;
-            }
-            const votante = v.votantes[v.indiceVotante];
-            document.getElementById('modalVotacion').classList.add('visible');
-            document.getElementById('tituloVotacion').textContent = `🗳️ Votación - ${v.lugar}`;
-            document.getElementById('contenidoVotacion').innerHTML = `
-                <div style="text-align:center; padding:10px 0;">
-                    <p style="color:var(--sand); font-size:1.1em;">${votante.nombre}, ¿cree que ${v.jugador.nombre} ha bailado bien?</p>
-                    <p style="color:var(--sand-dim); font-size:0.9em; margin:8px 0;">Bailes: ${v.bailesElegidos.map(b => b.nombre).join(' · ')}</p>
-                    <div class="votacion-botones">
-                        <button class="si" onclick="votarTaifas(true)">👍 Sí</button>
-                        <button class="no" onclick="votarTaifas(false)">👎 No</button>
-                    </div>
-                    <p style="color:var(--sand-dim); font-size:0.8em;">Votante ${v.indiceVotante+1}/${v.votantes.length}</p>
-                </div>`;
-        }
-        function votarTaifas(aprobado) {
-            const v = votacionEnCurso;
-            v.votos.push(aprobado);
-            v.indiceVotante++;
-            document.getElementById('modalVotacion').classList.remove('visible');
-            setTimeout(mostrarVotanteTaifas, 400);
-        }
         function finalizarVotacionTaifas(jugador, lugar, bailesElegidos, exito) {
-            votacionEnCurso = null;
-            document.getElementById('modalVotacion').classList.remove('visible');
+    votacionEnCurso = null;
+    document.getElementById('modalVotacion').classList.remove('visible');
 
-            // SIEMPRE eliminar cartas
-            const idsAEliminar = bailesElegidos.map(b => b.id);
-            jugador.casillero.bailes = jugador.casillero.bailes.filter(b => !idsAEliminar.includes(b.id));
-            if (jugador.casillero.preguntas.length > 0) jugador.casillero.preguntas.shift();
-            if (jugador.casillero.vestimentas.length > 0) jugador.casillero.vestimentas.shift();
-            if (jugador.casillero.coplas.length > 0) jugador.casillero.coplas.shift();
-            if (jugador.casillero.comodines.length > 0) jugador.casillero.comodines.shift();
+    // SIEMPRE eliminar cartas (tanto si gana como si pierde)
+    const idsAEliminar = bailesElegidos.map(b => b.id);
+    jugador.casillero.bailes = jugador.casillero.bailes.filter(b => !idsAEliminar.includes(b.id));
+    if (jugador.casillero.preguntas.length > 0) jugador.casillero.preguntas.shift();
+    if (jugador.casillero.vestimentas.length > 0) jugador.casillero.vestimentas.shift();
+    if (jugador.casillero.coplas.length > 0) jugador.casillero.coplas.shift();
+    if (jugador.casillero.comodines.length > 0) jugador.casillero.comodines.shift();
 
-            if (exito) {
-                jugador.casillero.taifasLogrados.push(lugar);
-                sonidoAcierto();
-                mostrarToast(`🎉 ¡${jugador.nombre} ha conseguido ${lugar}!`);
-                participantesTaifas.forEach(nombre => {
-                    const participante = jugadores.find(j => j.nombre === nombre);
-                    if (participante && participante.casillero.comodines.length < 5) {
-                        participante.casillero.comodines.push({});
-                        mostrarToast(`⭐ ${nombre} gana un comodín por participar.`, 2000);
-                    }
-                });
-                historial.push({ ronda: ronda + 1, jugador: jugador.nombre, tipo: 'taifas', exito: true, lugar: lugar });
-                setTimeout(() => {
-                    renderizarCasilleros();
-                    document.querySelectorAll('.tarjeta.taifa').forEach(el => {
-                        if (el.textContent.includes(lugar)) {
-                            el.classList.add('destacada');
-                            setTimeout(() => el.classList.remove('destacada'), 2000);
-                        }
-                    });
-                }, 300);
-            } else {
-                sonidoFallo();
-                mostrarToast(`❌ ${jugador.nombre} ha perdido la votación para ${lugar}.`);
-                historial.push({ ronda: ronda + 1, jugador: jugador.nombre, tipo: 'taifas', exito: false, lugar: lugar });
+    if (exito) {
+        // GANA la votación
+        jugador.casillero.taifasLogrados.push(lugar);
+        sonidoAcierto();
+        mostrarToast(`🎉 ¡${jugador.nombre} ha conseguido ${lugar}!`);
+        participantesTaifas.forEach(nombre => {
+            const participante = jugadores.find(j => j.nombre === nombre);
+            if (participante && participante.casillero.comodines.length < 5) {
+                participante.casillero.comodines.push({});
+                mostrarToast(`⭐ ${nombre} gana un comodín por participar.`, 2000);
             }
-
+        });
+        historial.push({ ronda: ronda + 1, jugador: jugador.nombre, tipo: 'taifas', exito: true, lugar: lugar });
+        setTimeout(() => {
             renderizarCasilleros();
-            guardarPartidaAuto();
+            document.querySelectorAll('.tarjeta.taifa').forEach(el => {
+                if (el.textContent.includes(lugar)) {
+                    el.classList.add('destacada');
+                    setTimeout(() => el.classList.remove('destacada'), 2000);
+                }
+            });
+        }, 300);
+    } else {
+        // PIERDE la votación
+        sonidoFallo();
+        mostrarToast(`❌ ${jugador.nombre} ha perdido la votación para ${lugar}.`);
+        historial.push({ ronda: ronda + 1, jugador: jugador.nombre, tipo: 'taifas', exito: false, lugar: lugar });
+    }
 
-            if (jugador.casillero.taifasLogrados.length === LUGARES_TAIFAS.length) {
-                sonidoAcierto();
-                setTimeout(() => sonidoAcierto(), 300);
-                mostrarToast(`🏆 ¡${jugador.nombre} ha ganado la partida!`);
-                finalizarPartida();
-                return;
-            }
+    renderizarCasilleros();
+    guardarPartidaAuto();
 
-            cambiandoTurno = true;
-            setTimeout(() => { if (partidaActiva) siguienteTurno(); }, 1000);
+    // Comprobar si ya ha ganado la partida (todos los lugares conseguidos)
+    if (jugador.casillero.taifasLogrados.length === LUGARES_TAIFAS.length) {
+        sonidoAcierto();
+        setTimeout(() => sonidoAcierto(), 300);
+        mostrarToast(`🏆 ¡${jugador.nombre} ha ganado la partida!`);
+        finalizarPartida();
+        return;
+    }
+
+    // --- CORRECCIÓN: limpiar estados y forzar cambio de turno ---
+    cambiandoTurno = false;
+    esperandoEleccion = false;
+    pruebaEnCurso = null;
+
+    setTimeout(() => {
+        if (partidaActiva) {
+            siguienteTurno();
         }
+    }, 500);
+}
 
         // ============================================================
         // 🖼️ RENDERIZAR CASILLEROS
