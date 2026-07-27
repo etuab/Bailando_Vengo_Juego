@@ -3789,85 +3789,226 @@
         // 🏆 BAILE DE TAIFAS
         // ============================================================
         function abrirModalTaifas() {
-            const jugador = getJugadorActivo();
-            if (!jugador) return;
-            if (cambiandoTurno) { mostrarToast("⏳ Espera a que termine el turno."); return; }
-            if (votacionEnCurso) { mostrarToast("⚠️ Ya hay una votación en curso."); return; }
-            if (!comprobarRequisitosTaifas(jugador)) { mostrarToast("⚠️ No cumples los requisitos."); return; }
-            participantesTaifas = jugadores.filter(j => j.nombre !== jugador.nombre).map(j => j.nombre);
-            const modal = document.getElementById("modalTaifas");
-            modal.classList.add("visible");
-            const container = document.getElementById("contenidoTaifas");
-            const lugaresPendientes = LUGARES_TAIFAS.filter(l => !jugador.casillero.taifasLogrados.includes(l));
-            let html = `<p style="color:var(--sand-dim); margin-bottom:8px;">📍 Elige el lugar:</p>
-                <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; justify-content:center;">`;
-            lugaresPendientes.forEach(l => {
-                html += `<button class="btn-secundario" onclick="seleccionarLugarTaifas('${l}')" style="margin:2px;" id="btnLugar_${l}">${l}</button>`;
-            });
-            html += `</div><p style="color:var(--sand-dim); margin-bottom:8px;">🕺 Elige 3 bailes (en el orden que los realizarás):</p>
-                <div id="bailesTaifasSeleccion" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; justify-content:center;">`;
-            jugador.casillero.bailes.forEach((b, i) => {
-                html += `<button class="btn-secundario" onclick="toggleBaileTaifas(${i})" id="btnBaileTaifas_${i}" style="margin:2px;">${b.id} ${b.nombre}
-                    <a href="${b.enlace}" target="_blank" style="color:var(--ocean-light); margin-left:6px; text-decoration:none; font-size:0.9em;">🔗</a></button>`;
-            });
-            html += `</div><div style="font-size:0.85em; color:var(--sand-dim); text-align:center;">Seleccionados: <span id="contadorBailesTaifas">0</span>/3</div>
-                <div style="margin-top:12px; border-top:1px solid var(--line); padding-top:10px;">
-                <p style="color:var(--sand-dim); font-size:0.9em; margin-bottom:6px;">👥 Jugadores que participan (recibirán comodín si ganas):</p>
-                <div class="selector-participantes" id="participantesTaifas">`;
-            jugadores.filter(j => j.nombre !== jugador.nombre).forEach(j => {
-                html += `<button onclick="toggleParticipanteTaifas('${j.nombre}')" id="part_${j.nombre}" class="${participantesTaifas.includes(j.nombre) ? 'seleccionado' : ''}">${j.nombre}</button>`;
-            });
-            html += `</div></div><button class="btn-principal" onclick="confirmarTaifas()" id="btnConfirmarTaifas" style="margin-top:12px; display:none;">✅ Confirmar Baile de Taifas</button>`;
-            container.innerHTML = html;
-            window.taifasState = { lugar: null, bailesSeleccionados: [], jugador: jugador };
-        }
-        function toggleParticipanteTaifas(nombre) {
-            const idx = participantesTaifas.indexOf(nombre);
-            if (idx !== -1) { participantesTaifas.splice(idx, 1); document.getElementById(`part_${nombre}`).classList.remove('seleccionado'); }
-            else { participantesTaifas.push(nombre); document.getElementById(`part_${nombre}`).classList.add('seleccionado'); }
-        }
-        function seleccionarLugarTaifas(lugar) {
-            window.taifasState.lugar = lugar;
-            mostrarToast(`📍 Lugar seleccionado: ${lugar}`);
-            document.querySelectorAll('#contenidoTaifas .btn-secundario').forEach(b => {
-                b.style.borderColor = b.textContent.trim() === lugar ? 'var(--ochre)' : 'var(--line)';
-                b.style.background = b.textContent.trim() === lugar ? 'rgba(212,160,23,0.3)' : 'var(--basalt-1)';
-            });
-            actualizarBotonConfirmarTaifas();
-        }
-        function toggleBaileTaifas(index) {
-            const state = window.taifasState;
-            const idx = state.bailesSeleccionados.indexOf(index);
-            if (idx !== -1) state.bailesSeleccionados.splice(idx, 1);
-            else {
-                if (state.bailesSeleccionados.length >= 3) { mostrarToast("Ya has seleccionado 3 bailes."); return; }
-                state.bailesSeleccionados.push(index);
-            }
-            document.querySelectorAll('#bailesTaifasSeleccion .btn-secundario').forEach((btn, i) => {
-                btn.style.borderColor = state.bailesSeleccionados.includes(i) ? 'var(--ochre)' : 'var(--line)';
-                btn.style.background = state.bailesSeleccionados.includes(i) ? 'rgba(212,160,23,0.2)' : 'var(--basalt-1)';
-            });
-            document.getElementById('contadorBailesTaifas').textContent = state.bailesSeleccionados.length;
-            actualizarBotonConfirmarTaifas();
-        }
-        function actualizarBotonConfirmarTaifas() {
-            const state = window.taifasState;
-            document.getElementById('btnConfirmarTaifas').style.display = (state.lugar && state.bailesSeleccionados.length === 3) ? 'block' : 'none';
-        }
-        function confirmarTaifas() {
-            const state = window.taifasState;
-            if (!state.lugar || state.bailesSeleccionados.length !== 3) { mostrarToast("Selecciona lugar y 3 bailes."); return; }
-            const jugador = state.jugador;
-            const bailesElegidos = state.bailesSeleccionados.map(i => jugador.casillero.bailes[i]);
-            cerrarModalTaifas();
-            iniciarVotacionTaifas(jugador, state.lugar, bailesElegidos);
-        }
-        function cerrarModalTaifas() { document.getElementById("modalTaifas").classList.remove("visible"); }
+    const jugador = getJugadorActivo();
+    if (!jugador) {
+        mostrarToast("⚠️ No hay jugador activo.");
+        return;
+    }
+    if (cambiandoTurno) {
+        mostrarToast("⏳ Espera a que termine el turno.");
+        return;
+    }
+    if (votacionEnCurso) {
+        mostrarToast("⚠️ Ya hay una votación en curso.");
+        return;
+    }
+    if (!comprobarRequisitosTaifas(jugador)) {
+        mostrarToast("⚠️ No cumples los requisitos.");
+        return;
+    }
 
-        // ============================================================
-        // 🗳️ VOTACIÓN
-        // ============================================================
-        function finalizarVotacionTaifas(jugador, lugar, bailesElegidos, exito) {
+    participantesTaifas = jugadores.filter(j => j.nombre !== jugador.nombre).map(j => j.nombre);
+
+    const modal = document.getElementById("modalTaifas");
+    modal.classList.add("visible");
+    const container = document.getElementById("contenidoTaifas");
+
+    const lugaresPendientes = LUGARES_TAIFAS.filter(l => !jugador.casillero.taifasLogrados.includes(l));
+
+    let html = `
+        <p style="color:var(--sand-dim); margin-bottom:8px;">📍 Elige el lugar:</p>
+        <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; justify-content:center;">
+            ${lugaresPendientes.map(l => `<button class="btn-secundario" onclick="seleccionarLugarTaifas('${l}')" style="margin:2px;" id="btnLugar_${l}">${l}</button>`).join('')}
+        </div>
+        <p style="color:var(--sand-dim); margin-bottom:8px;">🕺 Elige 3 bailes (en el orden que los realizarás):</p>
+        <div id="bailesTaifasSeleccion" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; justify-content:center;">
+            ${jugador.casillero.bailes.map((b, i) => `
+                <button class="btn-secundario" onclick="toggleBaileTaifas(${i})" id="btnBaileTaifas_${i}" style="margin:2px;">
+                    ${b.id} ${b.nombre}
+                    <a href="${b.enlace}" target="_blank" style="color:var(--ocean-light); margin-left:6px; text-decoration:none; font-size:0.9em;">🔗</a>
+                </button>
+            `).join('')}
+        </div>
+        <div style="font-size:0.85em; color:var(--sand-dim); text-align:center;">Seleccionados: <span id="contadorBailesTaifas">0</span>/3</div>
+        <div style="margin-top:12px; border-top:1px solid var(--line); padding-top:10px;">
+            <p style="color:var(--sand-dim); font-size:0.9em; margin-bottom:6px;">👥 Jugadores que participan (recibirán comodín si ganas):</p>
+            <div class="selector-participantes" id="participantesTaifas">
+                ${jugadores.filter(j => j.nombre !== jugador.nombre).map(j => `
+                    <button onclick="toggleParticipanteTaifas('${j.nombre}')" id="part_${j.nombre}" class="${participantesTaifas.includes(j.nombre) ? 'seleccionado' : ''}">${j.nombre}</button>
+                `).join('')}
+            </div>
+        </div>
+        <button class="btn-principal" onclick="confirmarTaifas()" id="btnConfirmarTaifas" style="margin-top:12px; display:none;">✅ Confirmar Baile de Taifas</button>
+    `;
+    container.innerHTML = html;
+    window.taifasState = { lugar: null, bailesSeleccionados: [], jugador: jugador };
+}
+
+function toggleParticipanteTaifas(nombre) {
+    const idx = participantesTaifas.indexOf(nombre);
+    if (idx !== -1) {
+        participantesTaifas.splice(idx, 1);
+        document.getElementById(`part_${nombre}`).classList.remove('seleccionado');
+    } else {
+        participantesTaifas.push(nombre);
+        document.getElementById(`part_${nombre}`).classList.add('seleccionado');
+    }
+}
+
+function seleccionarLugarTaifas(lugar) {
+    window.taifasState.lugar = lugar;
+    mostrarToast(`📍 Lugar seleccionado: ${lugar}`);
+    document.querySelectorAll('#contenidoTaifas .btn-secundario').forEach(b => {
+        if (b.textContent.trim() === lugar) {
+            b.style.borderColor = 'var(--ochre)';
+            b.style.background = 'rgba(212,160,23,0.3)';
+        } else {
+            b.style.borderColor = 'var(--line)';
+            b.style.background = 'var(--basalt-1)';
+        }
+    });
+    actualizarBotonConfirmarTaifas();
+}
+
+function toggleBaileTaifas(index) {
+    const state = window.taifasState;
+    const idx = state.bailesSeleccionados.indexOf(index);
+    if (idx !== -1) {
+        state.bailesSeleccionados.splice(idx, 1);
+    } else {
+        if (state.bailesSeleccionados.length >= 3) {
+            mostrarToast("Ya has seleccionado 3 bailes.");
+            return;
+        }
+        state.bailesSeleccionados.push(index);
+    }
+    document.querySelectorAll('#bailesTaifasSeleccion .btn-secundario').forEach((btn, i) => {
+        if (state.bailesSeleccionados.includes(i)) {
+            btn.style.borderColor = 'var(--ochre)';
+            btn.style.background = 'rgba(212,160,23,0.2)';
+        } else {
+            btn.style.borderColor = 'var(--line)';
+            btn.style.background = 'var(--basalt-1)';
+        }
+    });
+    document.getElementById('contadorBailesTaifas').textContent = state.bailesSeleccionados.length;
+    actualizarBotonConfirmarTaifas();
+}
+
+function actualizarBotonConfirmarTaifas() {
+    const state = window.taifasState;
+    const btn = document.getElementById('btnConfirmarTaifas');
+    if (state && state.lugar && state.bailesSeleccionados.length === 3) {
+        btn.style.display = 'block';
+    } else {
+        btn.style.display = 'none';
+    }
+}
+
+function confirmarTaifas() {
+    const state = window.taifasState;
+    if (!state || !state.lugar || state.bailesSeleccionados.length !== 3) {
+        mostrarToast("Selecciona lugar y 3 bailes.");
+        return;
+    }
+    const jugador = state.jugador;
+    const bailesElegidos = state.bailesSeleccionados.map(i => jugador.casillero.bailes[i]);
+    
+    // Cerrar modal y limpiar estado
+    cerrarModalTaifas();
+    
+    // Iniciar votación
+    iniciarVotacionTaifas(jugador, state.lugar, bailesElegidos);
+}
+
+function cerrarModalTaifas() {
+    document.getElementById("modalTaifas").classList.remove("visible");
+    window.taifasState = null;
+}
+
+// ============================================================
+// 🗳️ VOTACIÓN
+// ============================================================
+function iniciarVotacionTaifas(jugador, lugar, bailesElegidos) {
+    sonidoVotacion();
+    
+    // Crear lista de votantes (todos los jugadores, incluido el que propone)
+    let votantes = [jugador];
+    jugadores.forEach(j => {
+        if (!votantes.some(v => v.nombre === j.nombre)) {
+            votantes.push(j);
+        }
+    });
+    
+    if (votantes.length === 0) {
+        // Caso extremo: solo hay un jugador, votación automática
+        finalizarVotacionTaifas(jugador, lugar, bailesElegidos, true);
+        return;
+    }
+    
+    votacionEnCurso = {
+        tipo: 'taifas',
+        jugador: jugador,
+        lugar: lugar,
+        bailesElegidos: bailesElegidos,
+        votantes: votantes,
+        votos: [],
+        indiceVotante: 0
+    };
+    
+    mostrarVotanteTaifas();
+}
+
+function mostrarVotanteTaifas() {
+    const v = votacionEnCurso;
+    if (!v) {
+        // Si no hay votación, salir
+        return;
+    }
+    
+    if (v.indiceVotante >= v.votantes.length) {
+        // Todos han votado, calcular resultado
+        const aprobados = v.votos.filter(voto => voto).length;
+        const exito = aprobados > v.votantes.length / 2;
+        finalizarVotacionTaifas(v.jugador, v.lugar, v.bailesElegidos, exito);
+        return;
+    }
+    
+    const votante = v.votantes[v.indiceVotante];
+    const modal = document.getElementById('modalVotacion');
+    modal.classList.add('visible');
+    document.getElementById('tituloVotacion').textContent = `🗳️ Votación - ${v.lugar}`;
+    
+    const container = document.getElementById('contenidoVotacion');
+    container.innerHTML = `
+        <div style="text-align:center; padding:10px 0;">
+            <p style="color:var(--sand); font-size:1.1em;">${votante.nombre}, ¿cree que ${v.jugador.nombre} ha bailado bien?</p>
+            <p style="color:var(--sand-dim); font-size:0.9em; margin:8px 0;">Bailes: ${v.bailesElegidos.map(b => b.nombre).join(' · ')}</p>
+            <div class="votacion-botones">
+                <button class="si" onclick="votarTaifas(true)">👍 Sí</button>
+                <button class="no" onclick="votarTaifas(false)">👎 No</button>
+            </div>
+            <p style="color:var(--sand-dim); font-size:0.8em;">Votante ${v.indiceVotante+1}/${v.votantes.length}</p>
+        </div>
+    `;
+}
+
+function votarTaifas(aprobado) {
+    const v = votacionEnCurso;
+    if (!v) return;
+    
+    v.votos.push(aprobado);
+    v.indiceVotante++;
+    
+    // Cerrar modal de votación y pasar al siguiente votante
+    document.getElementById('modalVotacion').classList.remove('visible');
+    setTimeout(() => {
+        mostrarVotanteTaifas();
+    }, 400);
+}
+
+function finalizarVotacionTaifas(jugador, lugar, bailesElegidos, exito) {
+    // Limpiar estado de votación
     votacionEnCurso = null;
     document.getElementById('modalVotacion').classList.remove('visible');
 
@@ -3911,7 +4052,7 @@
     renderizarCasilleros();
     guardarPartidaAuto();
 
-    // Comprobar si ya ha ganado la partida (todos los lugares conseguidos)
+    // Comprobar si ya ha ganado la partida
     if (jugador.casillero.taifasLogrados.length === LUGARES_TAIFAS.length) {
         sonidoAcierto();
         setTimeout(() => sonidoAcierto(), 300);
@@ -3920,16 +4061,15 @@
         return;
     }
 
-    // --- CORRECCIÓN DEFINITIVA: limpiar estados y FORZAR cambio de turno ---
-    // Estas líneas son críticas para que el juego entienda que el turno ha terminado
+    // --- FORZAR CAMBIO DE TURNO ---
+    // Limpiar cualquier estado de prueba o elección pendiente
     esperandoEleccion = false;
     pruebaEnCurso = null;
     cambiandoTurno = false;
-
-    // Ahora sí, avanzamos al siguiente jugador
+    
+    // Avanzar al siguiente jugador
     setTimeout(() => {
         if (partidaActiva) {
-            // Llamamos a siguienteTurno() que ya está preparada para avanzar
             siguienteTurno();
         }
     }, 500);
