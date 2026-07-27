@@ -3920,16 +3920,70 @@
         return;
     }
 
-    // --- CORRECCIÓN: limpiar estados y forzar cambio de turno ---
-    cambiandoTurno = false;
+    // --- CORRECCIÓN DEFINITIVA: limpiar estados y FORZAR cambio de turno ---
+    // Estas líneas son críticas para que el juego entienda que el turno ha terminado
     esperandoEleccion = false;
     pruebaEnCurso = null;
+    cambiandoTurno = false;
 
+    // Ahora sí, avanzamos al siguiente jugador
     setTimeout(() => {
         if (partidaActiva) {
+            // Llamamos a siguienteTurno() que ya está preparada para avanzar
             siguienteTurno();
         }
     }, 500);
+}
+
+// ============================================================
+// 🔄 SIGUIENTE TURNO (MODIFICADO PARA ACEPTAR LLAMADA DESDE TAIFAS)
+// ============================================================
+function siguienteTurno() {
+    // Primero, aseguramos que no haya bloqueos residuales
+    cambiandoTurno = false;
+    esperandoEleccion = false;
+    pruebaEnCurso = null;
+    votacionEnCurso = null;
+
+    if (!partidaActiva) { mostrarToast("⚠️ No hay partida."); return; }
+
+    // Si por alguna razón aún hay una prueba o votación en curso, las forzamos a terminar
+    // (esto es una red de seguridad)
+    if (pruebaEnCurso) {
+        pruebaEnCurso = null;
+    }
+    if (votacionEnCurso) {
+        votacionEnCurso = null;
+    }
+
+    // Ocultar contenedores del dado
+    document.getElementById("zonaDado").style.display = "none";
+    document.getElementById("dadoResultado").style.display = "none";
+
+    // Avanzar al siguiente jugador
+    turnoActual = (turnoActual + 1) % jugadores.length;
+    if (turnoActual === 0) ronda++;
+
+    // Elegir nuevo asistente
+    asistenteActual = elegirAsistente();
+    asegurarAsistente();
+
+    // Actualizar interfaz
+    actualizarEstadoPartida();
+    renderizarCasilleros();
+    actualizarListaJugadores();
+    guardarPartidaAuto();
+
+    const jugador = getJugadorActivo();
+    const asistente = getAsistente();
+    mostrarToast(`🔄 Ronda ${ronda+1} · 🎯 Turno de ${jugador.nombre} (Asistente: ${asistente ? asistente.nombre : 'Sin asistente'})`);
+
+    // Iniciar el dado del nuevo turno
+    setTimeout(() => {
+        if (partidaActiva && !pruebaEnCurso && !esperandoEleccion) {
+            tirarDado();
+        }
+    }, 800);
 }
 
         // ============================================================
