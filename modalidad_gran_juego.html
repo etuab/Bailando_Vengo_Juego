@@ -3250,13 +3250,13 @@
             const tirada = Math.floor(Math.random() * 6) + 1;
             let numOpciones = 1, mensajeExtra = '';
             switch(tirada) {
-                case 1: numOpciones = 1; mensajeExtra = '🎲 1 opción'; break;
-                case 2: numOpciones = 2; mensajeExtra = '🎲 2 opciones'; break;
-                case 3: numOpciones = 2; mensajeExtra = '🎲 2 opciones'; break;
-                case 4: numOpciones = 3; mensajeExtra = '🎲 3 opciones'; break;
-                case 5: numOpciones = 3; mensajeExtra = '🎲 3 opciones'; break;
-                case 6: numOpciones = 6; mensajeExtra = '🎲 ¡Todas las pruebas!'; break;
-            }
+    case 1: numOpciones = 1; mensajeExtra = '🎲 1 opción'; break;
+    case 2: numOpciones = 2; mensajeExtra = '🎲 2 opciones'; break;
+    case 3: numOpciones = 3; mensajeExtra = '🎲 3 opciones'; break;
+    case 4: numOpciones = 4; mensajeExtra = '🎲 4 opciones'; break;
+    case 5: numOpciones = 5; mensajeExtra = '🎲 5 opciones'; break;
+    case 6: numOpciones = 6; mensajeExtra = '🎲 ¡Todas las pruebas!'; break;
+}
             sonidoDado();
             const dadoContainer = document.getElementById('dadoResultado');
             if (dadoContainer) {
